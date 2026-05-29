@@ -1,0 +1,252 @@
+import { useState, useRef, useEffect } from 'react';
+import { Outlet, NavLink, useNavigate, Link, useLocation } from 'react-router-dom';
+import { Bell, User, Container, LogOut, Menu, X, MessageSquare, Package, MapPin, Plus, Home, ChevronRight } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { getUnreadNotificationCount } from '../../lib/database';
+import { requestNotificationPermission } from '../../lib/firebase-messaging';
+import ErrorBoundary from '../ui/ErrorBoundary';
+import OnboardingModal from '../ui/OnboardingModal';
+
+const desktopNavItems = [
+  { to: '/customer/book', icon: Plus, label: 'Place Order' },
+  { to: '/customer/orders', icon: Package, label: 'Orders' },
+  { to: '/customer/trips', icon: MapPin, label: 'Trips' },
+  { to: '/customer/support', icon: MessageSquare, label: 'Chat Support' },
+];
+
+const bottomNavItems = [
+  { to: '/customer', icon: Home, label: 'Home', end: true },
+  { to: '/customer/orders', icon: Package, label: 'Orders' },
+  { to: '/customer/book', icon: Plus, label: 'Book', isBookTab: true },
+  { to: '/customer/trips', icon: MapPin, label: 'Trips' },
+  { to: '/customer/profile', icon: User, label: 'Profile' },
+];
+
+const getInitials = (name) => {
+  if (!name || !name.trim()) return '?';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
+
+const getDisplayName = (profile, userEmail) => {
+  if (profile?.name && profile.name.trim()) return profile.name;
+  if (userEmail) return userEmail.split('@')[0];
+  return 'Account';
+};
+
+const CustomerLayout = () => {
+  const { user, userProfile, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // ── Fetch unread count + listen for new notifications in real-time ────────
+  useEffect(() => {
+    if (!user) return;
+
+    // Initial count
+    getUnreadNotificationCount(user.id)
+      .then(count => setUnreadCount(count))
+      .catch(() => {});
+
+    // Real-time listener for new notifications
+    const channel = supabase.channel(`notif_badge_${user.id}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'notifications',
+        filter: `user_id=eq.${user.id}`,
+      }, () => {
+        setUnreadCount(prev => prev + 1);
+      })
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'notifications',
+        filter: `user_id=eq.${user.id}`,
+      }, (payload) => {
+        // When a notification is marked as read, decrement
+        if (payload.new.is_read && !payload.old.is_read) {
+          setUnreadCount(prev => Math.max(0, prev - 1));
+        }
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [user]);
+
+  // Reset badge when user visits the notifications page
+  useEffect(() => {
+    if (location.pathname === '/customer/notifications') {
+      // Re-fetch actual count (in case some were already read)
+      if (user) {
+        getUnreadNotificationCount(user.id)
+          .then(count => setUnreadCount(count))
+          .catch(() => {});
+      }
+    }
+  }, [location.pathname, user]);
+
+  // ── Request push notification permission (once per session) ───────────────
+  useEffect(() => {
+    if (!user) return;
+    if (sessionStorage.getItem('fcm_asked')) return;
+    sessionStorage.setItem('fcm_asked', '1');
+    
+    // Delay slightly so it doesn't block initial page load
+    const timer = setTimeout(() => {
+      requestNotificationPermission(user.id).catch(() => {});
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [user]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    setDropdownOpen(false);
+    await logout();
+    navigate('/login');
+  };
+
+  return (
+    <>
+    <OnboardingModal />
+    <div className="customer-layout-v2">
+      {/* ─── Top Navigation Bar ─── */}
+      <header className="customer-navbar">
+        <div className="customer-navbar-inner">
+          {/* Left: Logo */}
+          <Link to="/customer" className="customer-navbar-logo">
+            <Container size={24} color="var(--primary)" />
+            <span className="customer-navbar-brand">
+              <span style={{ color: 'var(--accent)' }}>CARGO</span>
+              <span style={{ color: 'var(--primary)' }}>EXPRESS</span>
+            </span>
+          </Link>
+
+          {/* Center: Desktop Nav Links */}
+          <nav className="customer-navbar-links">
+            {desktopNavItems.map(item => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `customer-nav-link ${isActive ? 'active' : ''}`
+                }
+              >
+                <item.icon size={16} />
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* Right: Icons + Avatar */}
+          <div className="customer-navbar-right">
+            <Link to="/customer/notifications" className="customer-nav-icon-btn" title="Notifications">
+              <Bell size={20} />
+              {unreadCount > 0 && (
+                <span className="notification-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
+              )}
+            </Link>
+
+            {/* Profile Dropdown */}
+            <div style={{ position: 'relative' }} ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="customer-avatar-btn"
+                title="Account"
+              >
+                <div className="customer-avatar">
+                  {getInitials(userProfile?.name)}
+                </div>
+              </button>
+
+              {dropdownOpen && (
+                <div className="customer-dropdown">
+                  <div className="customer-dropdown-header">
+                    <div style={{ fontWeight: 600, color: 'var(--text)', fontSize: '0.875rem' }}>
+                      {getDisplayName(userProfile, user?.email)}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: 2 }}>
+                      {user?.email}
+                    </div>
+                  </div>
+                  <div style={{ padding: 8 }}>
+                    <Link
+                      to="/customer/personal-info"
+                      onClick={() => setDropdownOpen(false)}
+                      className="customer-dropdown-item"
+                    >
+                      <User size={16} /> Account Settings
+                      <ChevronRight size={14} style={{ marginLeft: 'auto', opacity: 0.4 }} />
+                    </Link>
+                    <button onClick={handleLogout} className="customer-dropdown-item danger">
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* ─── Page Content ─── */}
+      <main className="customer-main page-transition" key={location.pathname}>
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
+      </main>
+
+      {/* ─── Bottom Tab Bar (Mobile Only) ─── */}
+      <nav className="customer-bottom-nav">
+        <div className="customer-bottom-nav-inner">
+          {bottomNavItems.map(item => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              className={({ isActive }) =>
+                `customer-bottom-tab ${isActive ? 'active' : ''} ${item.isBookTab ? 'book-tab' : ''}`
+              }
+            >
+              {item.isBookTab ? (
+                <>
+                  <div className="book-tab-icon">
+                    <item.icon size={22} />
+                  </div>
+                  <span>{item.label}</span>
+                </>
+              ) : (
+                <>
+                  <div style={{ position: 'relative', display: 'inline-flex' }}>
+                    <item.icon size={20} />
+                    {item.hasBadge && unreadCount > 0 && (
+                      <span className="notification-badge-sm">{unreadCount > 9 ? '9+' : unreadCount}</span>
+                    )}
+                  </div>
+                  <span>{item.label}</span>
+                </>
+              )}
+            </NavLink>
+          ))}
+        </div>
+      </nav>
+    </div>
+    </>
+  );
+};
+
+export default CustomerLayout;

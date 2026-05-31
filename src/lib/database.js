@@ -933,6 +933,16 @@ export const getMessages = async (conversationId) => {
   return data;
 };
 
+export const markCustomerMessagesRead = async (conversationId) => {
+  const { error } = await supabase
+    .from('chat_messages')
+    .update({ is_read: true })
+    .eq('conversation_id', conversationId)
+    .eq('sender_role', 'customer')
+    .eq('is_read', false);
+  if (error) throw error;
+};
+
 export const sendMessage = async (conversationId, senderId, senderRole, text) => {
   const { data, error } = await supabase
     .from('chat_messages')

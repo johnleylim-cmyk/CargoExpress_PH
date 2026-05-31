@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { getOrCreateConversation, getMessages, sendMessage } from '../../lib/database';
-import { Send, Bot, User, Loader, MessageSquare, AlertCircle } from 'lucide-react';
+import { Send, Bot, Loader, MessageSquare, AlertCircle } from 'lucide-react';
 import EmptyState from '../../components/ui/EmptyState';
 
 const formatTime = (ts) => {
@@ -86,7 +86,7 @@ const SupportChatPage = () => {
   }
 
   return (
-    <div className="page-transition" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 200px)' }}>
+    <div className="support-chat-page page-transition">
       {/* Header */}
       <div style={{ marginBottom: 16 }}>
         <h2 style={{ fontWeight: 800, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -103,12 +103,7 @@ const SupportChatPage = () => {
       )}
 
       {/* Messages Area */}
-      <div style={{
-        flex: 1, overflowY: 'auto', marginBottom: 12,
-        background: 'var(--bg)', padding: 16,
-        borderRadius: 'var(--radius-md)',
-        border: '1px solid var(--border-light)',
-      }}>
+      <div className="support-chat-messages">
         {messages.length === 0 && (
           <EmptyState
             icon={MessageSquare}
@@ -128,14 +123,14 @@ const SupportChatPage = () => {
                   {new Date(m.created_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })} · {formatTime(m.created_at)}
                 </div>
               )}
-              <div className={`chat-bubble-wrap ${isMe ? 'user' : ''}`} style={{ marginBottom: 8 }}>
+              <div className={`support-message-row ${isMe ? 'is-me' : 'is-admin'}`}>
                 {!isMe && (
                   <div className="chat-avatar bot-avatar">
                     <Bot size={12} />
                   </div>
                 )}
-                <div>
-                  <div className={`chat-bubble ${isMe ? 'user-bubble' : 'bot-bubble'}`}>
+                <div className="support-message-stack">
+                  <div className={`support-message-bubble ${isMe ? 'user-bubble' : 'bot-bubble'}`}>
                     {m.message.split('\n').map((line, j) => (
                       <span key={j}>{line}{j < m.message.split('\n').length - 1 && <br />}</span>
                     ))}

@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
 import {
   LayoutDashboard, Package, Truck, Users, BarChart3,
   Megaphone, MessageSquare, Settings, LogOut, Container, FileText, Mail
@@ -16,8 +18,8 @@ const toolsNav = [
   { to: '/admin/sales', icon: BarChart3, label: 'Sales' },
   { to: '/admin/reports', icon: FileText, label: 'Reports' },
   { to: '/admin/announcements', icon: Megaphone, label: 'Announcements' },
-  { to: '/admin/inbox', icon: MessageSquare, label: 'Inbox' },
-  { to: '/admin/contact-inquiries', icon: Mail, label: 'Inquiries' },
+  { to: '/admin/inbox', icon: MessageSquare, label: 'Inbox', badgeKey: 'inbox' },
+  { to: '/admin/contact-inquiries', icon: Mail, label: 'Inquiries', badgeKey: 'inquiries' },
 ];
 
 const systemNav = [
@@ -27,14 +29,66 @@ const systemNav = [
 const Sidebar = ({ isOpen, onClose }) => {
   const { logout, userProfile } = useAuth();
   const navigate = useNavigate();
+  const [badges, setBadges] = useState({ inbox: 0, inquiries: 0 });
+
+  useEffect(() => {
+    if (userProfile?.role !== 'admin') return;
+
+    let isMounted = true;
+
+    const loadBadges = async () => {
+      const [inboxResult, inquiriesResult] = await Promise.allSettled([
+        supabase
+          .from('chat_messages')
+          .select('id', { count: 'exact', head: true })
+          .eq('sender_role', 'customer')
+          .eq('is_read', false),
+        supabase
+          .from('contact_inquiries')
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'new'),
+      ]);
+
+      if (!isMounted) return;
+
+      setBadges({
+        inbox: inboxResult.status === 'fulfilled' ? inboxResult.value.count || 0 : 0,
+        inquiries: inquiriesResult.status === 'fulfilled' ? inquiriesResult.value.count || 0 : 0,
+      });
+    };
+
+    loadBadges();
+
+    const channel = supabase.channel('admin_sidebar_badges')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'chat_messages',
+      }, loadBadges)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'contact_inquiries',
+      }, loadBadges)
+      .subscribe();
+
+    return () => {
+      isMounted = false;
+      supabase.removeChannel(channel);
+    };
+  }, [userProfile?.role]);
 
   const handleLogout = async () => {
     await logout();
     navigate('/login');
   };
 
+  const formatBadge = (count) => count > 99 ? '99+' : String(count);
+
   const renderLinks = (items) =>
-    items.map(item => (
+    items.map(item => {
+      const badgeCount = item.badgeKey ? badges[item.badgeKey] || 0 : 0;
+      return (
       <NavLink
         key={item.to}
         to={item.to}
@@ -43,9 +97,15 @@ const Sidebar = ({ isOpen, onClose }) => {
         onClick={onClose}
       >
         <item.icon size={18} />
-        <span>{item.label}</span>
+        <span className="sidebar-link-label">{item.label}</span>
+        {badgeCount > 0 && (
+          <span className="sidebar-count-badge" aria-label={`${badgeCount} unread`}>
+            {formatBadge(badgeCount)}
+          </span>
+        )}
       </NavLink>
-    ));
+      );
+    });
 
   return (
     <>

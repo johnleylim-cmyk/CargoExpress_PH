@@ -1,7 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
-import { getAdminConversations, getMessages, sendMessage, withTimeout } from '../../lib/database';
+import {
+  getAdminConversations,
+  getMessages,
+  markCustomerMessagesRead,
+  sendMessage,
+  withTimeout,
+} from '../../lib/database';
 import EmptyState from '../../components/ui/EmptyState';
 import { MessageSquare, Send, Loader, User } from 'lucide-react';
 
@@ -55,7 +61,12 @@ const InboxPage = () => {
       setLoadingChat(true);
       try {
         const history = await getMessages(activeConv.id);
-        if (isMounted) setMessages(history || []);
+        if (isMounted) {
+          setMessages((history || []).map(message =>
+            message.sender_role === 'customer' ? { ...message, is_read: true } : message
+          ));
+        }
+        markCustomerMessagesRead(activeConv.id).catch(() => {});
       } catch (err) {
         // Message load failed — user sees empty state
       } finally {
@@ -83,8 +94,14 @@ const InboxPage = () => {
         (payload) => {
           setMessages(prev => {
             if (prev.some(m => m.id === payload.new.id)) return prev;
-            return [...prev, payload.new];
+            const incoming = payload.new.sender_role === 'customer'
+              ? { ...payload.new, is_read: true }
+              : payload.new;
+            return [...prev, incoming];
           });
+          if (payload.new.sender_role === 'customer') {
+            markCustomerMessagesRead(activeConv.id).catch(() => {});
+          }
         }
       )
       .subscribe();

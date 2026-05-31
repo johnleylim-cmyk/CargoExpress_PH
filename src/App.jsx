@@ -42,6 +42,7 @@ const ReportsPage = lazy(() => import('./pages/admin/ReportsPage'));
 const AnnouncementsPage = lazy(() => import('./pages/admin/AnnouncementsPage'));
 const InboxPage = lazy(() => import('./pages/admin/InboxPage'));
 const SettingsPage = lazy(() => import('./pages/admin/SettingsPage'));
+const ContactInquiriesPage = lazy(() => import('./pages/admin/ContactInquiriesPage'));
 
 // Public Pages
 const TrackingPage = lazy(() => import('./pages/public/TrackingPage'));
@@ -84,6 +85,10 @@ const ProtectedRoute = ({ children, requiredRole }) => {
   if (!userProfile) return <Navigate to="/login" replace />;
   
   if (requiredRole && userProfile.role !== requiredRole) {
+    // If role is null/undefined (profile fetch failed), send to login
+    // instead of redirecting to a role-based route that also rejects null,
+    // which would create an infinite redirect loop.
+    if (!userProfile.role) return <Navigate to="/login" replace />;
     return <Navigate to={userProfile.role === 'admin' ? '/admin' : '/customer'} replace />;
   }
   return children;
@@ -92,7 +97,10 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 const AuthRoute = ({ children }) => {
   const { user, userProfile, loading } = useAuth();
   if (loading) return <LoadingScreen />;
-  if (user && userProfile) {
+  // Only redirect away from auth pages if the user has a valid role.
+  // If role is null (profile fetch failed), stay on login so the user
+  // can re-authenticate, which retries the profile fetch.
+  if (user && userProfile && userProfile.role) {
     return <Navigate to={userProfile.role === 'admin' ? '/admin' : '/customer'} replace />;
   }
   return children;
@@ -102,7 +110,7 @@ const RootRedirect = () => {
   const { user, userProfile, loading } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/login" replace />;
-  if (!userProfile) return <Navigate to="/login" replace />;
+  if (!userProfile || !userProfile.role) return <Navigate to="/login" replace />;
   return <Navigate to={userProfile.role === 'admin' ? '/admin' : '/customer'} replace />;
 };
 
@@ -154,6 +162,7 @@ function App() {
               <Route path="announcements" element={<Suspense fallback={<PageLoader />}><AnnouncementsPage /></Suspense>} />
               <Route path="inbox" element={<Suspense fallback={<PageLoader />}><InboxPage /></Suspense>} />
               <Route path="settings" element={<Suspense fallback={<PageLoader />}><SettingsPage /></Suspense>} />
+              <Route path="contact-inquiries" element={<Suspense fallback={<PageLoader />}><ContactInquiriesPage /></Suspense>} />
             </Route>
 
             {/* 404 */}

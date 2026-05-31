@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   LayoutDashboard, Package, Truck, Users, BarChart3,
-  Megaphone, MessageSquare, Settings, LogOut, Container, FileText
+  Megaphone, MessageSquare, Settings, LogOut, Container, FileText, Mail
 } from 'lucide-react';
 
 const mainNav = [
@@ -17,6 +17,7 @@ const toolsNav = [
   { to: '/admin/reports', icon: FileText, label: 'Reports' },
   { to: '/admin/announcements', icon: Megaphone, label: 'Announcements' },
   { to: '/admin/inbox', icon: MessageSquare, label: 'Inbox' },
+  { to: '/admin/contact-inquiries', icon: Mail, label: 'Inquiries' },
 ];
 
 const systemNav = [

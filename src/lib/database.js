@@ -830,6 +830,44 @@ export const createContactInquiry = async (data) => {
   if (error) throw error;
 };
 
+export const getContactInquiries = async () => {
+  const { data, error } = await supabase
+    .from('contact_inquiries')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
+};
+
+export const updateContactInquiry = async (id, updates) => {
+  const { error } = await supabase
+    .from('contact_inquiries')
+    .update(updates)
+    .eq('id', id);
+  if (error) throw error;
+};
+
+// ==================== PAYMENT RECONCILIATION ====================
+export const createPaymentAttempt = async (attempt) => {
+  const { data, error } = await supabase
+    .from('payment_attempts')
+    .upsert({
+      source_id: attempt.source_id,
+      order_id: attempt.order_id,
+      amount: attempt.amount,
+      description: attempt.description || null,
+      actual_weight: attempt.actual_weight ?? null,
+      payer_type: attempt.payer_type || 'sender',
+      pickup_photos: attempt.pickup_photos || [],
+      status: 'pending',
+      last_error: null,
+    }, { onConflict: 'source_id' })
+    .select('id, source_id, status')
+    .single();
+  if (error) throw error;
+  return data;
+};
+
 // ==================== CHAT SUPPORT ====================
 export const getOrCreateConversation = async (customerId) => {
   // Try to find existing — use .limit(1) instead of .single() to avoid

@@ -6,6 +6,13 @@ const AuthContext = createContext({});
 
 export const useAuth = () => useContext(AuthContext);
 
+const appOrigin = (import.meta.env.VITE_APP_URL || '').replace(/\/+$/, '');
+
+const getPasswordResetRedirectUrl = () => {
+  const origin = appOrigin || window.location.origin;
+  return `${origin}/reset-password`;
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
@@ -217,7 +224,7 @@ export const AuthProvider = ({ children }) => {
   const resetPassword = useCallback(async (email) => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/reset-password',
+        redirectTo: getPasswordResetRedirectUrl(),
       });
       if (error) throw error;
       return { success: true };

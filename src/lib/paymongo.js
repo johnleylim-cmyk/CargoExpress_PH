@@ -96,8 +96,13 @@ export const checkPaymentStatus = async (sourceId) => {
  * @param {string} sourceId - Chargeable source ID
  * @param {number} amount - Amount in PHP
  * @param {string} description - Payment description
+ * @param {object} [orderUpdate] - Optional order data for server-side reconciliation
+ * @param {string} [orderUpdate.orderId] - Order UUID
+ * @param {number} [orderUpdate.actualWeight] - Actual weight in kg
+ * @param {string} [orderUpdate.payerType] - 'sender' or 'receiver'
+ * @param {string[]} [orderUpdate.pickupPhotos] - Photo URLs
  */
-export const createPayment = async (sourceId, amount, description) => {
+export const createPayment = async (sourceId, amount, description, orderUpdate = null) => {
   if (!sourceId) {
     throw new Error('PayMongo source ID is required.');
   }
@@ -105,12 +110,13 @@ export const createPayment = async (sourceId, amount, description) => {
     throw new Error('PayMongo payment amount must be greater than zero.');
   }
 
+  const body = { sourceId, amount, description };
+  if (orderUpdate) {
+    body.orderUpdate = orderUpdate;
+  }
+
   const { data, error } = await supabase.functions.invoke('paymongo-create-payment', {
-    body: {
-      sourceId,
-      amount,
-      description,
-    },
+    body,
   });
 
   if (error) {
@@ -124,6 +130,7 @@ export const createPayment = async (sourceId, amount, description) => {
     paymentId: data.paymentId,
     status: data.status,
     amount: data.amount,
+    orderReconciled: data.orderReconciled || false,
   };
 };
 

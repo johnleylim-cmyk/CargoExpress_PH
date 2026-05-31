@@ -69,7 +69,8 @@ const SupportChatPage = () => {
         return [...prev, newMsg];
       });
     } catch (err) {
-      // Send failed — message stays in local state
+      setError('Failed to send message. Please try again.');
+      setInput(text);
     } finally {
       setSending(false);
     }

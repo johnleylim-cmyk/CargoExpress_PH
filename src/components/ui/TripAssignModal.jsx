@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getTrips } from '../../lib/database';
-import { X, Truck, Loader, MapPin } from 'lucide-react';
+import { X, Truck, Loader, MapPin, AlertTriangle } from 'lucide-react';
 import FocusTrap from './FocusTrap';
 
 /**
@@ -80,16 +80,16 @@ const TripAssignModal = ({ order, onClose, onAssign }) => {
                 const orderWeight = parseFloat(order.actual_weight || order.package_weight || 0);
                 const availableWeight = trip.capacity > 0 ? Number(trip.capacity) - Number(trip.current_weight || 0) : Infinity;
                 const exceedsCapacity = trip.capacity > 0 && orderWeight > availableWeight;
+                const overloadWeight = Math.max(0, orderWeight - availableWeight);
 
                 return (
                   <div
                     key={trip.id}
-                    onClick={() => { if (!exceedsCapacity) setSelectedTrip(trip); }}
+                    onClick={() => setSelectedTrip(trip)}
                     style={{
-                      padding: 14, borderRadius: 10, cursor: exceedsCapacity ? 'not-allowed' : 'pointer',
+                      padding: 14, borderRadius: 10, cursor: 'pointer',
                       border: `2px solid ${isSelected ? 'var(--primary)' : '#E2E8F0'}`,
-                      background: exceedsCapacity ? '#F8FAFC' : isSelected ? 'var(--primary-glow)' : 'white',
-                      opacity: exceedsCapacity ? 0.65 : 1,
+                      background: isSelected ? 'var(--primary-glow)' : 'white',
                       transition: 'all 0.2s ease',
                     }}
                   >
@@ -115,8 +115,13 @@ const TripAssignModal = ({ order, onClose, onAssign }) => {
                     </div>
                     <div style={{ fontSize: '0.6875rem', color: '#94A3B8', marginTop: 4 }}>
                       {(trip.current_weight || 0).toFixed(1)} / {trip.capacity} kg
-                      {exceedsCapacity ? ` - needs ${orderWeight.toFixed(1)} kg, only ${Math.max(0, availableWeight).toFixed(1)} kg available` : ''}
                     </div>
+                    {exceedsCapacity && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.6875rem', color: '#B45309', marginTop: 6 }}>
+                        <AlertTriangle size={12} />
+                        Exceeds capacity by {overloadWeight.toFixed(1)} kg. Admin override allowed.
+                      </div>
+                    )}
                   </div>
                 );
               })}

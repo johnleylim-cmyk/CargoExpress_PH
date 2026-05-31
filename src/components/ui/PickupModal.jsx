@@ -3,6 +3,7 @@ import { X, Camera, Loader, Scale, CreditCard, Calendar, Upload, Trash2 } from '
 import FocusTrap from './FocusTrap';
 import { uploadMultiplePhotos } from '../../lib/storage';
 import { createGCashSource, checkPaymentStatus, createPayment } from '../../lib/paymongo';
+import { createPaymentAttempt } from '../../lib/database';
 import { PAYMENT_METHODS } from '../../constants/status';
 
 /**
@@ -49,7 +50,18 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
             setPollStatus('Payment Authorized! Capturing funds...');
             
             const description = `CargoExpress PH - Order ${order.tracking_number}`;
-            const payment = await createPayment(qrData.sourceId, estimatedCost, description);
+
+            // Pass order details so the Edge Function can atomically
+            // update the order server-side after capturing payment.
+            // This prevents orphaned payments if the browser closes.
+            const orderUpdate = {
+              orderId: order.id,
+              actualWeight: parseFloat(form.actual_weight),
+              payerType: form.payer_type,
+              pickupPhotos: qrData.photoUrls,
+            };
+
+            const payment = await createPayment(qrData.sourceId, estimatedCost, description, orderUpdate);
             
             setPollStatus('Payment Successful! Saving order...');
             
@@ -65,7 +77,40 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
               promised_payment_date: null,
               status: 'Picked Up',
             };
-            await onSave(updates);
+
+            // If the server already reconciled the order, onSave is just
+            // a UI refresh — it will read the already-updated row.
+            // If not, retry onSave client-side as a fallback.
+            let saveAttempts = 0;
+            const maxRetries = payment.orderReconciled ? 1 : 3;
+            while (saveAttempts < maxRetries) {
+              try {
+                await onSave(updates);
+                return; // Success — modal will close via parent
+              } catch (saveErr) {
+                saveAttempts++;
+                if (saveAttempts < maxRetries) {
+                  setPollStatus(`Save failed, retrying (${saveAttempts}/${maxRetries})...`);
+                  await new Promise(r => setTimeout(r, 1500));
+                } else if (payment.orderReconciled) {
+                  // Server already saved it — force-close the modal.
+                  // The parent's order list will pick up the DB change on next refresh.
+                  setQrData(null);
+                  setSaving(false);
+                  onClose();
+                  return;
+                } else {
+                  // All retries exhausted — show payment reference for manual reconciliation
+                  setError(
+                    `⚠️ Payment captured (Ref: ${payment.paymentId}) but failed to save to the order. ` +
+                    `Please go to Order Detail and manually update: Payment Method = GCash, ` +
+                    `Amount Paid = ₱${estimatedCost.toFixed(2)}, Payment Status = Paid.`
+                  );
+                  setQrData(null);
+                  setSaving(false);
+                }
+              }
+            }
           } else if (status === 'expired' || status === 'cancelled') {
             clearInterval(interval);
             setError(`GCash payment was ${status}. Please try again or use Cash.`);
@@ -167,6 +212,16 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
           };
           const description = `CargoExpress PH - Order ${order.tracking_number}`;
           const { sourceId, checkoutUrl } = await createGCashSource(estimatedCost, description, customerData, true);
+
+          await createPaymentAttempt({
+            source_id: sourceId,
+            order_id: order.id,
+            amount: estimatedCost,
+            description,
+            actual_weight: parseFloat(form.actual_weight),
+            payer_type: form.payer_type,
+            pickup_photos: photoUrls,
+          });
           
           setQrData({ sourceId, url: checkoutUrl, photoUrls });
           return; // Stop and wait for customer to scan QR code

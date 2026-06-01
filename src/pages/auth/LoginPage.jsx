@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import {
   Container, Eye, EyeOff, Loader, ArrowRight,
   MessageCircle, Send, X, Bot, Package,
-  MapPin, DollarSign, Clock, HelpCircle, ExternalLink, ChevronRight,
+  DollarSign, Ship, Search, Zap, AlertTriangle,
 } from 'lucide-react';
 
 // ── Error mapper ───────────────────────────────────────────────────────────
@@ -28,47 +28,47 @@ const getFriendlyError = (msg) => {
 const FAQ_TRIGGERS = [
   {
     patterns: ['book', 'how to book', 'booking', 'ship', 'send', 'order'],
-    answer: `📦 To book a shipment:\n1. Create a free account (Sign Up)\n2. Go to "Place Order"\n3. Fill in sender & receiver details\n4. Select your route (Bohol→Manila or Manila→Bohol)\n5. Enter package weight\n6. Submit — your tracking number will be generated!\n\nNeed help? Message us on Facebook. 😊`,
+    answer: `To book a shipment:\n1. Create a free account (Sign Up)\n2. Go to "Place Order"\n3. Fill in sender and receiver details\n4. Select your route (Bohol to Manila or Manila to Bohol)\n5. Enter package weight\n6. Submit. Your tracking number will be generated.\n\nNeed help? Message us on Facebook.`,
   },
   {
     patterns: ['route', 'routes', 'where', 'destination', 'bohol', 'manila'],
-    answer: `🗺️ We serve TWO routes:\n\n🚢 Bohol → Manila\n🚢 Manila → Bohol\n\nContact us on Facebook for trip schedules!`,
+    answer: `We serve two routes:\n\nBohol to Manila\nManila to Bohol\n\nContact us on Facebook for trip schedules.`,
   },
   {
     patterns: ['price', 'fee', 'cost', 'rate', 'how much', 'charge', 'shipping fee'],
-    answer: `💰 Shipping fees are per kilogram:\n\n• Final price = Weight × Rate/kg\n• You'll see the exact cost before confirming your order.\n\nFor current rates, message us on Facebook!`,
+    answer: `Shipping fees are per kilogram:\n\n- Final price = weight x rate per kg\n- You'll see the exact cost before confirming your order.\n\nFor current rates, message us on Facebook.`,
   },
   {
     patterns: ['track', 'tracking', 'where is', 'status', 'locate', 'check order'],
-    answer: `🔍 To track your package:\n\n• Visit our Track page (no login needed!)\n• Enter your tracking number (CE-XXXXXXXX-XXXX)\n• See real-time status updates\n\nOr log in → Orders to view all shipments.`,
+    answer: `To track your package:\n\n- Visit our Track page. No login is needed.\n- Enter your tracking number (CE-XXXXXXXX-XXXX).\n- See real-time status updates.\n\nOr log in and open Orders to view all shipments.`,
   },
   {
     patterns: ['schedule', 'when', 'depart', 'trip', 'departure', 'date'],
-    answer: `📅 Trip schedules vary. For the latest dates:\n\n• Message us on Facebook for current schedule.\n\nWe'll confirm pickup and estimated delivery once your order is booked!`,
+    answer: `Trip schedules vary. For the latest dates, message us on Facebook.\n\nWe'll confirm pickup and estimated delivery once your order is booked.`,
   },
   {
     patterns: ['contact', 'reach', 'call', 'message', 'facebook', 'fb'],
-    answer: `📞 Contact us:\n\n• 💬 Facebook: facebook.com/marlon.sarong.cargodeliveryservice\n\nWe respond Mon–Sat during business hours. 😊`,
+    answer: `Contact us:\n\nFacebook: facebook.com/marlon.sarong.cargodeliveryservice\n\nWe respond Mon-Sat during business hours.`,
   },
   {
     patterns: ['register', 'sign up', 'create account', 'signup'],
-    answer: `✅ Creating an account is FREE!\n\nClick "Sign Up" below and fill in:\n• Full Name\n• Email & Password\n• Mobile number (09xxxxxxxxx)\n• Address\n\nThen you can book and track shipments!`,
+    answer: `Creating an account is free.\n\nClick "Sign Up" below and fill in:\n- Full name\n- Email and password\n- Mobile number (09xxxxxxxxx)\n- Address\n\nThen you can book and track shipments.`,
   },
   {
     patterns: ['cancel', 'cancellation'],
-    answer: `❌ To cancel an order:\n\nLog in → Orders → Select the order → Cancel.\n\nOrders can only be cancelled before pickup. For urgent cases, message us on Facebook!`,
+    answer: `To cancel an order:\n\nLog in, open Orders, select the order, then choose Cancel.\n\nOrders can only be cancelled before pickup. For urgent cases, message us on Facebook.`,
   },
   {
     patterns: ['payment', 'pay', 'gcash', 'cash'],
-    answer: `💳 Payment options:\n\n• Cash on pickup/delivery\n• GCash (contact us for details)\n• Pay Later option available\n\nMessage us on Facebook for payment instructions!`,
+    answer: `Payment options:\n\n- Cash on pickup or delivery\n- GCash. Contact us for details.\n- Pay Later option available\n\nMessage us on Facebook for payment instructions.`,
   },
 ];
 
 const QUICK_QUESTIONS = [
-  { label: '📦 How to book?', query: 'how to book' },
-  { label: '🗺️ Routes?', query: 'what routes are available' },
-  { label: '💰 Shipping fee?', query: 'how much is the shipping fee' },
-  { label: '🔍 Track package?', query: 'how to track my order' },
+  { label: 'How to book?', query: 'how to book' },
+  { label: 'Routes?', query: 'what routes are available' },
+  { label: 'Shipping fee?', query: 'how much is the shipping fee' },
+  { label: 'Track package?', query: 'how to track my order' },
 ];
 
 const getBotReply = (input) => {
@@ -76,7 +76,7 @@ const getBotReply = (input) => {
   for (const faq of FAQ_TRIGGERS) {
     if (faq.patterns.some(p => lower.includes(p))) return faq.answer;
   }
-  return `🤔 I'm not sure about that yet.\n\nContact us directly:\n• 💬 Facebook: facebook.com/marlon.sarong.cargodeliveryservice\n\nOur team will be happy to help! 😊`;
+  return `I'm not sure about that yet.\n\nContact us directly:\nFacebook: facebook.com/marlon.sarong.cargodeliveryservice\n\nOur team will be happy to help.`;
 };
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -133,7 +133,7 @@ const LoginPage = () => {
     setChatName(name);
     setMessages([{
       from: 'bot',
-      text: `Hi ${name}! 👋 I'm the CargoExpress PH assistant.\n\nHow can I help you today?`,
+      text: `Hi ${name}. I'm the CargoExpress PH assistant.\n\nHow can I help you today?`,
       ts: Date.now(),
     }]);
     setChatStarted(true);
@@ -180,23 +180,23 @@ const LoginPage = () => {
           {/* Route pills */}
           <div className="login-route-pills">
             <div className="login-route-pill">
-              🚢 Bohol → Manila
+              <Ship size={15} /> Bohol to Manila
             </div>
             <div className="login-route-pill">
-              🚢 Manila → Bohol
+              <Ship size={15} /> Manila to Bohol
             </div>
           </div>
 
           {/* Features */}
           <div className="login-features">
             {[
-              { icon: '📦', text: 'Door-to-door delivery' },
-              { icon: '🔍', text: 'Real-time tracking' },
-              { icon: '💰', text: 'Affordable per-kilo rates' },
-              { icon: '⚡', text: 'Fast & reliable service' },
+              { icon: Package, text: 'Door-to-door delivery' },
+              { icon: Search, text: 'Real-time tracking' },
+              { icon: DollarSign, text: 'Affordable per-kilo rates' },
+              { icon: Zap, text: 'Fast and reliable service' },
             ].map((f, i) => (
               <div key={i} className="login-feature-item">
-                <span>{f.icon}</span> {f.text}
+                <f.icon size={16} /> {f.text}
               </div>
             ))}
           </div>
@@ -224,7 +224,7 @@ const LoginPage = () => {
           <p className="login-form-sub">Welcome back! Enter your credentials to continue.</p>
 
           {loginError && (
-            <div className="login-error-box">⚠️ {loginError}</div>
+            <div className="login-error-box"><AlertTriangle size={16} /> {loginError}</div>
           )}
 
           <form onSubmit={handleLogin} noValidate>
@@ -312,7 +312,11 @@ const LoginPage = () => {
                     <Bot size={18} />
                     <span style={{ fontWeight: 700, fontSize: '0.875rem' }}>CargoExpress PH</span>
                   </div>
-                  <button onClick={() => setChatOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.8)' }}>
+                  <button
+                    onClick={() => setChatOpen(false)}
+                    aria-label="Close chat"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.8)' }}
+                  >
                     <X size={16} />
                   </button>
                 </div>
@@ -351,7 +355,7 @@ const LoginPage = () => {
                             const name = chatName.trim() || 'Guest';
                             setChatName(name);
                             setMessages([
-                              { from: 'bot', text: `Hi ${name}! 👋 How can I help you?`, ts: Date.now() },
+                              { from: 'bot', text: `Hi ${name}. How can I help you?`, ts: Date.now() },
                               { from: 'user', text: q.label, ts: Date.now() + 1 },
                               { from: 'bot', text: getBotReply(q.query), ts: Date.now() + 2 },
                             ]);
@@ -385,10 +389,10 @@ const LoginPage = () => {
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 8 }}>
-                    <button onClick={resetChat} title="New chat" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.7)', fontSize: '0.65rem' }}>
+                    <button onClick={resetChat} title="New chat" aria-label="Start new chat" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.7)', fontSize: '0.65rem' }}>
                       New
                     </button>
-                    <button onClick={() => setChatOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.8)' }}>
+                    <button onClick={() => setChatOpen(false)} aria-label="Close chat" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.8)' }}>
                       <X size={16} />
                     </button>
                   </div>
@@ -443,6 +447,7 @@ const LoginPage = () => {
           className="chat-fab-btn"
           onClick={() => setChatOpen(!chatOpen)}
           title="Chat with us"
+          aria-label={chatOpen ? 'Close chat' : 'Chat with us'}
         >
           {chatOpen ? <X size={24} /> : <MessageCircle size={24} />}
           {!chatOpen && <span className="chat-fab-badge">?</span>}

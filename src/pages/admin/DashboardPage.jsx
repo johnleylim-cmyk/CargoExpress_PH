@@ -5,6 +5,7 @@ import StatusBadge from '../../components/ui/StatusBadge';
 import CapacityTracker from '../../components/ui/CapacityTracker';
 import { SkeletonStatCard, SkeletonTableRow } from '../../components/ui/SkeletonLoader';
 import AnimatedCounter from '../../components/ui/AnimatedCounter';
+import PageTransition, { StaggerItem } from '../../components/ui/PageTransition';
 import { Package, Truck, Users, Clock, ArrowRight, TrendingUp, Gauge } from 'lucide-react';
 
 const DashboardPage = () => {
@@ -34,13 +35,13 @@ const DashboardPage = () => {
   };
 
   if (error) return (
-    <div className="page-transition">
+    <PageTransition>
       <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
         <h3>Error</h3>
         <p>{error}</p>
         <button className="btn btn-primary mt-md" onClick={loadData}>Retry</button>
       </div>
-    </div>
+    </PageTransition>
   );
 
   const statCards = [
@@ -53,7 +54,7 @@ const DashboardPage = () => {
 
 
   return (
-    <div className="page-transition">
+    <PageTransition>
       <div className="flex items-center justify-between" style={{ marginBottom: 24 }}>
         <div>
           <h1 style={{ fontWeight: 800, fontSize: '1.5rem' }}>Dashboard</h1>
@@ -71,20 +72,20 @@ const DashboardPage = () => {
           </>
         ) : (
           statCards.map((s, i) => (
-            <div key={i} className="stat-card stagger-item" style={{ background: s.gradient, animationDelay: `${i * 60}ms` }}>
+            <StaggerItem key={i} className="stat-card" style={{ background: s.gradient }} delay={i * 60}>
               <div className="stat-icon"><s.icon size={40} /></div>
               <div className="stat-value">
                 <AnimatedCounter value={s.value} duration={1200} />
               </div>
               <div className="stat-label">{s.label}</div>
-            </div>
+            </StaggerItem>
           ))
         )}
       </div>
 
       <div className="grid grid-2" style={{ marginBottom: 24 }}>
         {/* Van Capacity */}
-        <div className="card stagger-item" style={{ animationDelay: '240ms' }}>
+        <StaggerItem className="card" delay={240}>
           <div className="card-header"><h3><Gauge size={16} style={{ display: 'inline', marginRight: 8 }} />Van Capacity</h3></div>
           <div className="card-body">
             {loading ? (
@@ -108,10 +109,10 @@ const DashboardPage = () => {
               <div className="text-center text-secondary" style={{ padding: 20 }}>No active trip</div>
             )}
           </div>
-        </div>
+        </StaggerItem>
 
         {/* Quick Stats */}
-        <div className="card stagger-item" style={{ animationDelay: '300ms' }}>
+        <StaggerItem className="card" delay={300}>
           <div className="card-header"><h3><TrendingUp size={16} style={{ display: 'inline', marginRight: 8 }} />Quick Stats</h3></div>
           <div className="card-body">
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #F1F5F9' }}>
@@ -127,11 +128,11 @@ const DashboardPage = () => {
               <span className="font-bold">{loading ? '—' : stats?.totalCustomers || 0}</span>
             </div>
           </div>
-        </div>
+        </StaggerItem>
       </div>
 
       {/* Recent Orders */}
-      <div className="card stagger-item" style={{ animationDelay: '360ms' }}>
+      <StaggerItem className="card" delay={360}>
         <div className="card-header">
           <h3>Recent Orders</h3>
           <Link to="/admin/orders" className="btn btn-ghost btn-sm">View All <ArrowRight size={14} /></Link>
@@ -146,10 +147,10 @@ const DashboardPage = () => {
                 <>
                   {recent.map(o => (
                     <tr key={o.id}>
-                      <td><Link to={`/admin/orders/${o.id}`} style={{ fontWeight: 600, color: 'var(--accent)' }}>{o.tracking_number}</Link></td>
-                      <td>{o.profiles?.name || '—'}</td>
-                      <td><StatusBadge status={o.status} size="sm" /></td>
-                      <td className="text-sm text-secondary">{new Date(o.created_at).toLocaleDateString()}</td>
+                      <td data-label="Tracking"><Link to={`/admin/orders/${o.id}`} style={{ fontWeight: 600, color: 'var(--accent)' }}>{o.tracking_number}</Link></td>
+                      <td data-label="Customer">{o.profiles?.name || '—'}</td>
+                      <td data-label="Status"><StatusBadge status={o.status} size="sm" /></td>
+                      <td data-label="Date" className="text-sm text-secondary">{new Date(o.created_at).toLocaleDateString()}</td>
                     </tr>
                   ))}
                   {recent.length === 0 && <tr><td colSpan={4} className="text-center text-secondary" style={{ padding: 40 }}>No orders yet</td></tr>}
@@ -158,8 +159,8 @@ const DashboardPage = () => {
             </tbody>
           </table>
         </div>
-      </div>
-    </div>
+      </StaggerItem>
+    </PageTransition>
   );
 };
 

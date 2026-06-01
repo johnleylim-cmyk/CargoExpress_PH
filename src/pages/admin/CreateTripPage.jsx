@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createTrip } from '../../lib/database';
 import { ROUTES } from '../../constants/phLocations';
-import { ArrowLeft, Loader, Truck, DollarSign, Package, FileText } from 'lucide-react';
+import { ArrowLeft, Calendar, Loader, Truck, DollarSign, Package, FileText, Lightbulb } from 'lucide-react';
 
 const CreateTripPage = () => {
   const navigate = useNavigate();
@@ -75,12 +75,12 @@ const CreateTripPage = () => {
             <h3 style={{ fontWeight: 700, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
               <Truck size={18} color="var(--primary)" /> Route *
             </h3>
-            <div style={{ display: 'flex', gap: 12 }}>
+            <div className="admin-route-options">
               {ROUTES.map(r => (
                 <button
                   type="button" key={r.label}
                   onClick={() => handleRouteSelect(r)}
-                  className={`card-interactive ${form.origin === r.origin ? '' : ''}`}
+                  className={`card-interactive admin-route-option ${form.origin === r.origin ? '' : ''}`}
                   style={{
                     flex: 1, padding: 20, borderRadius: 12,
                     border: form.origin === r.origin ? '2px solid var(--primary)' : '1.5px solid #E2E8F0',
@@ -103,7 +103,7 @@ const CreateTripPage = () => {
         <div className="card stagger-item" style={{ marginBottom: 16, animationDelay: '60ms' }}>
           <div className="card-body">
             <h3 style={{ fontWeight: 700, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-              📅 Schedule *
+              <Calendar size={18} color="var(--primary)" /> Schedule *
             </h3>
             <div className="grid grid-2" style={{ gap: 16 }}>
               <div className="form-group">
@@ -179,7 +179,7 @@ const CreateTripPage = () => {
                 border: '1.5px solid var(--primary-light)',
                 color: '#92400E',
               }}>
-                💡 At ₱{parseFloat(form.price_per_kg).toFixed(2)}/kg, a full trip of {Number(form.capacity).toLocaleString()} kg
+                <Lightbulb size={16} /> At ₱{parseFloat(form.price_per_kg).toFixed(2)}/kg, a full trip of {Number(form.capacity).toLocaleString()} kg
                 = <strong>₱{(Number(form.capacity) * Number(form.price_per_kg)).toLocaleString()} max revenue</strong>
               </div>
             )}
@@ -202,17 +202,19 @@ const CreateTripPage = () => {
           </div>
         </div>
 
-        <button
-          type="submit"
-          className="btn btn-primary btn-lg"
-          disabled={loading || !routeSelected}
-          style={{ minWidth: 180 }}
-        >
-          {loading
-            ? <><Loader size={18} className="animate-spin" /> Creating...</>
-            : <><Truck size={18} /> Create Trip</>
-          }
-        </button>
+        <div className="admin-form-actions">
+          <button
+            type="submit"
+            className="btn btn-primary btn-lg admin-form-submit"
+            disabled={loading || !routeSelected}
+            style={{ minWidth: 180 }}
+          >
+            {loading
+              ? <><Loader size={18} className="animate-spin" /> Creating...</>
+              : <><Truck size={18} /> Create Trip</>
+            }
+          </button>
+        </div>
       </form>
     </div>
   );

@@ -141,7 +141,7 @@ const InboxPage = () => {
   };
 
   return (
-    <div className="page-transition" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 120px)' }}>
+    <div className="page-transition admin-inbox-page">
       <h1 style={{ fontWeight: 800, fontSize: '1.5rem', marginBottom: 24 }}>Customer Inbox</h1>
       
       <div className="inbox-layout">
@@ -192,20 +192,20 @@ const InboxPage = () => {
           {activeConv ? (
             <>
               {/* Chat Header */}
-              <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', background: '#F8FAFC', display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div className="inbox-chat-header">
                 <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg,var(--primary),var(--primary-light))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <User size={18} color="white" />
                 </div>
-                <div>
+                <div className="inbox-chat-user-meta">
                   <div style={{ fontWeight: 700, fontSize: '1.0625rem', color: 'var(--accent)' }}>
                     {activeConv.profiles?.name || 'Customer'}
                   </div>
-                  <div style={{ fontSize: '0.8125rem', color: '#64748B' }}>{activeConv.profiles?.email}</div>
+                  <div style={{ fontSize: '0.8125rem', color: '#64748B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{activeConv.profiles?.email}</div>
                 </div>
               </div>
 
               {/* Chat Area */}
-              <div style={{ flex: 1, overflowY: 'auto', padding: 20, background: '#F8FAFC' }}>
+              <div className="inbox-chat-messages">
                 {loadingChat ? (
                   <div className="flex-center h-full"><Loader size={24} className="animate-spin text-secondary" /></div>
                 ) : messages.length === 0 ? (
@@ -215,13 +215,14 @@ const InboxPage = () => {
                     const isAdmin = m.sender_role === 'admin';
                     return (
                       <div key={m.id} style={{ display: 'flex', justifyContent: isAdmin ? 'flex-end' : 'flex-start', marginBottom: 12 }}>
-                        <div style={{ maxWidth: '70%' }}>
+                        <div className="inbox-message-stack">
                           <div style={{
                             padding: '10px 14px', 
                             borderRadius: isAdmin ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
                             background: isAdmin ? 'var(--accent)' : 'white',
                             color: isAdmin ? 'white' : '#0F172A', 
                             fontSize: '0.875rem', lineHeight: 1.5,
+                            overflowWrap: 'break-word',
                             boxShadow: '0 1px 2px rgba(0,0,0,0.05)', 
                             border: isAdmin ? 'none' : '1px solid #E2E8F0',
                           }}>
@@ -245,14 +246,14 @@ const InboxPage = () => {
               </div>
 
               {/* Input Area */}
-              <div style={{ padding: 16, borderTop: '1px solid #E2E8F0', display: 'flex', gap: 12, background: 'white' }}>
+              <div className="inbox-chat-input-area">
                 <input 
                   className="form-input" 
                   placeholder="Type a reply..." 
                   value={input} 
                   onChange={e => setInput(e.target.value)} 
                   onKeyDown={e => e.key === 'Enter' && handleSend()} 
-                  style={{ flex: 1 }} 
+                  style={{ flex: 1, minWidth: 0 }} 
                   disabled={sending}
                 />
                 <button 

@@ -250,7 +250,7 @@ const AdminPersonalInfoPage = () => {
               : form.facebook_link && !fieldErrors.facebook_link && (
                 <a
                   href={form.facebook_link} target="_blank" rel="noopener noreferrer"
-                  style={{ fontSize: '0.75rem', color: '#3B82F6', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}
+                  className="admin-external-link"
                 >
                   <ExternalLink size={12} /> Open page
                 </a>
@@ -295,17 +295,19 @@ const AdminPersonalInfoPage = () => {
       </div>
 
       {/* Save */}
-      <button
-        className="btn btn-primary btn-lg"
-        onClick={handleSave}
-        disabled={loading}
-        style={{ minWidth: 180 }}
-      >
-        {loading
-          ? <><Loader size={18} className="animate-spin" /> Saving...</>
-          : <><Save size={18} /> Save Changes</>
-        }
-      </button>
+      <div className="admin-form-actions">
+        <button
+          className="btn btn-primary btn-lg admin-form-submit"
+          onClick={handleSave}
+          disabled={loading}
+          style={{ minWidth: 180 }}
+        >
+          {loading
+            ? <><Loader size={18} className="animate-spin" /> Saving...</>
+            : <><Save size={18} /> Save Changes</>
+          }
+        </button>
+      </div>
     </div>
   );
 };

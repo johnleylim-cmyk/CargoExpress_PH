@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { Container, Eye, EyeOff, Loader, Check, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Container, Eye, EyeOff, Loader, Check, ArrowRight, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { PH_LOCATIONS, VALID_PROVINCES } from '../../constants/phLocations';
 
 const toTitleCase = (str) =>
@@ -107,7 +107,7 @@ const RegisterPage = () => {
 
         {error && (
           <div className="alert-banner alert-banner-error animate-shake">
-            <span>⚠</span> {error}
+            <AlertTriangle size={16} /> {error}
           </div>
         )}
 

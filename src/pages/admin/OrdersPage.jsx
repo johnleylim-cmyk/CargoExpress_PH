@@ -4,6 +4,8 @@ import { getOrders, withTimeout } from '../../lib/database';
 import StatusBadge from '../../components/ui/StatusBadge';
 import { SkeletonTableRow } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
+import PageTransition from '../../components/ui/PageTransition';
+import { motion } from 'framer-motion';
 import { Search, Package, Filter } from 'lucide-react';
 
 const tabs = ['All', 'Pending', 'Assigned', 'Picked Up', 'In Transit', 'Arrived at Hub', 'Out for Delivery', 'Delivered', 'Cancelled'];
@@ -39,7 +41,7 @@ const AdminOrdersPage = () => {
   });
 
   return (
-    <div className="page-transition">
+    <PageTransition>
       <div className="flex items-center justify-between" style={{ marginBottom: 24 }}>
         <h1 style={{ fontWeight: 800, fontSize: '1.5rem' }}>Orders</h1>
         <span className="badge badge-info">{orders.length} total</span>
@@ -48,13 +50,12 @@ const AdminOrdersPage = () => {
         <Search size={16} className="search-icon" />
         <input placeholder="Search tracking, sender, or receiver..." value={search} onChange={e => setSearch(e.target.value)} />
       </div>
-      <div className="tabs" style={{ overflowX: 'auto', marginBottom: 16 }}>
+      <div className="tabs admin-mobile-tabs" style={{ marginBottom: 16 }}>
         {tabs.map((t, i) => (
           <button
             key={t}
-            className={`tab stagger-item ${activeTab === t ? 'active' : ''}`}
+            className={`tab ${activeTab === t ? 'active' : ''}`}
             onClick={() => setActiveTab(t)}
-            style={{ animationDelay: `${i * 40}ms` }}
           >
             {t} {t !== 'All' ? `(${orders.filter(o => o.status === t).length})` : ''}
           </button>
@@ -84,15 +85,20 @@ const AdminOrdersPage = () => {
               <thead><tr><th>Tracking</th><th>Customer</th><th>Route</th><th>Weight</th><th>Cost</th><th>Status</th><th>Date</th></tr></thead>
               <tbody>
                 {filtered.map((o, i) => (
-                  <tr key={o.id} className="stagger-item" style={{ animationDelay: `${i * 30}ms` }}>
-                    <td><Link to={`/admin/orders/${o.id}`} style={{ fontWeight: 700, color: 'var(--accent)' }}>{o.tracking_number}</Link></td>
-                    <td>{o.profiles?.name || o.sender_name}</td>
-                    <td className="text-sm">{o.origin} → {o.destination}</td>
-                    <td>{o.actual_weight || o.package_weight} kg</td>
-                    <td style={{ fontWeight: 600 }}>₱{parseFloat(o.shipping_cost || 0).toFixed(2)}</td>
-                    <td><StatusBadge status={o.status} size="sm" /></td>
-                    <td className="text-xs text-secondary">{new Date(o.created_at).toLocaleDateString()}</td>
-                  </tr>
+                  <motion.tr 
+                    key={o.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.03, type: 'spring', stiffness: 260, damping: 24 }}
+                  >
+                    <td data-label="Tracking"><Link to={`/admin/orders/${o.id}`} style={{ fontWeight: 700, color: 'var(--accent)' }}>{o.tracking_number}</Link></td>
+                    <td data-label="Customer">{o.profiles?.name || o.sender_name}</td>
+                    <td data-label="Route" className="text-sm">{o.origin} → {o.destination}</td>
+                    <td data-label="Weight">{o.actual_weight || o.package_weight} kg</td>
+                    <td data-label="Cost" style={{ fontWeight: 600 }}>₱{parseFloat(o.shipping_cost || 0).toFixed(2)}</td>
+                    <td data-label="Status"><StatusBadge status={o.status} size="sm" /></td>
+                    <td data-label="Date" className="text-xs text-secondary">{new Date(o.created_at).toLocaleDateString()}</td>
+                  </motion.tr>
                 ))}
                 {filtered.length === 0 && (
                   <tr>
@@ -110,7 +116,7 @@ const AdminOrdersPage = () => {
           </div>
         </div>
       )}
-    </div>
+    </PageTransition>
   );
 };
 

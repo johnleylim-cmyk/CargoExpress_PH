@@ -3,7 +3,7 @@ import { getAnnouncements, createAnnouncement, deleteAnnouncement, withTimeout }
 import ConfirmModal from '../../components/ui/ConfirmModal';
 import EmptyState from '../../components/ui/EmptyState';
 import { SkeletonCard } from '../../components/ui/SkeletonLoader';
-import { Plus, Trash2, Megaphone, Loader } from 'lucide-react';
+import { Plus, Trash2, Megaphone, Loader, AlertTriangle } from 'lucide-react';
 
 const AnnouncementsPage = () => {
   const [items, setItems] = useState([]); 
@@ -54,7 +54,7 @@ const AnnouncementsPage = () => {
 
   return (
     <div className="page-transition">
-      <div className="flex items-center justify-between" style={{marginBottom:24}}>
+      <div className="admin-page-header">
         <h1 style={{fontWeight:800,fontSize:'1.5rem'}}>Announcements</h1>
         <button className="btn btn-primary" onClick={()=>setShowForm(!showForm)}><Plus size={16}/> New</button>
       </div>
@@ -64,10 +64,10 @@ const AnnouncementsPage = () => {
           <div className="form-group"><label className="form-label">Content</label><textarea className="form-textarea" value={form.content} onChange={e=>setForm(p=>({...p,content:e.target.value}))}/></div>
           {createError && (
             <div className="alert-banner alert-banner-error" style={{ marginBottom: 12 }}>
-              <span>⚠</span> {createError}
+              <AlertTriangle size={16} /> {createError}
             </div>
           )}
-          <div style={{display:'flex',gap:8}}>
+          <div className="admin-form-actions">
             <button className="btn btn-primary" onClick={handleCreate} disabled={saving}>{saving?<Loader size={16} className="animate-spin"/>:'Publish'}</button>
             <button className="btn btn-ghost" onClick={()=>{setShowForm(false);setCreateError('');}}>Cancel</button>
           </div>
@@ -95,9 +95,9 @@ const AnnouncementsPage = () => {
         items.map((a, i) => (
           <div key={a.id} className="card stagger-item" style={{marginBottom:12, animationDelay: `${i * 60}ms`}}>
             <div className="card-body" style={{padding:16}}>
-              <div className="flex items-center justify-between" style={{marginBottom:8}}>
-                <h3 style={{fontWeight:700}}>{a.title}</h3>
-                <button className="btn btn-ghost btn-sm" onClick={()=>setDeleteTarget(a.id)}><Trash2 size={14} color="#EF4444"/></button>
+              <div className="admin-announcement-header">
+                <h3 className="admin-announcement-title" style={{fontWeight:700}}>{a.title}</h3>
+                <button className="btn btn-ghost btn-icon admin-card-action" onClick={()=>setDeleteTarget(a.id)} aria-label={`Delete ${a.title}`}><Trash2 size={16}/></button>
               </div>
               <p className="text-sm text-secondary">{a.content}</p>
               <div className="text-xs text-tertiary" style={{marginTop:8}}>by {a.profiles?.name||'Admin'} • {new Date(a.created_at).toLocaleDateString()}</div>

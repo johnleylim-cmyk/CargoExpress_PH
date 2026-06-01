@@ -7,6 +7,7 @@ import { getUnreadNotificationCount } from '../../lib/database';
 import { requestNotificationPermission } from '../../lib/firebase-messaging';
 import ErrorBoundary from '../ui/ErrorBoundary';
 import OnboardingModal from '../ui/OnboardingModal';
+import PageTransition from '../ui/PageTransition';
 
 const desktopNavItems = [
   { to: '/customer/book', icon: Plus, label: 'Place Order' },
@@ -204,11 +205,11 @@ const CustomerLayout = () => {
       </header>
 
       {/* ─── Page Content ─── */}
-      <main className="customer-main page-transition" key={location.pathname}>
+      <PageTransition as="main" className="customer-main" key={location.pathname}>
         <ErrorBoundary>
           <Outlet />
         </ErrorBoundary>
-      </main>
+      </PageTransition>
 
       {/* ─── Bottom Tab Bar (Mobile Only) ─── */}
       <nav className="customer-bottom-nav">

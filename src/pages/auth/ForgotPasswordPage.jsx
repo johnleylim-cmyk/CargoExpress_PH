@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { Container, Mail, Loader, CheckCircle, ArrowLeft, Send } from 'lucide-react';
+import { Container, Mail, Loader, CheckCircle, ArrowLeft, Send, AlertTriangle } from 'lucide-react';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
@@ -89,7 +89,7 @@ const ForgotPasswordPage = () => {
 
             {error && (
               <div className="alert-banner alert-banner-error">
-                <span>⚠</span> {error}
+                <AlertTriangle size={16} /> {error}
               </div>
             )}
 

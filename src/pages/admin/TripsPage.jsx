@@ -37,7 +37,7 @@ const AdminTripsPage = () => {
         <h1 style={{ fontWeight: 800, fontSize: '1.5rem' }}>Trips</h1>
         <button className="btn btn-primary" onClick={() => navigate('/admin/trips/create')}><Plus size={16} /> Create Trip</button>
       </div>
-      <div className="tabs" style={{ overflowX: 'auto', marginBottom: 16 }}>
+      <div className="tabs admin-mobile-tabs" style={{ marginBottom: 16 }}>
         {tabs.map((t, i) => (
           <button
             key={t}

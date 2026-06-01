@@ -109,7 +109,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   return (
     <>
-      {isOpen && <div className="modal-overlay" style={{ zIndex: 99, background: 'rgba(15,23,42,0.5)' }} onClick={onClose} />}
+      {isOpen && <div className="sidebar-backdrop" onClick={onClose} aria-hidden="true" />}
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         <div className="sidebar-brand">
           <Container size={28} color="var(--primary)" />

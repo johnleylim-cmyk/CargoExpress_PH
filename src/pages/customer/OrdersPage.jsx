@@ -5,6 +5,7 @@ import { getOrders } from '../../lib/database';
 import StatusBadge from '../../components/ui/StatusBadge';
 import { SkeletonOrderCard } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
+import PageTransition, { StaggerItem } from '../../components/ui/PageTransition';
 import { Search, Package, AlertCircle } from 'lucide-react';
 
 const tabs = ['All', 'Pending', 'In Transit', 'Delivered', 'Cancelled'];
@@ -46,23 +47,23 @@ const OrdersPage = () => {
   });
 
   return (
-    <div className="page-transition">
+    <PageTransition>
       <h2 style={{ fontWeight: 800, marginBottom: 20 }}>My Orders</h2>
-      <div className="search-box stagger-item" style={{ marginBottom: 16, animationDelay: '0ms' }}>
+      <StaggerItem className="search-box" delay={0} style={{ marginBottom: 16 }}>
         <Search size={16} className="search-icon" />
         <input placeholder="Search tracking number..." value={search} onChange={e => setSearch(e.target.value)} />
-      </div>
-      <div className="tabs stagger-item" style={{ overflowX: 'auto', animationDelay: '60ms' }}>
+      </StaggerItem>
+      <StaggerItem className="tabs customer-order-tabs" delay={60}>
         {tabs.map(t => (
           <button key={t} className={`tab ${activeTab === t ? 'active' : ''}`} onClick={() => setActiveTab(t)}>{t}</button>
         ))}
-      </div>
+      </StaggerItem>
       {loading ? (
         <div>
           {[0, 1, 2].map(i => (
-            <div key={i} className="stagger-item" style={{ animationDelay: `${(i + 2) * 60}ms`, marginBottom: 12 }}>
+            <StaggerItem key={i} delay={(i + 2) * 60} style={{ marginBottom: 12 }}>
               <SkeletonOrderCard />
-            </div>
+            </StaggerItem>
           ))}
         </div>
       ) : error ? (
@@ -86,22 +87,24 @@ const OrdersPage = () => {
         </div>
       ) : (
         filtered.map((order, index) => (
-          <Link key={order.id} to={`/customer/orders/${order.id}`} className="card card-interactive stagger-item" style={{ display: 'block', marginBottom: 12, textDecoration: 'none', color: 'inherit', animationDelay: `${(index + 2) * 60}ms` }}>
-            <div className="card-body" style={{ padding: 16 }}>
-              <div className="flex items-center justify-between" style={{ marginBottom: 6 }}>
-                <span style={{ fontWeight: 700, color: 'var(--accent)' }}>{order.tracking_number}</span>
-                <StatusBadge status={order.status} size="sm" />
+          <StaggerItem key={order.id} delay={(index + 2) * 60} style={{ marginBottom: 12 }}>
+            <Link to={`/customer/orders/${order.id}`} className="card card-interactive" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+              <div className="card-body" style={{ padding: 16 }}>
+                <div className="flex items-center justify-between" style={{ marginBottom: 6 }}>
+                  <span style={{ fontWeight: 700, color: 'var(--accent)' }}>{order.tracking_number}</span>
+                  <StatusBadge status={order.status} size="sm" />
+                </div>
+                <div className="text-sm text-secondary">{order.origin} → {order.destination}</div>
+                <div className="flex items-center justify-between" style={{ marginTop: 8 }}>
+                  <span className="text-xs text-tertiary">To: {order.receiver_name}</span>
+                  <span className="text-sm font-bold">₱{parseFloat(order.shipping_cost || 0).toFixed(2)}</span>
+                </div>
               </div>
-              <div className="text-sm text-secondary">{order.origin} → {order.destination}</div>
-              <div className="flex items-center justify-between" style={{ marginTop: 8 }}>
-                <span className="text-xs text-tertiary">To: {order.receiver_name}</span>
-                <span className="text-sm font-bold">₱{parseFloat(order.shipping_cost || 0).toFixed(2)}</span>
-              </div>
-            </div>
-          </Link>
+            </Link>
+          </StaggerItem>
         ))
       )}
-    </div>
+    </PageTransition>
   );
 };
 

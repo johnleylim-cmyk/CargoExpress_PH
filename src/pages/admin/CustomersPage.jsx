@@ -58,10 +58,10 @@ const CustomersPage = () => {
               <tbody>
                 {filtered.map((c, i) => (
                   <tr key={c.id} className="stagger-item" style={{ animationDelay: `${i * 30}ms` }}>
-                    <td><Link to={`/admin/customers/${c.id}`} style={{ fontWeight: 700, color: 'var(--accent)' }}>{c.name}</Link></td>
-                    <td className="text-sm">{c.email}</td><td className="text-sm">{c.phone || '—'}</td>
-                    <td className="text-sm">{c.address_province || '—'}</td>
-                    <td className="text-xs text-secondary">{new Date(c.created_at).toLocaleDateString()}</td>
+                    <td data-label="Name"><Link to={`/admin/customers/${c.id}`} style={{ fontWeight: 700, color: 'var(--accent)' }}>{c.name}</Link></td>
+                    <td data-label="Email" className="text-sm">{c.email}</td><td data-label="Phone" className="text-sm">{c.phone || '—'}</td>
+                    <td data-label="Province" className="text-sm">{c.address_province || '—'}</td>
+                    <td data-label="Joined" className="text-xs text-secondary">{new Date(c.created_at).toLocaleDateString()}</td>
                   </tr>
                 ))}
                 {filtered.length === 0 && (

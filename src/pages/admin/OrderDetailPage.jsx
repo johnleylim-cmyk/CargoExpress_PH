@@ -35,6 +35,7 @@ const AdminOrderDetailPage = () => {
   });
   const [lightboxIndex, setLightboxIndex] = useState(-1);
   const [resolvedPickupPhotos, setResolvedPickupPhotos] = useState([]);
+  const [photoLoadState, setPhotoLoadState] = useState({});
 
   useEffect(() => {
     let isMounted = true;
@@ -56,6 +57,28 @@ const AdminOrderDetailPage = () => {
 
     return () => { isMounted = false; };
   }, [order?.pickup_photos]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setPhotoLoadState({});
+
+    resolvedPickupPhotos.forEach((url, index) => {
+      const preview = new window.Image();
+      preview.onload = () => {
+        if (!cancelled) {
+          setPhotoLoadState(prev => ({ ...prev, [index]: 'loaded' }));
+        }
+      };
+      preview.onerror = () => {
+        if (!cancelled) {
+          setPhotoLoadState(prev => ({ ...prev, [index]: 'failed' }));
+        }
+      };
+      preview.src = url;
+    });
+
+    return () => { cancelled = true; };
+  }, [resolvedPickupPhotos]);
 
   const loadOrder = async (isMounted = true) => {
     setError(null);
@@ -242,7 +265,7 @@ const AdminOrderDetailPage = () => {
             {nextStatus && (
               <button className="btn btn-primary" onClick={handleStatusAdvance} disabled={saving}>
                 {saving ? <Loader size={16} className="animate-spin" /> : <Check size={16} />}
-                {nextStatus === 'Picked Up' ? '📦 Process Pickup' : `Advance to "${nextStatus}"`}
+                {nextStatus === 'Picked Up' ? 'Process Pickup' : `Advance to "${nextStatus}"`}
               </button>
             )}
             <button className="btn btn-danger btn-sm" onClick={() => setShowCancelConfirm(true)} disabled={saving}>
@@ -339,50 +362,30 @@ const AdminOrderDetailPage = () => {
               gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
               gap: 12,
             }}>
-              {resolvedPickupPhotos.map((url, i) => (
+              {resolvedPickupPhotos.map((url, i) => {
+                const loadState = photoLoadState[i] || 'loading';
+                const canOpen = loadState === 'loaded';
+                return (
                 <button
                   key={i}
-                  onClick={() => setLightboxIndex(i)}
-                  className="card-interactive"
+                  onClick={() => canOpen && setLightboxIndex(i)}
+                  className="customer-proof-photo-btn"
                   type="button"
-                  style={{
-                    position: 'relative',
-                    display: 'block',
-                    borderRadius: 10,
-                    overflow: 'hidden',
-                    aspectRatio: '1',
-                    border: 'none',
-                    padding: 0,
-                    cursor: 'zoom-in',
-                    width: '100%',
-                  }}
+                  disabled={!canOpen}
                 >
-                  <img
-                    src={url}
-                    alt={`Proof ${i + 1}`}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      display: 'block',
-                    }}
-                  />
-                  <div style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    background: 'linear-gradient(transparent, rgba(0,0,0,0.6))',
-                    padding: '16px 8px 8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}>
-                    <span style={{ color: 'white', fontSize: '0.6875rem', fontWeight: 600 }}>Photo {i + 1}</span>
-                    <Image size={12} color="white" />
+                  <div className="customer-proof-photo-fallback">
+                    <Image size={20} />
+                    <span>{loadState === 'failed' ? 'Image unavailable' : `Photo ${i + 1}`}</span>
                   </div>
+                  {canOpen && <div className="customer-proof-photo-preview" style={{ backgroundImage: `url("${url}")` }} />}
+                  {canOpen && (
+                    <div className="customer-proof-photo-overlay">
+                      <Image size={12} color="white" />
+                    </div>
+                  )}
                 </button>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -395,10 +398,7 @@ const AdminOrderDetailPage = () => {
         </div>
         <div className="card-body">
           {/* Financial Summary Bar */}
-          <div style={{
-            background: 'linear-gradient(135deg, #0F172A, var(--accent))', borderRadius: 10,
-            padding: 18, marginBottom: 20, display: 'flex', justifyContent: 'space-around',
-          }}>
+          <div className="admin-payment-summary">
             <div className="text-center">
               <div style={{ fontSize: '0.6875rem', color: '#94A3B8', marginBottom: 2 }}>Shipping Cost</div>
               <div style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--primary)' }}>

@@ -4,7 +4,7 @@ import { SkeletonTableRow } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
 import {
   Mail, Phone, Clock, CheckCircle, Eye,
-  Loader, MessageSquare, AlertCircle
+  Loader, MessageSquare, AlertCircle, X
 } from 'lucide-react';
 
 const STATUS_CONFIG = {
@@ -80,7 +80,7 @@ const ContactInquiriesPage = () => {
   return (
     <div className="page-transition">
       {/* Header */}
-      <div className="flex items-center justify-between" style={{ marginBottom: 24 }}>
+      <div className="admin-page-header">
         <div>
           <h1 style={{ fontWeight: 800, fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: 10 }}>
             <Mail size={24} color="var(--primary)" />
@@ -99,7 +99,7 @@ const ContactInquiriesPage = () => {
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+      <div className="admin-filter-row">
         {['all', 'new', 'read', 'resolved'].map(f => (
           <button
             key={f}
@@ -151,7 +151,7 @@ const ContactInquiriesPage = () => {
                       }}
                       onClick={() => handleView(inq)}
                     >
-                      <td>
+                      <td data-label="Name">
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <div className="sidebar-user-avatar" style={{ width: 32, height: 32, fontSize: '0.75rem', flexShrink: 0 }}>
                             {(inq.name || '?')[0].toUpperCase()}
@@ -161,10 +161,10 @@ const ContactInquiriesPage = () => {
                           </span>
                         </div>
                       </td>
-                      <td className="text-sm text-secondary">
+                      <td data-label="Phone" className="text-sm text-secondary">
                         {inq.phone || '—'}
                       </td>
-                      <td>
+                      <td data-label="Message">
                         <div
                           className="text-sm"
                           style={{
@@ -178,19 +178,20 @@ const ContactInquiriesPage = () => {
                           {inq.message}
                         </div>
                       </td>
-                      <td>
+                      <td data-label="Status">
                         <span className={`badge ${cfg.className}`}>{cfg.label}</span>
                       </td>
-                      <td className="text-sm text-secondary">
+                      <td data-label="Date" className="text-sm text-secondary">
                         {new Date(inq.created_at).toLocaleDateString('en-PH', {
                           month: 'short', day: 'numeric', year: 'numeric',
                         })}
                       </td>
-                      <td>
+                      <td data-label="Actions">
                         <div style={{ display: 'flex', gap: 4 }} onClick={e => e.stopPropagation()}>
                           <button
                             className="btn-icon btn-ghost"
                             title="View"
+                            aria-label={`View inquiry from ${inq.name}`}
                             onClick={() => handleView(inq)}
                           >
                             <Eye size={16} />
@@ -199,6 +200,7 @@ const ContactInquiriesPage = () => {
                             <button
                               className="btn-icon btn-ghost"
                               title="Mark as Resolved"
+                              aria-label={`Mark inquiry from ${inq.name} as resolved`}
                               disabled={updating === inq.id}
                               onClick={() => handleStatusChange(inq.id, 'resolved')}
                             >
@@ -227,7 +229,9 @@ const ContactInquiriesPage = () => {
                 <MessageSquare size={18} />
                 Inquiry Details
               </h3>
-              <button className="btn-icon btn-ghost" onClick={() => setSelectedInquiry(null)}>✕</button>
+              <button className="btn-icon btn-ghost" onClick={() => setSelectedInquiry(null)} aria-label="Close inquiry details">
+                <X size={18} />
+              </button>
             </div>
             <div className="modal-body">
               <div style={{

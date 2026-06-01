@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Camera, Loader, Scale, CreditCard, Calendar, Upload, Trash2 } from 'lucide-react';
+import { X, Camera, Loader, Scale, CreditCard, Calendar, Upload, Trash2, Package, AlertTriangle, Smartphone, CheckCircle } from 'lucide-react';
 import FocusTrap from './FocusTrap';
 import { uploadMultiplePhotos } from '../../lib/storage';
 import { createGCashSource, checkPaymentStatus, createPayment } from '../../lib/paymongo';
@@ -102,7 +102,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
                 } else {
                   // All retries exhausted — show payment reference for manual reconciliation
                   setError(
-                    `⚠️ Payment captured (Ref: ${payment.paymentId}) but failed to save to the order. ` +
+                    `Payment captured (Ref: ${payment.paymentId}) but failed to save to the order. ` +
                     `Please go to Order Detail and manually update: Payment Method = GCash, ` +
                     `Amount Paid = ₱${estimatedCost.toFixed(2)}, Payment Status = Paid.`
                   );
@@ -276,7 +276,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
       <div className="modal-overlay">
         <div className="modal" style={{ maxWidth: 400, textAlign: 'center' }}>
           <div className="modal-header">
-            <h3>📱 GCash Payment</h3>
+            <h3><Smartphone size={18} /> GCash Payment</h3>
             <button className="btn-icon btn-ghost" onClick={() => { setQrData(null); setSaving(false); }}><X size={20} /></button>
           </div>
           <div className="modal-body" style={{ padding: '30px 20px' }}>
@@ -309,13 +309,13 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
       <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 560 }}>
         <div className="modal-header">
-          <h3>📦 Pickup Processing</h3>
+          <h3><Package size={18} /> Pickup Processing</h3>
           <button className="btn-icon btn-ghost" onClick={onClose}><X size={20} /></button>
         </div>
 
         <div className="modal-body">
           {/* Order summary */}
-          <div style={{
+          <div className="pickup-summary-card" style={{
             background: '#F8FAFC', borderRadius: 8, padding: 14, marginBottom: 20,
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           }}>
@@ -368,7 +368,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
               <CreditCard size={14} style={{ display: 'inline', marginRight: 6 }} />
               Payment Method *
             </label>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div className="pickup-segment-row" style={{ display: 'flex', gap: 8 }}>
               {PAYMENT_METHODS.map(m => (
                 <button
                   key={m}
@@ -386,7 +386,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
           {/* Payer Type */}
           <div className="form-group">
             <label className="form-label">Who Pays?</label>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div className="pickup-segment-row" style={{ display: 'flex', gap: 8 }}>
               {['sender', 'receiver'].map(t => (
                 <button
                   key={t}
@@ -405,7 +405,8 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
           {isPayLater && (
             <div style={{ background: '#FFFBEB', borderRadius: 8, padding: 14, marginBottom: 16, border: '1px solid #FDE68A' }}>
               <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#92400E', marginBottom: 8 }}>
-                ⚠️ Pay Later Details
+                <AlertTriangle size={14} style={{ display: 'inline', marginRight: 6 }} />
+                Pay Later Details
               </div>
               <div className="form-group" style={{ marginBottom: 12 }}>
                 <label className="form-label">Downpayment (₱)</label>
@@ -464,12 +465,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
                   <button
                     type="button"
                     onClick={() => removePhoto(i)}
-                    style={{
-                      position: 'absolute', top: 4, right: 4, width: 22, height: 22,
-                      borderRadius: '50%', background: '#EF4444', color: 'white',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      border: 'none', cursor: 'pointer', fontSize: '0.625rem',
-                    }}
+                    className="pickup-photo-remove-btn"
                   >
                     <Trash2 size={12} />
                   </button>
@@ -514,7 +510,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
                 {uploadProgress || 'Processing...'}
               </>
             ) : (
-              '✓ Confirm Pickup'
+              <><CheckCircle size={16} /> Confirm Pickup</>
             )}
           </button>
         </div>

@@ -8,7 +8,6 @@ import TrackingTimeline from '../../components/ui/TrackingTimeline';
 import ConfirmModal from '../../components/ui/ConfirmModal';
 import ImageLightbox from '../../components/ui/ImageLightbox';
 import { SkeletonOrderCard, SkeletonText } from '../../components/ui/SkeletonLoader';
-import { STATUS_TIMELINE, ORDER_STATUS } from '../../constants/status';
 import { ArrowLeft, MapPin, User, Phone, Package, CreditCard, Truck, Camera, Image, XCircle, Loader, AlertTriangle, CheckCircle } from 'lucide-react';
 
 const OrderDetailPage = () => {
@@ -40,7 +39,11 @@ const OrderDetailPage = () => {
     }
 
     resolvePhotoUrls(photos)
-      .then(urls => { if (isMounted) setResolvedPickupPhotos(urls); })
+      .then(urls => {
+        if (isMounted) {
+          setResolvedPickupPhotos(urls);
+        }
+      })
       .catch(() => { if (isMounted) setResolvedPickupPhotos([]); });
 
     return () => { isMounted = false; };
@@ -117,7 +120,7 @@ const OrderDetailPage = () => {
       </button>
 
       {/* Header */}
-      <div className="flex items-center justify-between animate-slide-up" style={{ marginBottom: 20 }}>
+      <div className="customer-order-detail-header flex items-center justify-between animate-slide-up" style={{ marginBottom: 20 }}>
         <div>
           <h2 style={{ fontWeight: 800 }}>{order.tracking_number}</h2>
           <p className="text-sm text-secondary">{order.origin} → {order.destination}</p>
@@ -198,7 +201,7 @@ const OrderDetailPage = () => {
       )}
 
       {/* Sender & Receiver */}
-      <div className="stagger-item" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16, animationDelay: '120ms' }}>
+      <div className="customer-contact-grid stagger-item" style={{ marginBottom: 16, animationDelay: '120ms' }}>
         <div className="card">
           <div className="card-body" style={{ padding: 16 }}>
             <div className="text-xs text-tertiary font-bold" style={{ textTransform: 'uppercase', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -261,30 +264,14 @@ const OrderDetailPage = () => {
                   key={i}
                   onClick={() => setLightboxIndex(i)}
                   type="button"
-                  style={{
-                    border: '2px solid #E2E8F0',
-                    borderRadius: 8,
-                    overflow: 'hidden',
-                    padding: 0,
-                    cursor: 'zoom-in',
-                    background: 'none',
-                    position: 'relative',
-                  }}
+                  className="customer-proof-photo-btn"
                 >
-                  <img
-                    src={url}
-                    alt={`Proof ${i + 1}`}
-                    style={{
-                      width: 100, height: 100, objectFit: 'cover',
-                      display: 'block',
-                    }}
-                  />
-                  <div style={{
-                    position: 'absolute', bottom: 0, left: 0, right: 0,
-                    background: 'linear-gradient(transparent, rgba(0,0,0,0.5))',
-                    padding: '8px 6px 4px',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
+                  <div className="customer-proof-photo-fallback">
+                    <Image size={20} />
+                    <span>Proof photo</span>
+                  </div>
+                  <div className="customer-proof-photo-preview" style={{ backgroundImage: `url("${url}")` }} />
+                  <div className="customer-proof-photo-overlay">
                     <Image size={12} color="white" />
                   </div>
                 </button>
@@ -300,10 +287,7 @@ const OrderDetailPage = () => {
           <h4 style={{ fontWeight: 700, marginBottom: 12 }}>
             <CreditCard size={16} style={{ display: 'inline', marginRight: 8 }} />Payment
           </h4>
-          <div style={{
-            background: '#F8FAFC', borderRadius: 8, padding: 14,
-            display: 'flex', justifyContent: 'space-around', marginBottom: 12,
-          }}>
+          <div className="customer-payment-summary">
             <div className="text-center">
               <div className="text-xs text-tertiary">Shipping Cost</div>
               <div className="text-sm font-bold text-primary">₱{parseFloat(order.shipping_cost || 0).toFixed(2)}</div>

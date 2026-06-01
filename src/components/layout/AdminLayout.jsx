@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import ErrorBoundary from '../ui/ErrorBoundary';
+import PageTransition from '../ui/PageTransition';
 import { Menu, Container } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -36,11 +37,11 @@ const AdminLayout = () => {
             </div>
           </div>
         </header>
-        <main className="page-content page-transition">
+        <PageTransition as="main" className="page-content">
           <ErrorBoundary>
             <Outlet />
           </ErrorBoundary>
-        </main>
+        </PageTransition>
       </div>
       <style>{`
         .mobile-menu-toggle { display: none; }

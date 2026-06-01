@@ -86,9 +86,9 @@ const CustomerDetailPage = () => {
             <thead><tr><th>Tracking</th><th>Route</th><th>Cost</th><th>Status</th><th>Date</th></tr></thead>
             <tbody>
               {orders.map(o=>(
-                <tr key={o.id}><td style={{fontWeight:600}}>{o.tracking_number}</td><td className="text-sm">{o.origin} → {o.destination}</td>
-                <td>₱{parseFloat(o.shipping_cost||0).toFixed(2)}</td><td><StatusBadge status={o.status} size="sm"/></td>
-                <td className="text-xs text-secondary">{new Date(o.created_at).toLocaleDateString()}</td></tr>
+                <tr key={o.id}><td data-label="Tracking" style={{fontWeight:600}}>{o.tracking_number}</td><td data-label="Route" className="text-sm">{o.origin} → {o.destination}</td>
+                <td data-label="Cost">₱{parseFloat(o.shipping_cost||0).toFixed(2)}</td><td data-label="Status"><StatusBadge status={o.status} size="sm"/></td>
+                <td data-label="Date" className="text-xs text-secondary">{new Date(o.created_at).toLocaleDateString()}</td></tr>
               ))}
               {orders.length===0&&<tr><td colSpan={5} className="text-center text-secondary" style={{padding:30}}>No orders</td></tr>}
             </tbody>

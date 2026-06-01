@@ -242,9 +242,9 @@ const ReportsPage = () => {
                       <tbody>
                         {STATUS_ORDER.filter(st => data.statusBreakdown[st]).map(st => (
                           <tr key={st}>
-                            <td><StatusBadge status={st} /></td>
-                            <td style={{ textAlign: 'center', fontWeight: 600 }}>{data.statusBreakdown[st]}</td>
-                            <td style={{ textAlign: 'right', color: 'var(--text-secondary)' }}>
+                            <td data-label="Status"><StatusBadge status={st} /></td>
+                            <td data-label="Count" style={{ textAlign: 'center', fontWeight: 600 }}>{data.statusBreakdown[st]}</td>
+                            <td data-label="Percentage" style={{ textAlign: 'right', color: 'var(--text-secondary)' }}>
                               {s.totalOrders > 0 ? ((data.statusBreakdown[st] / s.totalOrders) * 100).toFixed(1) : 0}%
                             </td>
                           </tr>
@@ -326,15 +326,15 @@ const ReportsPage = () => {
                         <tbody>
                           {data.routeBreakdown.map((r, i) => (
                             <tr key={i}>
-                              <td style={{ fontWeight: 600 }}>
+                              <td data-label="Route" style={{ fontWeight: 600 }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                   <Truck size={14} style={{ color: 'var(--primary)', flexShrink: 0 }} />
                                   {r.route}
                                 </div>
                               </td>
-                              <td style={{ textAlign: 'center' }}>{r.count}</td>
-                              <td style={{ textAlign: 'right', fontWeight: 600 }}>{formatCurrency(r.revenue)}</td>
-                              <td style={{ textAlign: 'right', color: 'var(--text-secondary)' }}>{formatWeight(r.weight)}</td>
+                              <td data-label="Orders" style={{ textAlign: 'center' }}>{r.count}</td>
+                              <td data-label="Revenue" style={{ textAlign: 'right', fontWeight: 600 }}>{formatCurrency(r.revenue)}</td>
+                              <td data-label="Weight" style={{ textAlign: 'right', color: 'var(--text-secondary)' }}>{formatWeight(r.weight)}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -373,23 +373,23 @@ const ReportsPage = () => {
                       <tbody>
                         {data.orders.map((order) => (
                           <tr key={order.id}>
-                            <td style={{ fontWeight: 600, fontFamily: 'monospace', fontSize: '0.8rem', color: 'var(--primary)' }}>
+                            <td data-label="Tracking #" style={{ fontWeight: 600, fontFamily: 'monospace', fontSize: '0.8rem', color: 'var(--primary)' }}>
                               {order.tracking_number}
                             </td>
-                            <td>
+                            <td data-label="Customer">
                               <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>{order.sender_name || order.profiles?.name || '—'}</div>
                             </td>
-                            <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                            <td data-label="Route" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                               {order.origin || '—'} → {order.destination || '—'}
                             </td>
-                            <td><StatusBadge status={order.status} /></td>
-                            <td style={{ textAlign: 'right', fontSize: '0.85rem' }}>
+                            <td data-label="Status"><StatusBadge status={order.status} /></td>
+                            <td data-label="Weight" style={{ textAlign: 'right', fontSize: '0.85rem' }}>
                               {formatWeight(parseFloat(order.actual_weight || order.package_weight || 0))}
                             </td>
-                            <td style={{ textAlign: 'right', fontWeight: 600, fontSize: '0.85rem' }}>
+                            <td data-label="Amount" style={{ textAlign: 'right', fontWeight: 600, fontSize: '0.85rem' }}>
                               {formatCurrency(parseFloat(order.shipping_cost || 0))}
                             </td>
-                            <td>
+                            <td data-label="Payment">
                               <span className="badge" style={{
                                 background: order.payment_method === 'cash' ? '#ECFDF5' : order.payment_method === 'gcash' ? '#EFF6FF' : '#FFFBEB',
                                 color: order.payment_method === 'cash' ? '#059669' : order.payment_method === 'gcash' ? '#2563EB' : '#D97706',
@@ -399,7 +399,7 @@ const ReportsPage = () => {
                                 {order.payment_method || '—'}
                               </span>
                             </td>
-                            <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+                            <td data-label="Date" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
                               {formatDate(order.created_at)}
                             </td>
                           </tr>

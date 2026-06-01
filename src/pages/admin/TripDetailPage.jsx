@@ -109,8 +109,8 @@ const TripDetailPage = () => {
             <thead><tr><th>Tracking</th><th>Sender</th><th>Receiver</th><th>Weight</th><th>Status</th></tr></thead>
             <tbody>
               {orders.map(o=>(
-                <tr key={o.id}><td style={{fontWeight:600}}>{o.tracking_number}</td><td>{o.sender_name}</td><td>{o.receiver_name}</td>
-                <td>{o.actual_weight||o.package_weight} kg</td><td><StatusBadge status={o.status} size="sm"/></td></tr>
+                <tr key={o.id}><td data-label="Tracking" style={{fontWeight:600}}>{o.tracking_number}</td><td data-label="Sender">{o.sender_name}</td><td data-label="Receiver">{o.receiver_name}</td>
+                <td data-label="Weight">{o.actual_weight||o.package_weight} kg</td><td data-label="Status"><StatusBadge status={o.status} size="sm"/></td></tr>
               ))}
               {orders.length===0&&<tr><td colSpan={5} className="text-center text-secondary" style={{padding:30}}>No orders assigned</td></tr>}
             </tbody>

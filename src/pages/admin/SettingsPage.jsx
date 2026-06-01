@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getSettings, updateSettings, withTimeout } from '../../lib/database';
 import { SkeletonText } from '../../components/ui/SkeletonLoader';
-import { Settings, Loader, Save, User, DollarSign, CheckCircle } from 'lucide-react';
+import { Settings, Loader, Save, User, DollarSign, CheckCircle, AlertTriangle } from 'lucide-react';
 import AdminPersonalInfoPage from './PersonalInfoPage';
 
 const SettingsPage = () => {
@@ -87,7 +87,7 @@ const SettingsPage = () => {
               <div className="card-body">
                 <div className="form-group">
                   <label className="form-label">Price per Kilogram (₱)</label>
-                  <input type="number" className="form-input" value={pricePerKilo} onChange={e=>setPricePerKilo(e.target.value)} style={{maxWidth:200}}/>
+                  <input type="number" className="form-input admin-compact-input" value={pricePerKilo} onChange={e=>setPricePerKilo(e.target.value)} style={{maxWidth:200}}/>
                   <p className="text-xs text-secondary" style={{marginTop:4}}>Used to calculate shipping costs for all orders.</p>
                 </div>
 
@@ -99,13 +99,15 @@ const SettingsPage = () => {
 
                 {saveError && (
                   <div className="alert-banner alert-banner-error" style={{ marginBottom: 16 }}>
-                    <span>⚠</span> {saveError}
+                    <AlertTriangle size={16} /> {saveError}
                   </div>
                 )}
 
-                <button className="btn btn-primary" onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader size={16} className="animate-spin"/> : <><Save size={16}/> Save Settings</>}
-                </button>
+                <div className="admin-form-actions">
+                  <button className="btn btn-primary admin-form-submit" onClick={handleSave} disabled={saving}>
+                    {saving ? <Loader size={16} className="animate-spin"/> : <><Save size={16}/> Save Settings</>}
+                  </button>
+                </div>
               </div>
             </div>
           )}

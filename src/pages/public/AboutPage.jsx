@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import { createContactInquiry, getAdminProfile } from '../../lib/database';
 import {
   Container, ArrowLeft, Phone, MapPin, Globe, Loader, CheckCircle, AlertCircle, Send, User,
-  Package, Truck, Shield, Clock
+  Package, Truck, Shield, Clock, ExternalLink
 } from 'lucide-react';
 
 const FEATURES = [
   { icon: Package, title: 'Door-to-Door', desc: 'Complete pickup and delivery service' },
-  { icon: Truck, title: 'Two Routes', desc: 'Bohol ↔ Manila cargo shipping' },
+  { icon: Truck, title: 'Two Routes', desc: 'Bohol-Manila cargo shipping' },
   { icon: Shield, title: 'Safe & Secure', desc: 'Your cargo is in good hands' },
   { icon: Clock, title: 'Real-Time Tracking', desc: 'Track your package anytime' },
 ];
@@ -28,7 +28,7 @@ const AboutPage = () => {
         const profile = await getAdminProfile();
         if (profile) setAdminProfile(profile);
       } catch (err) {
-        // Failed to fetch admin profile — use defaults
+        // Failed to fetch admin profile; use defaults.
       } finally {
         setFetchingAdmin(false);
       }
@@ -70,45 +70,36 @@ const AboutPage = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
+    <div className="public-about-page">
       {/* Header */}
-      <header style={{
-        background: 'linear-gradient(135deg, #0B1929, var(--accent), #2D5A8A)',
-        padding: '20px 24px', color: 'white',
-      }}>
-        <div style={{ maxWidth: 960, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <header className="public-about-header">
+        <div className="public-about-header-inner">
+          <div className="public-about-brand">
             <Container size={28} color="var(--primary-light)" />
-            <h1 style={{ fontSize: '1.125rem', fontWeight: 900, margin: 0 }}>
-              <span>CARGO</span><span style={{ color: 'var(--primary-light)' }}>EXPRESS PH</span>
+            <h1>
+              <span>CARGO</span><span className="public-about-brand-accent">EXPRESS PH</span>
             </h1>
           </div>
-          <Link to="/login" style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.875rem', fontWeight: 600, opacity: 0.9 }}>
+          <Link to="/login" className="public-about-back">
             <ArrowLeft size={16} /> Back to Login
           </Link>
         </div>
       </header>
 
       {/* Hero */}
-      <div className="hero animate-fade-in" style={{
-        borderRadius: 0, padding: '56px 24px', textAlign: 'center',
-        background: 'linear-gradient(135deg, #0F172A, var(--accent), var(--primary))',
-      }}>
-        <h1 style={{ fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 900, marginBottom: 12, position: 'relative', letterSpacing: '-0.02em' }}>
+      <div className="public-about-hero animate-fade-in">
+        <h1>
           About CargoExpress PH
         </h1>
-        <p style={{ fontSize: '1.0625rem', opacity: 0.85, maxWidth: 600, margin: '0 auto', lineHeight: 1.65, position: 'relative' }}>
+        <p>
           Fast & Reliable Cargo Delivery connecting Bohol and Manila<br />
           with safe, affordable sea cargo shipping.
         </p>
       </div>
 
       {/* Feature Cards */}
-      <div style={{
-        maxWidth: 960, margin: '-32px auto 0', padding: '0 20px', width: '100%',
-        position: 'relative', zIndex: 2,
-      }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+      <div className="public-about-feature-wrap">
+        <div className="public-about-feature-grid">
           {FEATURES.map((f, i) => (
             <div key={i} className="card card-body stagger-item" style={{ animationDelay: `${i * 80}ms`, textAlign: 'center', padding: 20 }}>
               <div style={{
@@ -126,7 +117,7 @@ const AboutPage = () => {
         </div>
       </div>
 
-      <div style={{ maxWidth: 960, margin: '0 auto', padding: '32px 20px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 28 }}>
+      <div className="public-about-content-grid">
         {/* Left Side: About & Contact Info */}
         <div>
           <div className="card animate-slide-up" style={{ marginBottom: 20 }}>
@@ -176,8 +167,9 @@ const AboutPage = () => {
                       <div>
                         <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: 2 }}>Facebook Page</div>
                         {adminProfile.facebook_link ? (
-                          <a href={adminProfile.facebook_link} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--info)', fontSize: '0.875rem', fontWeight: 500 }}>
-                            Visit our Facebook page ↗
+                          <a href={adminProfile.facebook_link} target="_blank" rel="noopener noreferrer" className="public-about-contact-link">
+                            Visit Facebook page
+                            <ExternalLink size={14} aria-hidden="true" />
                           </a>
                         ) : (
                           <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>See Facebook for updated link.</div>
@@ -225,7 +217,7 @@ const AboutPage = () => {
 
         {/* Right Side: Contact Form */}
         <div>
-          <div className="card animate-slide-up" style={{ position: 'sticky', top: 24, animationDelay: '200ms' }}>
+          <div className="card animate-slide-up public-about-contact-card" style={{ position: 'sticky', top: 24, animationDelay: '200ms' }}>
             <div className="card-body">
               <h3 style={{ fontWeight: 800, marginBottom: 6, color: 'var(--text)' }}>Contact Us</h3>
               <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: 24 }}>
@@ -285,7 +277,7 @@ const AboutPage = () => {
 
       {/* Footer */}
       <footer style={{ marginTop: 'auto', textAlign: 'center', padding: '24px', color: 'var(--text-tertiary)', fontSize: '0.875rem', borderTop: '1px solid var(--border-light)' }}>
-        © {new Date().getFullYear()} CargoExpress PH. All rights reserved.
+        Copyright {new Date().getFullYear()} CargoExpress PH. All rights reserved.
       </footer>
     </div>
   );

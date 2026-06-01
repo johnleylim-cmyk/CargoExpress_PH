@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { Container, Lock, Loader, CheckCircle, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { Container, Lock, Loader, CheckCircle, Eye, EyeOff, ShieldCheck, AlertTriangle, Circle } from 'lucide-react';
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState('');
@@ -108,7 +108,7 @@ const ResetPasswordPage = () => {
 
             {error && (
               <div className="alert-banner alert-banner-error">
-                <span>⚠</span> {error}
+                <AlertTriangle size={16} /> {error}
               </div>
             )}
 
@@ -160,7 +160,7 @@ const ResetPasswordPage = () => {
                       fontSize: '0.8125rem', marginBottom: 4,
                       color: checks[key] ? 'var(--success)' : 'var(--text-secondary)',
                     }}>
-                      <span style={{ fontSize: '0.75rem' }}>{checks[key] ? '✅' : '○'}</span>
+                      {checks[key] ? <CheckCircle size={14} /> : <Circle size={14} />}
                       {label}
                     </div>
                   ))}

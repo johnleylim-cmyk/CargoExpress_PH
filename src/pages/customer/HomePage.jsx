@@ -5,6 +5,7 @@ import { getOrders, getAnnouncements, getTrips } from '../../lib/database';
 import StatusBadge from '../../components/ui/StatusBadge';
 import { SkeletonOrderCard, SkeletonStatCard } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
+import PageTransition, { StaggerItem } from '../../components/ui/PageTransition';
 import {
   Package, Search, Plus, Megaphone, ArrowRight,
   Container, MapPin, Calendar, Weight, ChevronRight,
@@ -81,7 +82,7 @@ const HomePage = () => {
     : 0;
 
   return (
-    <div className="page-transition">
+    <PageTransition>
 
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <div className="hero animate-slide-up" style={{ marginBottom: 24 }}>
@@ -112,20 +113,20 @@ const HomePage = () => {
       {/* ── Loading Skeleton ─────────────────────────────────────── */}
       {loading && (
         <div>
-          <div className="stagger-item" style={{ animationDelay: '0ms', marginBottom: 16 }}>
+          <StaggerItem delay={0} style={{ marginBottom: 16 }}>
             <SkeletonStatCard />
-          </div>
+          </StaggerItem>
           {[0, 1, 2].map(i => (
-            <div key={i} className="stagger-item" style={{ animationDelay: `${(i + 1) * 60}ms`, marginBottom: 12 }}>
+            <StaggerItem key={i} delay={(i + 1) * 60} style={{ marginBottom: 12 }}>
               <SkeletonOrderCard />
-            </div>
+            </StaggerItem>
           ))}
         </div>
       )}
 
       {/* ── Nearest Active / Scheduled Trip Card ────────────────── */}
       {!loading && activeTrip && (
-        <div className="stagger-item" style={{ animationDelay: '0ms', marginBottom: 24 }}>
+        <StaggerItem delay={0} style={{ marginBottom: 24 }}>
           <h3 style={{ fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
             <Truck size={18} color="var(--primary)" /> Next Available Trip
           </h3>
@@ -142,7 +143,7 @@ const HomePage = () => {
                 borderRadius: 20, border: '1px solid rgba(232, 114, 42, 0.35)',
                 letterSpacing: '0.04em',
               }}>
-                {activeTrip.status === 'in_progress' ? '🚢 In Progress' : '📅 Scheduled'}
+                {activeTrip.status === 'in_progress' ? 'In Progress' : 'Scheduled'}
               </span>
               <span style={{ fontSize: '0.75rem', opacity: 0.7, fontWeight: 600 }}>
                 {activeTrip.trip_number}
@@ -220,46 +221,48 @@ const HomePage = () => {
               <ChevronRight size={16} />
             </button>
           </div>
-        </div>
+        </StaggerItem>
       )}
 
       {/* ── Active Shipments ─────────────────────────────────────── */}
       {!loading && activeOrders.length > 0 && (
-        <div className="stagger-item" style={{ animationDelay: '60ms', marginBottom: 24 }}>
+        <StaggerItem delay={60} style={{ marginBottom: 24 }}>
           <div className="flex items-center justify-between mb-md">
             <h3 style={{ fontWeight: 700 }}>Active Shipments</h3>
-            <Link to="/customer/orders" className="text-sm text-primary font-medium" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Link to="/customer/orders" className="customer-inline-action text-sm text-primary font-medium">
               View All <ArrowRight size={14} />
             </Link>
           </div>
           {activeOrders.slice(0, 3).map((order, index) => (
-            <Link key={order.id} to={`/customer/orders/${order.id}`} className="card card-interactive stagger-item" style={{ display: 'block', marginBottom: 12, textDecoration: 'none', color: 'inherit', animationDelay: `${(index + 2) * 60}ms` }}>
-              <div className="card-body" style={{ padding: 16 }}>
-                <div className="flex items-center justify-between" style={{ marginBottom: 8 }}>
-                  <span style={{ fontWeight: 700, fontSize: '0.9375rem', color: 'var(--accent)' }}>{order.tracking_number}</span>
-                  <StatusBadge status={order.status} />
+            <StaggerItem key={order.id} delay={(index + 2) * 60} style={{ marginBottom: 12 }}>
+              <Link to={`/customer/orders/${order.id}`} className="card card-interactive" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+                <div className="card-body" style={{ padding: 16 }}>
+                  <div className="flex items-center justify-between" style={{ marginBottom: 8 }}>
+                    <span style={{ fontWeight: 700, fontSize: '0.9375rem', color: 'var(--accent)' }}>{order.tracking_number}</span>
+                    <StatusBadge status={order.status} />
+                  </div>
+                  <div className="text-sm text-secondary">
+                    {order.origin || '—'} → {order.destination || '—'}
+                  </div>
+                  <div className="text-xs text-tertiary" style={{ marginTop: 4 }}>
+                    {order.receiver_name} • ₱{parseFloat(order.shipping_cost || 0).toFixed(2)}
+                  </div>
                 </div>
-                <div className="text-sm text-secondary">
-                  {order.origin || '—'} → {order.destination || '—'}
-                </div>
-                <div className="text-xs text-tertiary" style={{ marginTop: 4 }}>
-                  {order.receiver_name} • ₱{parseFloat(order.shipping_cost || 0).toFixed(2)}
-                </div>
-              </div>
-            </Link>
+              </Link>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerItem>
       )}
 
       {/* ── Announcements ────────────────────────────────────────── */}
       {!loading && announcements.length > 0 && (
-        <div className="stagger-item" style={{ animationDelay: '120ms' }}>
+        <StaggerItem delay={120}>
           <h3 style={{ fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
             <Megaphone size={18} style={{ color: 'var(--primary)' }} />
             Announcements
           </h3>
           {announcements.slice(0, 3).map((a, index) => (
-            <div key={a.id} className="card stagger-item" style={{ marginBottom: 12, animationDelay: `${(index + 4) * 60}ms` }}>
+            <StaggerItem key={a.id} className="card" delay={(index + 4) * 60} style={{ marginBottom: 12 }}>
               <div className="card-body" style={{ padding: 16 }}>
                 <div style={{ fontWeight: 600, marginBottom: 4 }}>{a.title}</div>
                 <div className="text-sm text-secondary">{a.content}</div>
@@ -267,13 +270,13 @@ const HomePage = () => {
                   {new Date(a.created_at).toLocaleDateString()}
                 </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerItem>
       )}
 
       {!loading && orders.length === 0 && !activeTrip && (
-        <div className="stagger-item" style={{ animationDelay: '60ms' }}>
+        <StaggerItem delay={60}>
           <EmptyState
             icon={Container}
             title="No Shipments Yet"
@@ -281,9 +284,9 @@ const HomePage = () => {
             actionLabel="Book Shipment"
             onAction={() => navigate('/customer/book')}
           />
-        </div>
+        </StaggerItem>
       )}
-    </div>
+    </PageTransition>
   );
 };
 

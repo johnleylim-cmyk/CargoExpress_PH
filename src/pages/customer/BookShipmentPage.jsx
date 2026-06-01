@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { createOrder, getTrips, getSettings } from '../../lib/database';
 import { ROUTES, PH_LOCATIONS, VALID_PROVINCES, detectPickupLocation, validateRouteProvinces } from '../../constants/phLocations';
-import { ArrowLeft, Loader, CheckCircle, Package, MapPin, User, Truck, AlertTriangle, PartyPopper, Copy, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Loader, CheckCircle, Package, MapPin, User, Truck, AlertTriangle, Copy, ArrowRight } from 'lucide-react';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 const toTitleCase = (str) => str.replace(/\b\w/g, (char) => char.toUpperCase());
@@ -183,7 +183,10 @@ const BookShipmentPage = () => {
       const validation = validateRouteProvinces(form.sender_province, form.receiver_province, selectedRoute);
       if (!validation.valid) throw new Error(validation.error);
 
-      if (!form.package_weight) throw new Error('Package weight is required.');
+      const packageWeight = parseFloat(form.package_weight);
+      if (!Number.isFinite(packageWeight) || packageWeight <= 0) {
+        throw new Error('Package weight must be greater than 0 kg.');
+      }
 
       const fullSenderAddress = buildFullAddress({
         lotBlock: form.sender_lot_block, street: form.sender_street,
@@ -277,7 +280,7 @@ const BookShipmentPage = () => {
         }}>
           <CheckCircle size={44} color="#10B981" strokeWidth={2} />
         </div>
-        <h2 style={{ fontWeight: 800, marginBottom: 4, fontSize: '1.5rem' }}>Booking Confirmed! 🎉</h2>
+        <h2 style={{ fontWeight: 800, marginBottom: 4, fontSize: '1.5rem' }}>Booking Confirmed</h2>
         <p className="text-secondary" style={{ marginBottom: 20 }}>Your shipment has been booked successfully.</p>
         
         {/* Tracking Number Card */}
@@ -351,12 +354,12 @@ const BookShipmentPage = () => {
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: 12 }}>
+          <div className="customer-route-options">
             {ROUTES.map(r => (
-              <button key={r.label} className="card card-interactive" onClick={() => handleRouteChange(r.label)}
-                style={{ flex: 1, padding: 20, textAlign: 'center', cursor: 'pointer', border: form.route === r.label ? '2px solid var(--primary)' : '1.5px solid #E2E8F0', background: form.route === r.label ? '#FFF7F0' : 'white' }}>
+              <button key={r.label} className="customer-route-option card card-interactive" onClick={() => handleRouteChange(r.label)}
+                style={{ border: form.route === r.label ? '2px solid var(--primary)' : '1.5px solid #E2E8F0', background: form.route === r.label ? '#FFF7F0' : 'white' }}>
                 <Truck size={24} color={form.route === r.label ? 'var(--primary)' : '#94A3B8'} style={{ margin: '0 auto 8px' }} />
-                <div style={{ fontWeight: 700 }}>{r.label}</div>
+                <div className="customer-route-option-label">{r.label}</div>
               </button>
             ))}
           </div>
@@ -458,9 +461,10 @@ const BookShipmentPage = () => {
             </div>
           )}
           <button className="btn btn-primary btn-lg w-full" onClick={() => {
-            if (!form.package_weight) { setError('Package weight is required.'); return; }
+            const packageWeight = parseFloat(form.package_weight);
+            if (!Number.isFinite(packageWeight) || packageWeight <= 0) { setError('Package weight must be greater than 0 kg.'); return; }
             setError(''); setStep(5);
-          }} disabled={!form.package_weight} style={{ justifyContent: 'center' }}>Review Booking</button>
+          }} disabled={!form.package_weight || parseFloat(form.package_weight) <= 0} style={{ justifyContent: 'center' }}>Review Booking</button>
         </div></div>
       )}
 

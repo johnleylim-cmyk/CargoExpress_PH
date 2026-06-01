@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Container, Search, Loader, Package, MapPin, ArrowRight, Check, Clock, Weight, User, DollarSign } from 'lucide-react';
+import { Container, Search, Loader, Package, MapPin, ArrowRight, CheckCircle, XCircle, Clock, Weight, User, DollarSign } from 'lucide-react';
 import { STATUS_TIMELINE, STATUS_COLORS } from '../../constants/status';
 import TrackingTimeline from '../../components/ui/TrackingTimeline';
 
@@ -49,6 +49,12 @@ const TrackingPage = () => {
     doSearch(trackingNumber.trim().toUpperCase());
   };
 
+  const StatusIcon = order?.status === 'Delivered'
+    ? CheckCircle
+    : order?.status === 'Cancelled'
+      ? XCircle
+      : Package;
+
   return (
     <div className="tracking-page">
       {/* Header */}
@@ -68,12 +74,18 @@ const TrackingPage = () => {
             id="tracking-input"
             type="text"
             className="tracking-search-input"
-            placeholder="Enter tracking number (e.g., CE-20260430-1234)"
+            placeholder="Enter tracking number"
             value={trackingNumber}
             onChange={(e) => setTrackingNumber(e.target.value.toUpperCase())}
+            aria-label="Tracking number"
             autoFocus
           />
-          <button type="submit" className="tracking-search-btn" disabled={loading || !trackingNumber.trim()}>
+          <button
+            type="submit"
+            className="tracking-search-btn"
+            disabled={loading || !trackingNumber.trim()}
+            aria-label="Track shipment"
+          >
             {loading ? <Loader size={18} className="animate-spin" /> : 'Track'}
           </button>
         </div>
@@ -96,7 +108,7 @@ const TrackingPage = () => {
             borderColor: STATUS_COLORS[order.status]?.border || 'var(--border)',
           }}>
             <div className="tracking-status-label" style={{ color: STATUS_COLORS[order.status]?.text }}>
-              {order.status === 'Delivered' ? '🎉' : order.status === 'Cancelled' ? '❌' : '📦'} {order.status}
+              <StatusIcon size={22} /> {order.status}
             </div>
             <div className="tracking-number-display">{order.tracking_number}</div>
           </div>

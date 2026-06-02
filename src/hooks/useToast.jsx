@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useCallback } from 'react';
-import { CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
+import { Check, XCircle, AlertTriangle, Info, X } from 'lucide-react';
 
 /* ── Context ─────────────────────────────────────────────────────────── */
 const ToastContext = createContext(null);
@@ -20,9 +20,6 @@ export const ToastProvider = ({ children }) => {
       const next = [...prev, { id, message, type, duration }];
       return next.length > 4 ? next.slice(-4) : next;
     });
-    setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id));
-    }, duration);
   }, []);
 
   const removeToast = useCallback((id) => {
@@ -44,7 +41,7 @@ export const ToastProvider = ({ children }) => {
 
 /* ── Icons ───────────────────────────────────────────────────────────── */
 const ICONS = {
-  success: CheckCircle,
+  success: Check,
   error:   XCircle,
   warning: AlertTriangle,
   info:    Info,
@@ -57,37 +54,82 @@ const LABELS = {
   info:    'Info',
 };
 
+/* ── Toast Item ──────────────────────────────────────────────────────── */
+const ToastItem = ({ toast, onRemove }) => {
+  const { id, message, type, duration = 4000 } = toast;
+  const timerRef = useRef(null);
+  const startTimeRef = useRef(null);
+  const remainingTimeRef = useRef(duration);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const startTimer = useCallback(() => {
+    startTimeRef.current = Date.now();
+    timerRef.current = setTimeout(() => {
+      onRemove(id);
+    }, remainingTimeRef.current);
+  }, [id, onRemove]);
+
+  const pauseTimer = useCallback(() => {
+    clearTimeout(timerRef.current);
+    remainingTimeRef.current -= Date.now() - startTimeRef.current;
+  }, []);
+
+  useEffect(() => {
+    startTimer();
+    return () => clearTimeout(timerRef.current);
+  }, [startTimer]);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    pauseTimer();
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (remainingTimeRef.current > 0) {
+      startTimer();
+    } else {
+      onRemove(id);
+    }
+  };
+
+  const Icon = ICONS[type] || Info;
+
+  return (
+    <div
+      className={`toast toast-${type} ${isHovered ? 'toast-hovered' : ''}`}
+      role="alert"
+      aria-atomic="true"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{ '--toast-duration': `${duration}ms` }}
+    >
+      <div className="toast-icon-wrap">
+        <Icon size={16} />
+      </div>
+      <div className="toast-body">
+        <span className="toast-type-label">{LABELS[type]}</span>
+        <span className="toast-message">{message}</span>
+      </div>
+      <button
+        onClick={() => onRemove(id)}
+        className="toast-close"
+        aria-label="Dismiss notification"
+      >
+        <X size={14} />
+      </button>
+    </div>
+  );
+};
+
 /* ── Toast Container ─────────────────────────────────────────────────── */
 const ToastContainer = ({ toasts, onRemove }) => {
   if (!toasts.length) return null;
   return (
     <div className="toast-container" role="region" aria-label="Notifications" aria-live="polite">
-      {toasts.map(t => {
-        const Icon = ICONS[t.type] || Info;
-        return (
-          <div
-            key={t.id}
-            className={`toast toast-${t.type}`}
-            role="alert"
-            aria-atomic="true"
-          >
-            <div className="toast-icon-wrap">
-              <Icon size={16} />
-            </div>
-            <div className="toast-body">
-              <span className="toast-type-label">{LABELS[t.type]}</span>
-              <span className="toast-message">{t.message}</span>
-            </div>
-            <button
-              onClick={() => onRemove(t.id)}
-              className="toast-close"
-              aria-label="Dismiss notification"
-            >
-              <X size={14} />
-            </button>
-          </div>
-        );
-      })}
+      {toasts.map(t => (
+        <ToastItem key={t.id} toast={t} onRemove={onRemove} />
+      ))}
     </div>
   );
 };

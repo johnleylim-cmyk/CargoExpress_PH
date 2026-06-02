@@ -9,6 +9,57 @@ import {
 import { STATUS_TIMELINE, STATUS_COLORS } from '../../constants/status';
 import TrackingTimeline from '../../components/ui/TrackingTimeline';
 
+const TRACKING_STATUS_TONES = {
+  Pending: {
+    bg: 'var(--trk-status-warning-bg)',
+    text: 'var(--trk-status-warning-text)',
+    border: 'var(--trk-status-warning-border)',
+    iconBg: 'var(--trk-status-warning-icon-bg)',
+  },
+  Assigned: {
+    bg: 'var(--trk-status-info-bg)',
+    text: 'var(--trk-status-info-text)',
+    border: 'var(--trk-status-info-border)',
+    iconBg: 'var(--trk-status-info-icon-bg)',
+  },
+  'Picked Up': {
+    bg: 'var(--trk-status-success-bg)',
+    text: 'var(--trk-status-success-text)',
+    border: 'var(--trk-status-success-border)',
+    iconBg: 'var(--trk-status-success-icon-bg)',
+  },
+  'In Transit': {
+    bg: 'var(--trk-status-info-bg)',
+    text: 'var(--trk-status-info-text)',
+    border: 'var(--trk-status-info-border)',
+    iconBg: 'var(--trk-status-info-icon-bg)',
+  },
+  'Arrived at Hub': {
+    bg: 'var(--trk-status-success-bg)',
+    text: 'var(--trk-status-success-text)',
+    border: 'var(--trk-status-success-border)',
+    iconBg: 'var(--trk-status-success-icon-bg)',
+  },
+  'Out for Delivery': {
+    bg: 'var(--trk-status-purple-bg)',
+    text: 'var(--trk-status-purple-text)',
+    border: 'var(--trk-status-purple-border)',
+    iconBg: 'var(--trk-status-purple-icon-bg)',
+  },
+  Delivered: {
+    bg: 'var(--trk-status-success-bg)',
+    text: 'var(--trk-status-success-text)',
+    border: 'var(--trk-status-success-border)',
+    iconBg: 'var(--trk-status-success-icon-bg)',
+  },
+  Cancelled: {
+    bg: 'var(--trk-status-error-bg)',
+    text: 'var(--trk-status-error-text)',
+    border: 'var(--trk-status-error-border)',
+    iconBg: 'var(--trk-status-error-icon-bg)',
+  },
+};
+
 /* ── Status display helpers ────────────────────────────────────────── */
 const getStatusIcon = (status) => {
   if (status === 'Delivered')  return CheckCircle2;
@@ -78,7 +129,7 @@ const TrackingPage = () => {
   };
 
   const StatusIcon = getStatusIcon(order?.status);
-  const statusColor = order ? STATUS_COLORS[order.status] : null;
+  const statusColor = order ? (TRACKING_STATUS_TONES[order.status] || STATUS_COLORS[order.status]) : null;
   const completedSteps = order ? STATUS_TIMELINE.indexOf(order.status) : -1;
   const progressPct = order?.status === 'Cancelled' ? 0
     : order ? Math.round(((completedSteps) / (STATUS_TIMELINE.length - 1)) * 100)
@@ -171,14 +222,14 @@ const TrackingPage = () => {
           <div
             className="trk-status-banner"
             style={{
-              background: statusColor?.bg || '#F8FAFC',
-              borderColor: statusColor?.border || '#E2E8F0',
+              background: statusColor?.bg || 'var(--bg-secondary)',
+              borderColor: statusColor?.border || 'var(--border)',
             }}
           >
             <div className="trk-status-left">
               <div
                 className="trk-status-icon-wrap"
-                style={{ background: statusColor?.text ? `${statusColor.text}18` : '#F1F5F9' }}
+                style={{ background: statusColor?.iconBg || 'var(--bg-secondary)' }}
               >
                 <StatusIcon size={22} style={{ color: statusColor?.text }} />
               </div>

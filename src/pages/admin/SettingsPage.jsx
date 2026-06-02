@@ -54,7 +54,7 @@ const SettingsPage = () => {
       </div>
 
       {/* Tabs */}
-      <div className="tabs" role="tablist" aria-label="Settings sections" style={{ marginBottom: 24 }}>
+      <div className="tabs mb-24" role="tablist" aria-label="Settings sections">
         {tabItems.map((tab) => (
           <button
             key={tab.key}
@@ -78,7 +78,7 @@ const SettingsPage = () => {
               <div className="card-body"><SkeletonText lines={3} /></div>
             </div>
           ) : error ? (
-            <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
+            <div className="card text-center p-32 text-error">
               <h3>Error</h3>
               <p>{error}</p>
               <button type="button" className="btn btn-primary mt-md" onClick={load}>Retry</button>
@@ -86,7 +86,7 @@ const SettingsPage = () => {
           ) : (
             <div className="card animate-fade-in">
               <div className="card-header">
-                <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <h3 className="flex items-center gap-8">
                   <Settings size={16} /> Pricing
                 </h3>
               </div>
@@ -107,7 +107,7 @@ const SettingsPage = () => {
                       placeholder="70.00"
                     />
                   </div>
-                  <p className="form-helper" style={{ marginTop: 6 }}>
+                  <p className="form-helper mt-6">
                     Used to calculate shipping costs for all orders.
                   </p>
                 </div>

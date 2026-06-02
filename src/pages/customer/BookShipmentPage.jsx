@@ -36,6 +36,7 @@ const BookShipmentPage = () => {
 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [success, setSuccess] = useState(null);
   const [trips, setTrips] = useState([]);
   const [pricePerKilo, setPricePerKilo] = useState(70);
@@ -60,8 +61,11 @@ const BookShipmentPage = () => {
   const handlePhoneChange = (key) => (e) => u(key, e.target.value.replace(/\D/g, '').slice(0, 11));
 
   useEffect(() => {
-    getTrips('active').then(setTrips).catch(() => {});
-    getSettings().then(s => { if (s.price_per_kilo) setPricePerKilo(parseFloat(s.price_per_kilo)); }).catch(() => {});
+    setInitialLoading(true);
+    Promise.all([
+      getTrips('active').then(setTrips).catch(() => {}),
+      getSettings().then(s => { if (s.price_per_kilo) setPricePerKilo(parseFloat(s.price_per_kilo)); }).catch(() => {}),
+    ]).finally(() => setInitialLoading(false));
   }, []);
 
   const selectedRoute = ROUTES.find(r => r.label === form.route);
@@ -190,7 +194,7 @@ const BookShipmentPage = () => {
     const getProvinces = isSender ? getSenderProvinces : getReceiverProvinces;
     const id = (field) => `${prefix}-${field}`;
     return (
-      <div className="grid grid-2" style={{ gap: 16 }}>
+      <div className="grid grid-2 gap-16">
         <div className="form-group" style={{ gridColumn: '1 / -1' }}><label className="form-label" htmlFor={id('name')}>Full Name *</label><input id={id('name')} className="form-input" value={form[`${prefix}_name`]} onChange={handleTextChange(`${prefix}_name`)} required /></div>
         <div className="form-group"><label className="form-label" htmlFor={id('phone')}>Mobile Number *</label><input id={id('phone')} className="form-input" value={form[`${prefix}_phone`]} onChange={handlePhoneChange(`${prefix}_phone`)} inputMode="numeric" maxLength={11} placeholder="09xxxxxxxxx" required /></div>
         <div className="form-group"><label className="form-label" htmlFor={id('facebook')}>Facebook Name *</label><input id={id('facebook')} className="form-input" value={form[`${prefix}_facebook`]} onChange={handleTextChange(`${prefix}_facebook`)} placeholder="Your name on Facebook" required /></div>
@@ -216,30 +220,30 @@ const BookShipmentPage = () => {
 
   if (success) return (
     <div className="page-transition" style={{ padding: '40px 20px' }}>
-      <div className="animate-scale-in" style={{ textAlign: 'center' }}>
-        <div style={{ width: 88, height: 88, borderRadius: '50%', background: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', boxShadow: '0 8px 32px rgba(16,185,129,0.2)' }}>
+      <div className="animate-scale-in text-center">
+        <div className="w-88 rounded-full flex items-center justify-center mb-24" style={{ height: 88, background: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)', margin: '0 auto', boxShadow: '0 8px 32px rgba(16,185,129,0.2)' }}>
           <CheckCircle size={44} color="#10B981" strokeWidth={2} />
         </div>
-        <h2 style={{ fontWeight: 800, marginBottom: 4, fontSize: '1.5rem' }}>Booking Confirmed</h2>
-        <p className="text-secondary" style={{ marginBottom: 20 }}>Your shipment has been booked successfully.</p>
-        <div className="card" style={{ marginBottom: 20, overflow: 'hidden' }}>
-          <div style={{ background: 'linear-gradient(135deg, var(--accent), #2D5A8A)', padding: '16px 20px', color: 'white' }}>
-            <div style={{ fontSize: '0.75rem', opacity: 0.7, marginBottom: 4, fontWeight: 600 }}>TRACKING NUMBER</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '0.02em' }}>{success.tracking_number}</div>
+        <h2 className="fw-800 mb-4 text-2xl">Booking Confirmed</h2>
+        <p className="text-secondary mb-20">Your shipment has been booked successfully.</p>
+        <div className="card mb-20 overflow-hidden">
+          <div className="px-20 py-16 text-inverse" style={{ background: 'linear-gradient(135deg, var(--accent), #2D5A8A)' }}>
+            <div className="text-xs fw-600 mb-4" style={{ opacity: 0.7 }}>TRACKING NUMBER</div>
+            <div className="text-2xl fw-800" style={{ letterSpacing: '0.02em' }}>{success.tracking_number}</div>
           </div>
-          <div className="card-body" style={{ padding: 16 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="card-body p-16">
+            <div className="flex justify-between items-center">
               <div>
                 <div className="text-xs text-tertiary">Estimated Cost</div>
-                <div style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.125rem' }}>₱{parseFloat(success.shipping_cost || 0).toFixed(2)}</div>
+                <div className="fw-700 text-primary text-lg">₱{parseFloat(success.shipping_cost || 0).toFixed(2)}</div>
               </div>
               <div className="text-xs text-tertiary">{form.route}</div>
             </div>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-          <button type="button" className="btn btn-outline" onClick={() => navigate('/customer/orders')} style={{ flex: 1 }}><Package size={16} /> View Orders</button>
-          <button type="button" className="btn btn-primary" onClick={() => { setSuccess(null); setStep(1); setForm(p => ({ ...p, package_description: '', package_weight: '', trip_id: '' })); setUseRegisteredReceiver(false); setUseRegisteredSender(false); }} style={{ flex: 1 }}><ArrowRight size={16} /> Book Another</button>
+        <div className="flex gap-12 justify-center">
+          <button type="button" className="btn btn-outline flex-1" onClick={() => navigate('/customer/orders')}><Package size={16} /> View Orders</button>
+          <button type="button" className="btn btn-primary flex-1" onClick={() => { setSuccess(null); setStep(1); setForm(p => ({ ...p, package_description: '', package_weight: '', trip_id: '' })); setUseRegisteredReceiver(false); setUseRegisteredSender(false); }}><ArrowRight size={16} /> Book Another</button>
         </div>
       </div>
     </div>
@@ -249,15 +253,15 @@ const BookShipmentPage = () => {
 
   return (
     <div className="page-transition">
-      <button type="button" onClick={() => step > 1 ? setStep(step - 1) : navigate(-1)} className="btn btn-ghost" style={{ marginBottom: 16 }}>
+      <button type="button" onClick={() => step > 1 ? setStep(step - 1) : navigate(-1)} className="btn btn-ghost mb-16">
         <ArrowLeft size={18} /> {step > 1 ? 'Back' : 'Cancel'}
       </button>
-      <h2 style={{ fontWeight: 800, marginBottom: 8 }}>Book Shipment</h2>
+      <h2 className="fw-800 mb-8">Book Shipment</h2>
 
       {/* Step Progress */}
       <div className="step-progress" role="list" aria-label="Booking progress">
         {steps.map((s, i) => (
-          <div key={s} role="listitem" style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+          <div key={s} role="listitem" className="flex items-center flex-1">
             <div className={`step ${step > i + 1 ? 'completed' : step === i + 1 ? 'active' : ''}`}>
               <div className="step-number" aria-current={step === i + 1 ? 'step' : undefined}>{i + 1}</div>
               <span className="step-label">{s}</span>
@@ -270,9 +274,9 @@ const BookShipmentPage = () => {
       {/* Step 1: Route */}
       {step === 1 && (
         <div className="card animate-fade-in"><div className="card-body">
-          <h3 style={{ fontWeight: 700, marginBottom: 16 }}><MapPin size={18} style={{ display: 'inline', marginRight: 8 }} />Select Route</h3>
+          <h3 className="fw-700 mb-16"><MapPin size={18} className="inline mr-8" />Select Route</h3>
           {preTripId && (
-            <div className="alert-banner alert-banner-success" style={{ marginBottom: 16 }}>
+            <div className="alert-banner alert-banner-success mb-16">
               <CheckCircle size={16} /> Route & trip pre-selected from home page. You may change below if needed.
             </div>
           )}
@@ -280,14 +284,14 @@ const BookShipmentPage = () => {
             {ROUTES.map(r => (
               <button key={r.label} type="button" className="customer-route-option card card-interactive" onClick={() => handleRouteChange(r.label)}
                 aria-pressed={form.route === r.label}
-                style={{ border: form.route === r.label ? '2px solid var(--primary)' : '1.5px solid #E2E8F0', background: form.route === r.label ? '#FFF7F0' : 'white' }}>
-                <Truck size={24} color={form.route === r.label ? 'var(--primary)' : '#94A3B8'} style={{ margin: '0 auto 8px' }} />
+                style={{ border: form.route === r.label ? '2px solid var(--primary)' : '1.5px solid var(--border)', background: form.route === r.label ? 'var(--primary-bg)' : 'var(--surface)' }}>
+                <Truck size={24} color={form.route === r.label ? 'var(--primary)' : 'var(--text-tertiary)'} style={{ margin: '0 auto 8px' }} />
                 <div className="customer-route-option-label">{r.label}</div>
               </button>
             ))}
           </div>
           {form.route && (
-            <div className="alert-banner alert-banner-warning" style={{ marginTop: 16, fontSize: '0.8125rem' }}>
+            <div className="alert-banner alert-banner-warning mt-16" style={{ fontSize: '0.8125rem' }}>
               <AlertTriangle size={14} />
               {selectedRoute?.origin === 'Bohol'
                 ? 'Sender must be from Bohol. Receiver must be from Metro Manila, Cavite, Batangas, Laguna, or Bulacan.'
@@ -295,7 +299,7 @@ const BookShipmentPage = () => {
             </div>
           )}
           {form.route && filteredTrips.length > 0 && (
-            <div style={{ marginTop: 16 }}>
+            <div className="mt-16">
               <label className="form-label" htmlFor="booking-trip">Select Trip (Optional)</label>
               <select id="booking-trip" className="form-select" value={form.trip_id} onChange={e => u('trip_id', e.target.value)}>
                 <option value="">No specific trip</option>
@@ -303,22 +307,22 @@ const BookShipmentPage = () => {
               </select>
             </div>
           )}
-          <button type="button" className="btn btn-primary btn-lg w-full mt-lg" disabled={!form.route} onClick={() => setStep(2)} style={{ justifyContent: 'center' }}>Continue</button>
+          <button type="button" className="btn btn-primary btn-lg w-full mt-lg justify-center" disabled={!form.route} onClick={() => setStep(2)}>Continue</button>
         </div></div>
       )}
 
       {/* Step 2: Sender */}
       {step === 2 && (
         <div className="card animate-fade-in"><div className="card-body">
-          <h3 style={{ fontWeight: 700, marginBottom: 16 }}><User size={18} style={{ display: 'inline', marginRight: 8 }} />Sender Details</h3>
+          <h3 className="fw-700 mb-16"><User size={18} className="inline mr-8" />Sender Details</h3>
           {showSenderCheckbox && (
-            <div style={{ marginBottom: 20, padding: 12, background: '#F8FAFC', borderRadius: 8, border: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <input type="checkbox" id="useRegSender" checked={useRegisteredSender} onChange={e => setUseRegisteredSender(e.target.checked)} style={{ width: 18, height: 18 }} />
-              <label htmlFor="useRegSender" style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1E293B', cursor: 'pointer' }}>Use my registered address for sender details</label>
+            <div className="mb-20 p-12 flex items-center gap-10 rounded-sm" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+              <input type="checkbox" id="useRegSender" checked={useRegisteredSender} onChange={e => setUseRegisteredSender(e.target.checked)} className="w-18" style={{ height: 18 }} />
+              <label htmlFor="useRegSender" className="text-sm fw-600 cursor-pointer" style={{ color: 'var(--text)' }}>Use my registered address for sender details</label>
             </div>
           )}
           {renderAddressFields('sender')}
-          <button type="button" className="btn btn-primary btn-lg w-full" style={{ marginTop: 20, justifyContent: 'center' }} onClick={() => {
+          <button type="button" className="btn btn-primary btn-lg w-full mt-20 justify-center" onClick={() => {
             const err = validateSender();
             if (err) { toast.error(err); return; }
             setStep(3);
@@ -329,15 +333,15 @@ const BookShipmentPage = () => {
       {/* Step 3: Receiver */}
       {step === 3 && (
         <div className="card animate-fade-in"><div className="card-body">
-          <h3 style={{ fontWeight: 700, marginBottom: 16 }}><User size={18} style={{ display: 'inline', marginRight: 8 }} />Receiver Details</h3>
+          <h3 className="fw-700 mb-16"><User size={18} className="inline mr-8" />Receiver Details</h3>
           {showReceiverCheckbox && (
-            <div style={{ marginBottom: 20, padding: 12, background: '#F8FAFC', borderRadius: 8, border: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <input type="checkbox" id="useRegReceiver" checked={useRegisteredReceiver} onChange={e => setUseRegisteredReceiver(e.target.checked)} style={{ width: 18, height: 18 }} />
-              <label htmlFor="useRegReceiver" style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1E293B', cursor: 'pointer' }}>Use my registered address for receiver details</label>
+            <div className="mb-20 p-12 flex items-center gap-10 rounded-sm" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+              <input type="checkbox" id="useRegReceiver" checked={useRegisteredReceiver} onChange={e => setUseRegisteredReceiver(e.target.checked)} className="w-18" style={{ height: 18 }} />
+              <label htmlFor="useRegReceiver" className="text-sm fw-600 cursor-pointer" style={{ color: 'var(--text)' }}>Use my registered address for receiver details</label>
             </div>
           )}
           {renderAddressFields('receiver')}
-          <button type="button" className="btn btn-primary btn-lg w-full" style={{ marginTop: 20, justifyContent: 'center' }} onClick={() => {
+          <button type="button" className="btn btn-primary btn-lg w-full mt-20 justify-center" onClick={() => {
             const err = validateReceiver();
             if (err) { toast.error(err); return; }
             const v = validateRouteProvinces(form.sender_province, form.receiver_province, selectedRoute);
@@ -350,12 +354,12 @@ const BookShipmentPage = () => {
       {/* Step 4: Package */}
       {step === 4 && (
         <div className="card animate-fade-in"><div className="card-body">
-          <h3 style={{ fontWeight: 700, marginBottom: 16 }}><Package size={18} style={{ display: 'inline', marginRight: 8 }} />Package Details</h3>
+          <h3 className="fw-700 mb-16"><Package size={18} className="inline mr-8" />Package Details</h3>
           <div className="form-group"><label className="form-label" htmlFor="package-description">Description (Optional)</label><input id="package-description" className="form-input" value={form.package_description} onChange={e => u('package_description', e.target.value)} placeholder="e.g. Documents, Clothes, etc." /></div>
           <div className="form-group">
             <label className="form-label" htmlFor="package-weight">Estimated Weight (kg) *</label>
             <input id="package-weight" type="number" className="form-input" value={form.package_weight} onChange={e => u('package_weight', e.target.value)} placeholder="0.0" min="0.1" step="0.1" required aria-describedby="package-weight-helper" />
-            <p id="package-weight-helper" style={{ fontSize: '0.75rem', color: '#64748B', marginTop: 4 }}>Note: This is an estimate. Final weight may be updated by the admin during weighing.</p>
+            <p id="package-weight-helper" className="text-xs text-secondary mt-4">Note: This is an estimate. Final weight may be updated by the admin during weighing.</p>
           </div>
           <div className="form-group"><label className="form-label" htmlFor="payer-type">Who Pays?</label>
             <select id="payer-type" className="form-select" value={form.payer_type} onChange={e => u('payer_type', e.target.value)}>
@@ -363,47 +367,47 @@ const BookShipmentPage = () => {
             </select>
           </div>
           {form.package_weight && (
-            <div style={{ background: 'linear-gradient(135deg, #FFF7F0, #FFF1E6)', borderRadius: 12, padding: 16, marginBottom: 16, textAlign: 'center', border: '1px solid rgba(240,127,46,0.15)' }}>
+            <div className="rounded-md p-16 mb-16 text-center" style={{ background: 'var(--primary-bg)', border: '1px solid rgba(240,127,46,0.25)' }}>
               <div className="text-sm text-secondary">Estimated Cost</div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)' }}>₱{cost.toFixed(2)}</div>
+              <div className="text-2xl fw-800 text-primary">₱{cost.toFixed(2)}</div>
               <div className="text-xs text-tertiary">{form.package_weight} kg x PHP {effectivePricePerKilo}/kg</div>
             </div>
           )}
-          <button type="button" className="btn btn-primary btn-lg w-full" onClick={() => {
+          <button type="button" className="btn btn-primary btn-lg w-full justify-center" onClick={() => {
             const packageWeight = parseFloat(form.package_weight);
             if (!Number.isFinite(packageWeight) || packageWeight <= 0) { toast.error('Package weight must be greater than 0 kg.'); return; }
             setStep(5);
-          }} disabled={!form.package_weight || parseFloat(form.package_weight) <= 0} style={{ justifyContent: 'center' }}>Review Booking</button>
+          }} disabled={!form.package_weight || parseFloat(form.package_weight) <= 0}>Review Booking</button>
         </div></div>
       )}
 
       {/* Step 5: Review */}
       {step === 5 && (
         <div className="card animate-fade-in"><div className="card-body">
-          <h3 style={{ fontWeight: 700, marginBottom: 16 }}>Review & Confirm</h3>
-          <div style={{ background: '#F8FAFC', borderRadius: 12, padding: 16, marginBottom: 16 }}>
-            <div className="text-xs text-tertiary font-bold" style={{ marginBottom: 8 }}>ROUTE</div>
+          <h3 className="fw-700 mb-16">Review & Confirm</h3>
+          <div className="rounded-md p-16 mb-16" style={{ background: 'var(--bg-secondary)' }}>
+            <div className="text-xs text-tertiary font-bold mb-8">ROUTE</div>
             <div className="font-bold">{form.route}</div>
           </div>
-          <div className="grid grid-2" style={{ gap: 12, marginBottom: 16 }}>
-            <div style={{ background: '#F8FAFC', borderRadius: 12, padding: 16 }}>
-              <div className="text-xs text-tertiary font-bold" style={{ marginBottom: 8 }}>SENDER</div>
+          <div className="grid grid-2 gap-12 mb-16">
+            <div className="rounded-md p-16" style={{ background: 'var(--bg-secondary)' }}>
+              <div className="text-xs text-tertiary font-bold mb-8">SENDER</div>
               <div className="text-sm font-bold">{form.sender_name}</div>
               <div className="text-xs text-secondary">{form.sender_phone}</div>
-              <div className="text-xs text-secondary" style={{ marginTop: 4 }}>{form.sender_street}, {form.sender_barangay}, {form.sender_city}, {form.sender_province}</div>
+              <div className="text-xs text-secondary mt-4">{form.sender_street}, {form.sender_barangay}, {form.sender_city}, {form.sender_province}</div>
             </div>
-            <div style={{ background: '#F8FAFC', borderRadius: 12, padding: 16 }}>
-              <div className="text-xs text-tertiary font-bold" style={{ marginBottom: 8 }}>RECEIVER</div>
+            <div className="rounded-md p-16" style={{ background: 'var(--bg-secondary)' }}>
+              <div className="text-xs text-tertiary font-bold mb-8">RECEIVER</div>
               <div className="text-sm font-bold">{form.receiver_name}</div>
               <div className="text-xs text-secondary">{form.receiver_phone}</div>
-              <div className="text-xs text-secondary" style={{ marginTop: 4 }}>{form.receiver_street}, {form.receiver_barangay}, {form.receiver_city}, {form.receiver_province}</div>
+              <div className="text-xs text-secondary mt-4">{form.receiver_street}, {form.receiver_barangay}, {form.receiver_city}, {form.receiver_province}</div>
             </div>
           </div>
-          <div style={{ background: 'linear-gradient(135deg, #FFF7F0, #FFF1E6)', borderRadius: 12, padding: 20, textAlign: 'center', marginBottom: 16, border: '1px solid rgba(240,127,46,0.15)' }}>
+          <div className="rounded-md p-20 text-center mb-16" style={{ background: 'var(--primary-bg)', border: '1px solid rgba(240,127,46,0.25)' }}>
             <div className="text-sm text-secondary">Estimated Cost</div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--primary)' }}>₱{cost.toFixed(2)}</div>
+            <div className="fw-800 text-primary" style={{ fontSize: '2rem' }}>₱{cost.toFixed(2)}</div>
           </div>
-          <button type="button" className="btn btn-primary btn-lg w-full" onClick={handleSubmit} disabled={loading} style={{ justifyContent: 'center' }}>
+          <button type="button" className="btn btn-primary btn-lg w-full justify-center" onClick={handleSubmit} disabled={loading}>
             {loading ? <Loader size={18} className="animate-spin" /> : 'Confirm Booking'}
           </button>
         </div></div>

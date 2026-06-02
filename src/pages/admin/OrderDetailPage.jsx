@@ -9,6 +9,7 @@ import TripAssignModal from '../../components/ui/TripAssignModal';
 import ConfirmModal from '../../components/ui/ConfirmModal';
 import ImageLightbox from '../../components/ui/ImageLightbox';
 import { SkeletonText } from '../../components/ui/SkeletonLoader';
+import ErrorBoundarySection from '../../components/ui/ErrorBoundarySection';
 import {
   STATUS_FLOW, STATUS_TIMELINE, validateStatusTransition,
   PAYMENT_METHODS, PAYMENT_STATUSES, ORDER_STATUS
@@ -152,18 +153,18 @@ const AdminOrderDetailPage = () => {
 
   if (loading) return (
     <div className="page-transition">
-      <div className="skeleton skeleton-text" style={{ width: '80px', marginBottom: 16 }} />
-      <div className="skeleton skeleton-text" style={{ width: '200px', height: 28, marginBottom: 8 }} />
-      <div className="skeleton skeleton-text" style={{ width: '300px', marginBottom: 20 }} />
-      <div className="card" style={{ marginBottom: 16 }}><div className="card-body"><SkeletonText lines={3} /></div></div>
-      <div className="card" style={{ marginBottom: 16 }}><div className="card-body"><SkeletonText lines={4} /></div></div>
+      <div className="skeleton skeleton-text w-80 mb-16" />
+      <div className="skeleton skeleton-text mb-8" style={{ width: '200px', height: 28 }} />
+      <div className="skeleton skeleton-text mb-20" style={{ width: '300px' }} />
+      <div className="card mb-16"><div className="card-body"><SkeletonText lines={3} /></div></div>
+      <div className="card mb-16"><div className="card-body"><SkeletonText lines={4} /></div></div>
     </div>
   );
   if (error) return (
     <div className="page-transition">
-      <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
+      <div className="card text-center text-error" style={{ padding: 40 }}>
         <h3>Error Loading Order</h3>
-        <p style={{ margin: '8px 0 20px' }}>{error}</p>
+        <p className="mt-8 mb-20">{error}</p>
         <button type="button" className="btn btn-primary" onClick={() => loadOrder()}>Retry</button>
       </div>
     </div>
@@ -192,22 +193,23 @@ const AdminOrderDetailPage = () => {
 
   return (
     <div className="page-transition">
-      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost" style={{ marginBottom: 16 }}>
+      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost mb-16">
         <ArrowLeft size={18} /> Back
       </button>
 
+      <ErrorBoundarySection message="Order info failed to load.">
       {/* Header */}
-      <div className="flex items-center justify-between" style={{ marginBottom: 8 }}>
-        <h1 style={{ fontWeight: 800, fontSize: '1.5rem' }}>{order.tracking_number}</h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="fw-800 text-2xl">{order.tracking_number}</h1>
         <StatusBadge status={order.status} />
       </div>
-      <p className="text-secondary text-sm" style={{ marginBottom: 20 }}>
+      <p className="text-secondary text-sm mb-20">
         {order.origin} → {order.destination} • {order.profiles?.name}
       </p>
 
       {/* Status Action Bar */}
       {!isTerminal && (
-        <div className="card admin-section-card admin-action-card stagger-item" style={{ marginBottom: 16, animationDelay: '60ms' }}>
+        <div className="card admin-section-card admin-action-card stagger-item mb-16" style={{ animationDelay: '60ms' }}>
           <div className="card-body">
             <div className="admin-action-group">
             {needsTrip && (
@@ -232,7 +234,7 @@ const AdminOrderDetailPage = () => {
       {/* Trip Warning */}
       {needsTrip && (
         <div className="alert-banner alert-banner-error" style={{ background: '#FFFBEB', color: '#92400E', borderColor: '#FDE68A' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span className="flex items-center gap-10">
             <AlertTriangle size={18} />
             This order has not been assigned to a trip yet. Assign it before advancing status.
           </span>
@@ -240,43 +242,46 @@ const AdminOrderDetailPage = () => {
       )}
 
       {/* Timeline */}
-      <div className="card admin-section-card stagger-item" style={{ marginBottom: 16, animationDelay: '120ms' }}>
+      <ErrorBoundarySection message="Tracking timeline failed to load.">
+      <div className="card admin-section-card stagger-item mb-16" style={{ animationDelay: '120ms' }}>
         <div className="card-header"><h3>Status Timeline</h3></div>
         <div className="card-body"><TrackingTimeline currentStatus={order.status} compact /></div>
       </div>
+      </ErrorBoundarySection>
 
       {/* Sender / Receiver */}
-      <div className="grid grid-2" style={{ marginBottom: 16 }}>
-        <div className="card stagger-item" style={{ animationDelay: '180ms' }}><div className="card-body" style={{ padding: 16 }}>
-          <div className="text-xs text-tertiary font-bold" style={{ textTransform: 'uppercase', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}><User size={12} /> Sender</div>
+      <div className="grid grid-2 mb-16">
+        <div className="card stagger-item" style={{ animationDelay: '180ms' }}><div className="card-body p-16">
+          <div className="text-xs text-tertiary font-bold text-uppercase flex items-center gap-6" style={{ marginBottom: 10 }}><User size={12} /> Sender</div>
           <div className="text-sm font-bold">{order.sender_name}</div>
-          <div className="text-sm text-secondary" style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}><Phone size={12} /> {order.sender_phone}</div>
-          <div className="text-xs text-secondary" style={{ marginTop: 6 }}><MapPin size={12} style={{ display: 'inline', marginRight: 4 }} />{order.sender_address}</div>
+          <div className="text-sm text-secondary flex items-center gap-4" style={{ marginTop: 2 }}><Phone size={12} /> {order.sender_phone}</div>
+          <div className="text-xs text-secondary" style={{ marginTop: 6 }}><MapPin size={12} className="inline mr-4" />{order.sender_address}</div>
         </div></div>
-        <div className="card stagger-item" style={{ animationDelay: '240ms' }}><div className="card-body" style={{ padding: 16 }}>
-          <div className="text-xs text-tertiary font-bold" style={{ textTransform: 'uppercase', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}><User size={12} /> Receiver</div>
+        <div className="card stagger-item" style={{ animationDelay: '240ms' }}><div className="card-body p-16">
+          <div className="text-xs text-tertiary font-bold text-uppercase flex items-center gap-6" style={{ marginBottom: 10 }}><User size={12} /> Receiver</div>
           <div className="text-sm font-bold">{order.receiver_name}</div>
-          <div className="text-sm text-secondary" style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}><Phone size={12} /> {order.receiver_phone}</div>
-          <div className="text-xs text-secondary" style={{ marginTop: 6 }}><MapPin size={12} style={{ display: 'inline', marginRight: 4 }} />{order.receiver_address}</div>
+          <div className="text-sm text-secondary flex items-center gap-4" style={{ marginTop: 2 }}><Phone size={12} /> {order.receiver_phone}</div>
+          <div className="text-xs text-secondary" style={{ marginTop: 6 }}><MapPin size={12} className="inline mr-4" />{order.receiver_address}</div>
         </div></div>
       </div>
+      </ErrorBoundarySection>
 
       {/* Package Details */}
-      <div className="card stagger-item" style={{ marginBottom: 16, animationDelay: '300ms' }}>
-        <div className="card-header"><h3><Package size={16} style={{ display: 'inline', marginRight: 8 }} />Package Details</h3></div>
-        <div className="card-body" style={{ padding: 16 }}>
-          <div className="grid grid-3" style={{ gap: 16 }}>
+      <div className="card stagger-item mb-16" style={{ animationDelay: '300ms' }}>
+        <div className="card-header"><h3><Package size={16} className="inline mr-8" />Package Details</h3></div>
+        <div className="card-body p-16">
+          <div className="grid grid-3 gap-16">
             <div><div className="text-xs text-tertiary" style={{ marginBottom: 2 }}>Description</div><div className="text-sm font-bold">{order.package_description || '—'}</div></div>
             <div><div className="text-xs text-tertiary" style={{ marginBottom: 2 }}>Est. Weight</div><div className="text-sm font-bold">{order.package_weight || '—'} kg</div></div>
             <div><div className="text-xs text-tertiary" style={{ marginBottom: 2 }}>Actual Weight</div>
-              <div className="text-sm font-bold" style={{ color: order.actual_weight ? '#10B981' : '#94A3B8' }}>
+              <div className={`text-sm font-bold ${order.actual_weight ? 'text-success' : 'text-tertiary'}`}>
                 {order.actual_weight ? `${order.actual_weight} kg` : 'Not weighed'}
               </div>
             </div>
           </div>
           {order.trip_id && order.trips && (
-            <div style={{ marginTop: 12, padding: '8px 12px', background: '#EFF6FF', borderRadius: 6, fontSize: '0.8125rem' }}>
-              <Truck size={14} style={{ display: 'inline', marginRight: 6, color: '#1D4ED8' }} />
+            <div className="mt-12 px-12 py-8" style={{ background: '#EFF6FF', borderRadius: 6, fontSize: '0.8125rem' }}>
+              <Truck size={14} className="inline mr-6" style={{ color: '#1D4ED8' }} />
               Trip: <strong>{order.trips.trip_number}</strong> ({order.trips.origin} → {order.trips.destination})
             </div>
           )}
@@ -285,10 +290,11 @@ const AdminOrderDetailPage = () => {
 
       {/* Pickup Proof Photos */}
       {hasPhotos && (
-        <div className="card stagger-item" style={{ marginBottom: 16, animationDelay: '360ms' }}>
-          <div className="card-header"><h3><Camera size={16} style={{ display: 'inline', marginRight: 8 }} />Pickup Proof Photos</h3></div>
+      <ErrorBoundarySection message="Pickup photos failed to load.">
+        <div className="card stagger-item mb-16" style={{ animationDelay: '360ms' }}>
+          <div className="card-header"><h3><Camera size={16} className="inline mr-8" />Pickup Proof Photos</h3></div>
           <div className="card-body">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12 }}>
+            <div className="gap-12" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))' }}>
               {resolvedPickupPhotos.map((url, i) => {
                 const loadState = photoLoadState[i] || 'loading';
                 const canOpen = loadState === 'loaded';
@@ -306,37 +312,38 @@ const AdminOrderDetailPage = () => {
             </div>
           </div>
         </div>
+      </ErrorBoundarySection>
       )}
 
       {/* Payment & Weight Management */}
       <div className="card admin-section-card stagger-item" style={{ animationDelay: '420ms' }}>
-        <div className="card-header"><h3><CreditCard size={16} style={{ display: 'inline', marginRight: 8 }} />Payment & Details</h3></div>
+        <div className="card-header"><h3><CreditCard size={16} className="inline mr-8" />Payment & Details</h3></div>
         <div className="card-body">
           <div className="admin-payment-summary">
             <div className="text-center">
-              <div style={{ fontSize: '0.6875rem', color: '#94A3B8', marginBottom: 2 }}>Shipping Cost</div>
-              <div style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--primary)' }}>₱{computedShippingCost.toFixed(2)}</div>
+              <div className="text-xs text-tertiary" style={{ marginBottom: 2 }}>Shipping Cost</div>
+              <div className="text-lg fw-800 text-primary">₱{computedShippingCost.toFixed(2)}</div>
             </div>
             <div className="text-center">
-              <div style={{ fontSize: '0.6875rem', color: '#94A3B8', marginBottom: 2 }}>Amount Paid</div>
-              <div style={{ fontSize: '1.125rem', fontWeight: 800, color: '#10B981' }}>₱{computedAmountPaid.toFixed(2)}</div>
+              <div className="text-xs text-tertiary" style={{ marginBottom: 2 }}>Amount Paid</div>
+              <div className="text-lg fw-800 text-success">₱{computedAmountPaid.toFixed(2)}</div>
             </div>
             <div className="text-center">
-              <div style={{ fontSize: '0.6875rem', color: '#94A3B8', marginBottom: 2 }}>{isOverpaid ? 'Overpaid' : 'Balance'}</div>
-              <div style={{ fontSize: '1.125rem', fontWeight: 800, color: isOverpaid ? '#F59E0B' : (computedRemainingBalance > 0 ? '#EF4444' : '#10B981') }}>
+              <div className="text-xs text-tertiary" style={{ marginBottom: 2 }}>{isOverpaid ? 'Overpaid' : 'Balance'}</div>
+              <div className={`text-lg fw-800 ${isOverpaid ? 'text-warning' : computedRemainingBalance > 0 ? 'text-error' : 'text-success'}`}>
                 {isOverpaid ? `+₱${Math.abs(computedRemainingBalance).toFixed(2)}` : `₱${computedRemainingBalance.toFixed(2)}`}
               </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
-            {order.payment_method && <span className="badge badge-info" style={{ textTransform: 'capitalize' }}>{order.payment_method === 'gcash' ? 'GCash' : order.payment_method === 'paylater' ? 'Pay Later' : 'Cash'}</span>}
-            {order.payer_type && <span className="badge badge-info" style={{ textTransform: 'capitalize' }}>Payer: {order.payer_type}</span>}
-            {order.payment_status && <span className={`badge ${order.payment_status === 'paid' ? 'badge-success' : order.payment_status === 'partial' ? 'badge-warning' : 'badge-error'}`} style={{ textTransform: 'capitalize' }}>{order.payment_status}</span>}
+          <div className="flex gap-8 flex-wrap mb-16">
+            {order.payment_method && <span className="badge badge-info text-capitalize">{order.payment_method === 'gcash' ? 'GCash' : order.payment_method === 'paylater' ? 'Pay Later' : 'Cash'}</span>}
+            {order.payer_type && <span className="badge badge-info text-capitalize">Payer: {order.payer_type}</span>}
+            {order.payment_status && <span className={`badge ${order.payment_status === 'paid' ? 'badge-success' : order.payment_status === 'partial' ? 'badge-warning' : 'badge-error'} text-capitalize`}>{order.payment_status}</span>}
             {order.promised_payment_date && <span className="badge badge-warning">Due: {new Date(order.promised_payment_date).toLocaleDateString()}</span>}
           </div>
 
-          <div className="grid grid-2" style={{ gap: 16 }}>
+          <div className="grid grid-2 gap-16">
             <div className="form-group">
               <label className="form-label" htmlFor="admin-order-actual-weight">Actual Weight (kg)</label>
               <input id="admin-order-actual-weight" type="number" min="0" step="0.1" className="form-input" value={payForm.actual_weight}
@@ -353,7 +360,7 @@ const AdminOrderDetailPage = () => {
               <label className="form-label" htmlFor="admin-order-payment-status">Payment Status</label>
               <select id="admin-order-payment-status" className="form-select" value={payForm.payment_status} onChange={e => setPayForm(p => ({ ...p, payment_status: e.target.value }))}>
                 <option value="">Select</option>
-                {PAYMENT_STATUSES.map(s => <option key={s} value={s} style={{ textTransform: 'capitalize' }}>{s}</option>)}
+                {PAYMENT_STATUSES.map(s => <option key={s} value={s} className="text-capitalize">{s}</option>)}
               </select>
             </div>
             <div className="form-group">
@@ -373,7 +380,7 @@ const AdminOrderDetailPage = () => {
       </div>
 
       {/* Timestamps */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16, fontSize: '0.75rem', color: '#94A3B8', padding: '0 4px' }}>
+      <div className="flex justify-between mt-16 text-xs text-tertiary" style={{ padding: '0 4px' }}>
         <span>Created: {new Date(order.created_at).toLocaleString()}</span>
         <span>Updated: {new Date(order.updated_at).toLocaleString()}</span>
       </div>

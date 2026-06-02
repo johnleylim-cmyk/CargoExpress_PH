@@ -8,9 +8,11 @@ const ProfilePage = () => {
   const { user, userProfile, logout } = useAuth();
   const navigate = useNavigate();
   const [orderStats, setOrderStats] = useState({ total: 0, active: 0, delivered: 0 });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
+      setLoading(true);
       getOrders(user.id, false).then(orders => {
         const data = orders || [];
         setOrderStats({
@@ -18,7 +20,7 @@ const ProfilePage = () => {
           active: data.filter(o => !['Delivered', 'Cancelled'].includes(o.status)).length,
           delivered: data.filter(o => o.status === 'Delivered').length,
         });
-      }).catch(() => {});
+      }).catch(() => {}).finally(() => setLoading(false));
     }
   }, [user]);
 
@@ -40,7 +42,7 @@ const ProfilePage = () => {
             {(userProfile?.name || 'U')[0].toUpperCase()}
           </div>
           <div className="profile-card-info">
-            <h2 style={{ fontWeight: 800, marginTop: 12 }}>{userProfile?.name || 'User'}</h2>
+            <h2 className="fw-800 mt-12">{userProfile?.name || 'User'}</h2>
             <p className="text-secondary text-sm">{userProfile?.email}</p>
           </div>
         </div>
@@ -49,30 +51,30 @@ const ProfilePage = () => {
       {/* Quick Stats */}
       <div className="profile-quick-stats stagger-item" style={{ animationDelay: '60ms' }}>
         <div className="profile-stat-item">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36, borderRadius: 10, background: '#EFF6FF', marginBottom: 8 }}>
+          <div className="flex items-center justify-center mb-8" style={{ width: 36, height: 36, borderRadius: 10, background: '#EFF6FF' }}>
             <Package size={18} color="#3B82F6" />
           </div>
-          <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--accent)' }}>{orderStats.total}</div>
+          <div className="text-xl fw-800 text-accent">{loading ? '—' : orderStats.total}</div>
           <div className="text-xs text-tertiary">Total Orders</div>
         </div>
         <div className="profile-stat-item">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36, borderRadius: 10, background: '#FFF7F0', marginBottom: 8 }}>
+          <div className="flex items-center justify-center mb-8" style={{ width: 36, height: 36, borderRadius: 10, background: '#FFF7F0' }}>
             <Truck size={18} color="var(--primary)" />
           </div>
-          <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--accent)' }}>{orderStats.active}</div>
+          <div className="text-xl fw-800 text-accent">{loading ? '—' : orderStats.active}</div>
           <div className="text-xs text-tertiary">Active</div>
         </div>
         <div className="profile-stat-item">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36, borderRadius: 10, background: '#ECFDF5', marginBottom: 8 }}>
+          <div className="flex items-center justify-center mb-8" style={{ width: 36, height: 36, borderRadius: 10, background: '#ECFDF5' }}>
             <Package size={18} color="#10B981" />
           </div>
-          <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--accent)' }}>{orderStats.delivered}</div>
+          <div className="text-xl fw-800 text-accent">{loading ? '—' : orderStats.delivered}</div>
           <div className="text-xs text-tertiary">Delivered</div>
         </div>
       </div>
 
       {/* Menu Items */}
-      <div className="card stagger-item" style={{ marginBottom: 16, animationDelay: '120ms' }}>
+      <div className="card stagger-item mb-16" style={{ animationDelay: '120ms' }}>
         {menuItems.map((item, index) => {
           const Icon = item.icon;
           return (
@@ -82,13 +84,13 @@ const ProfilePage = () => {
               className="profile-menu-item"
               style={{ borderBottom: index < menuItems.length - 1 ? '1px solid #F1F5F9' : 'none' }}
             >
-              <div style={{
+              <div className="flex items-center justify-center flex-shrink-0" style={{
                 width: 40, height: 40, borderRadius: 10,
-                background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                background: `${item.color}12`,
               }}>
                 <Icon size={18} color={item.color} />
               </div>
-              <div style={{ flex: 1, textAlign: 'left' }}>
+              <div className="flex-1">
                 <div className="text-sm font-bold">{item.label}</div>
                 <div className="text-xs text-secondary">{item.desc}</div>
               </div>
@@ -100,9 +102,9 @@ const ProfilePage = () => {
 
       {/* Sign Out */}
       <button
-        className="btn btn-outline w-full stagger-item"
+        className="btn btn-outline w-full stagger-item justify-center"
         onClick={handleLogout}
-        style={{ justifyContent: 'center', color: '#EF4444', borderColor: '#FCA5A5', animationDelay: '180ms' }}
+        style={{ color: '#EF4444', borderColor: '#FCA5A5', animationDelay: '180ms' }}
       >
         <LogOut size={18} /> Sign Out
       </button>

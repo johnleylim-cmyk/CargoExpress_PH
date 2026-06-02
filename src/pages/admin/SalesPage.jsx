@@ -57,7 +57,7 @@ const SalesPage = () => {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-4" style={{marginBottom:24}}>
+      <div className="grid grid-4 mb-24">
         {loading ? (
           Array.from({ length: 4 }, (_, i) => <SkeletonStatCard key={i} />)
         ) : (
@@ -77,34 +77,30 @@ const SalesPage = () => {
         )}
       </div>
 
-      <div className="grid grid-2" style={{marginBottom:24}}>
+      <div className="grid grid-2 mb-24">
         {/* Payment Methods */}
         <div className="card admin-section-card stagger-item" style={{ animationDelay: '240ms' }}>
           <div className="card-header"><h3>Payment Methods</h3></div>
           <div className="card-body">
             {loading ? <SkeletonText lines={3} /> : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <div className="flex flex-col gap-20">
                 {paymentMethods.map((m,i)=>(
                   <div key={i}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center gap-10">
                         <div style={{ width: 10, height: 10, borderRadius: '50%', background: m.c, flexShrink: 0 }} />
-                        <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text)' }}>{m.l}</span>
+                        <span className="text-sm fw-600" style={{ color: 'var(--text)' }}>{m.l}</span>
                       </div>
-                      <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text)', whiteSpace: 'nowrap' }}>
+                      <span className="fw-700" style={{ fontSize: '0.9rem', color: 'var(--text)', whiteSpace: 'nowrap' }}>
                         ₱{(m.v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </div>
-                    <div style={{
-                      width: '100%',
-                      height: 8,
+                    <div className="w-full h-8 overflow-hidden" style={{
                       background: '#F1F5F9',
                       borderRadius: 4,
-                      overflow: 'hidden',
                     }}>
-                      <div style={{
+                      <div className="h-full" style={{
                         width: `${Math.max(2, (m.v / maxPayment) * 100)}%`,
-                        height: '100%',
                         background: m.c,
                         borderRadius: 4,
                         transition: 'width 0.8s ease',
@@ -122,32 +118,29 @@ const SalesPage = () => {
           <div className="card-header"><h3>Monthly Revenue</h3></div>
           <div className="card-body">
             {loading ? <SkeletonText lines={4} /> : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div className="flex flex-col gap-16">
                 {monthlySales.slice(0,6).map((m,i)=>(
                   <div key={i}>
-                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 6, flexWrap: 'wrap', gap: 4 }}>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text)', whiteSpace: 'nowrap' }}>
+                    <div className="flex justify-between mb-6 flex-wrap gap-4" style={{ alignItems: 'baseline' }}>
+                      <span className="fw-600" style={{ fontSize: '0.8rem', color: 'var(--text)', whiteSpace: 'nowrap' }}>
                         {new Date(m.month + '-01').toLocaleDateString('en-PH', { month: 'short', year: 'numeric' })}
                       </span>
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-                        <span style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>
+                      <div className="flex gap-10" style={{ alignItems: 'baseline' }}>
+                        <span className="fw-700 text-primary" style={{ fontSize: '0.9rem', whiteSpace: 'nowrap' }}>
                           ₱{m.total_revenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                         </span>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+                        <span className="text-xs text-secondary" style={{ whiteSpace: 'nowrap' }}>
                           collected: ₱{m.collected.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                         </span>
                       </div>
                     </div>
-                    <div style={{
-                      width: '100%',
+                    <div className="w-full overflow-hidden" style={{
                       height: 6,
                       background: '#F1F5F9',
                       borderRadius: 3,
-                      overflow: 'hidden',
                     }}>
-                      <div style={{
+                      <div className="h-full" style={{
                         width: `${Math.max(2, (m.total_revenue / maxMonthly) * 100)}%`,
-                        height: '100%',
                         background: 'linear-gradient(90deg, var(--primary), var(--primary-light))',
                         borderRadius: 3,
                         transition: 'width 0.8s ease',
@@ -155,7 +148,7 @@ const SalesPage = () => {
                     </div>
                   </div>
                 ))}
-                {monthlySales.length===0&&<div className="text-center text-secondary" style={{padding:20}}>No sales data</div>}
+                {monthlySales.length===0&&<div className="text-center text-secondary p-20">No sales data</div>}
               </div>
             )}
           </div>

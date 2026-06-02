@@ -78,9 +78,9 @@ const SupportChatPage = () => {
 
   if (loading) {
     return (
-      <div className="page-transition" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 300 }}>
+      <div className="page-transition flex flex-col items-center justify-center" style={{ minHeight: 300 }}>
         <div className="spinner" />
-        <p className="text-secondary text-sm" style={{ marginTop: 12 }}>Loading chat...</p>
+        <p className="text-secondary text-sm mt-12">Loading chat...</p>
       </div>
     );
   }
@@ -88,8 +88,8 @@ const SupportChatPage = () => {
   return (
     <div className="support-chat-page page-transition">
       {/* Header */}
-      <div style={{ marginBottom: 16 }}>
-        <h2 style={{ fontWeight: 800, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div className="mb-16">
+        <h2 className="fw-800 mb-4 flex items-center gap-8">
           <MessageSquare size={22} color="var(--primary)" />
           Support Chat
         </h2>
@@ -113,7 +113,7 @@ const SupportChatPage = () => {
           return (
             <div key={m.id}>
               {showTimestamp && (
-                <div style={{ textAlign: 'center', margin: '12px 0 8px', fontSize: '0.6875rem', color: 'var(--text-tertiary)', fontWeight: 600 }}>
+                <div className="text-center mt-12 mb-8 text-tertiary fw-600" style={{ fontSize: '0.6875rem' }}>
                   {new Date(m.created_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })} · {formatTime(m.created_at)}
                 </div>
               )}
@@ -129,7 +129,7 @@ const SupportChatPage = () => {
                       <span key={j}>{line}{j < m.message.split('\n').length - 1 && <br />}</span>
                     ))}
                   </div>
-                  <div className="chat-timestamp" style={{ textAlign: isMe ? 'right' : 'left' }}>
+                  <div className={`chat-timestamp ${isMe ? 'text-right' : ''}`}>
                     {formatTime(m.created_at)}
                   </div>
                 </div>
@@ -141,15 +141,15 @@ const SupportChatPage = () => {
       </div>
 
       {/* Input */}
-      <div style={{ display: 'flex', gap: 8 }}>
+      <div className="flex gap-8">
         <input
-          className="form-input"
+          className="form-input flex-1"
           placeholder="Type your message..."
           aria-label="Type your support message"
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-          style={{ flex: 1, borderRadius: 'var(--radius-full)', paddingLeft: 18 }}
+          style={{ borderRadius: 'var(--radius-full)', paddingLeft: 18 }}
           disabled={sending}
         />
         <button

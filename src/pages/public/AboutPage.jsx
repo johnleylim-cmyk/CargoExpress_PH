@@ -88,12 +88,12 @@ const AboutPage = () => {
       <div className="public-about-feature-wrap">
         <div className="public-about-feature-grid">
           {FEATURES.map((f, i) => (
-            <div key={i} className="card card-body stagger-item" style={{ animationDelay: `${i * 80}ms`, textAlign: 'center', padding: 20 }}>
-              <div style={{ width: 44, height: 44, borderRadius: 'var(--radius-md)', background: 'var(--primary-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', margin: '0 auto 10px' }}>
+            <div key={i} className="card card-body stagger-item text-center p-20" style={{ animationDelay: `${i * 80}ms` }}>
+              <div className="rounded-md flex items-center justify-center text-primary mx-auto mb-10" style={{ width: 44, height: 44, background: 'var(--primary-bg)' }}>
                 <f.icon size={22} />
               </div>
-              <h4 style={{ fontWeight: 700, fontSize: '0.875rem', marginBottom: 4 }}>{f.title}</h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8125rem' }}>{f.desc}</p>
+              <h4 className="fw-700 text-sm mb-4">{f.title}</h4>
+              <p className="text-secondary" style={{ fontSize: '0.8125rem' }}>{f.desc}</p>
             </div>
           ))}
         </div>
@@ -102,10 +102,10 @@ const AboutPage = () => {
       <div className="public-about-content-grid">
         {/* Left Side: About & Contact Info */}
         <div>
-          <div className="card animate-slide-up" style={{ marginBottom: 20 }}>
+          <div className="card animate-slide-up mb-20">
             <div className="card-body">
-              <h3 style={{ fontWeight: 800, marginBottom: 12, color: 'var(--text)' }}>About Us</h3>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '0.9375rem', marginBottom: 16 }}>
+              <h3 className="fw-800 mb-12" style={{ color: 'var(--text)' }}>About Us</h3>
+              <p className="text-secondary mb-16" style={{ lineHeight: 1.7, fontSize: '0.9375rem' }}>
                 CargoExpress PH is a real and reliable cargo delivery service connecting <strong>Bohol</strong> and <strong>Manila</strong>.
                 We provide safe, affordable, and secure sea cargo shipping for individuals and businesses who need to transport goods between these key locations.
               </p>
@@ -117,9 +117,9 @@ const AboutPage = () => {
 
           <div className="card animate-slide-up" style={{ animationDelay: '100ms' }}>
             <div className="card-body">
-              <h3 style={{ fontWeight: 800, marginBottom: 16, color: 'var(--text)' }}>Business Information</h3>
+              <h3 className="fw-800 mb-16" style={{ color: 'var(--text)' }}>Business Information</h3>
               {fetchingAdmin ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-tertiary)', padding: '20px 0' }}>
+                <div className="flex items-center gap-8 text-tertiary py-20">
                   <Loader size={16} className="animate-spin" /> Loading details...
                 </div>
               ) : !adminProfile ? (
@@ -127,49 +127,49 @@ const AboutPage = () => {
                   <AlertCircle size={16} /> Business information is currently unavailable.
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                <div className="flex flex-col gap-20">
                   {adminProfile.name && (
-                    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                      <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: 'var(--primary-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><User size={18} color="var(--primary)" /></div>
+                    <div className="flex gap-12 items-start">
+                      <div className="w-36 h-36 rounded-sm flex items-center justify-center flex-shrink-0" style={{ background: 'var(--primary-bg)' }}><User size={18} color="var(--primary)" /></div>
                       <div>
-                        <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: 2 }}>Business Owner</div>
-                        <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text)' }}>{adminProfile.name}</div>
+                        <div className="fw-700 text-secondary mb-2" style={{ fontSize: '0.8125rem' }}>Business Owner</div>
+                        <div className="fw-600" style={{ fontSize: '0.9375rem', color: 'var(--text)' }}>{adminProfile.name}</div>
                       </div>
                     </div>
                   )}
                   {(adminProfile.facebook_link || adminProfile.name) && (
-                    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                      <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: 'var(--info-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Globe size={18} color="var(--info)" /></div>
+                    <div className="flex gap-12 items-start">
+                      <div className="w-36 h-36 rounded-sm flex items-center justify-center flex-shrink-0" style={{ background: 'var(--info-bg)' }}><Globe size={18} color="var(--info)" /></div>
                       <div>
-                        <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: 2 }}>Facebook Page</div>
+                        <div className="fw-700 text-secondary mb-2" style={{ fontSize: '0.8125rem' }}>Facebook Page</div>
                         {adminProfile.facebook_link ? (
                           <a href={adminProfile.facebook_link} target="_blank" rel="noopener noreferrer" className="public-about-contact-link">
                             Visit Facebook page <ExternalLink size={14} aria-hidden="true" />
                           </a>
                         ) : (
-                          <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>See Facebook for updated link.</div>
+                          <div className="text-secondary text-sm">See Facebook for updated link.</div>
                         )}
                       </div>
                     </div>
                   )}
-                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: 'var(--success-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Phone size={18} color="var(--success)" /></div>
+                  <div className="flex gap-12 items-start">
+                    <div className="w-36 h-36 rounded-sm flex items-center justify-center flex-shrink-0" style={{ background: 'var(--success-bg)' }}><Phone size={18} color="var(--success)" /></div>
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: 2 }}>Contact Numbers</div>
-                      <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', display: 'flex', flexDirection: 'column', gap: 3 }}>
+                      <div className="fw-700 text-secondary mb-2" style={{ fontSize: '0.8125rem' }}>Contact Numbers</div>
+                      <div className="text-secondary text-sm flex flex-col" style={{ gap: 3 }}>
                         {adminProfile.smart_phone && <div><strong>Smart:</strong> {adminProfile.smart_phone}</div>}
                         {adminProfile.globe_phone && <div><strong>Globe:</strong> {adminProfile.globe_phone}</div>}
                         {!adminProfile.smart_phone && !adminProfile.globe_phone && 'See Facebook for numbers.'}
                       </div>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: 'var(--error-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><MapPin size={18} color="var(--error)" /></div>
+                  <div className="flex gap-12 items-start">
+                    <div className="w-36 h-36 rounded-sm flex items-center justify-center flex-shrink-0" style={{ background: 'var(--error-bg)' }}><MapPin size={18} color="var(--error)" /></div>
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: 2 }}>Service Locations</div>
-                      <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        {adminProfile.manila_address && <div><strong style={{ color: 'var(--text)' }}>Manila Hub:</strong><br /><span style={{ textTransform: 'capitalize' }}>{adminProfile.manila_address}</span></div>}
-                        {adminProfile.bohol_address && <div><strong style={{ color: 'var(--text)' }}>Bohol Hub:</strong><br /><span style={{ textTransform: 'capitalize' }}>{adminProfile.bohol_address}</span></div>}
+                      <div className="fw-700 text-secondary mb-2" style={{ fontSize: '0.8125rem' }}>Service Locations</div>
+                      <div className="text-secondary text-sm flex flex-col gap-6">
+                        {adminProfile.manila_address && <div><strong style={{ color: 'var(--text)' }}>Manila Hub:</strong><br /><span className="text-capitalize">{adminProfile.manila_address}</span></div>}
+                        {adminProfile.bohol_address && <div><strong style={{ color: 'var(--text)' }}>Bohol Hub:</strong><br /><span className="text-capitalize">{adminProfile.bohol_address}</span></div>}
                         {!adminProfile.manila_address && !adminProfile.bohol_address && 'Metro Manila and Bohol'}
                       </div>
                     </div>
@@ -184,8 +184,8 @@ const AboutPage = () => {
         <div>
           <div className="card animate-slide-up public-about-contact-card" style={{ position: 'sticky', top: 24, animationDelay: '200ms' }}>
             <div className="card-body">
-              <h3 style={{ fontWeight: 800, marginBottom: 6, color: 'var(--text)' }}>Contact Us</h3>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: 24 }}>
+              <h3 className="fw-800 mb-6" style={{ color: 'var(--text)' }}>Contact Us</h3>
+              <p className="text-sm text-secondary mb-24">
                 Have a question or want to request a pickup? Send us a message.
               </p>
               <form onSubmit={handleSubmit}>
@@ -211,7 +211,7 @@ const AboutPage = () => {
       </div>
 
       {/* Footer */}
-      <footer style={{ marginTop: 'auto', textAlign: 'center', padding: '24px', color: 'var(--text-tertiary)', fontSize: '0.875rem', borderTop: '1px solid var(--border-light)' }}>
+      <footer className="text-center p-24 text-tertiary text-sm" style={{ marginTop: 'auto', borderTop: '1px solid var(--border-light)' }}>
         Copyright {new Date().getFullYear()} CargoExpress PH. All rights reserved.
       </footer>
     </div>

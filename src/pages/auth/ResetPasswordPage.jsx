@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import {
   Container, Lock, Loader, CheckCircle2,
   Eye, EyeOff, ShieldCheck, AlertTriangle, Check,
+  ArrowLeft,
 } from 'lucide-react';
 
 /* ── Password strength helpers ───────────────────────────────────────── */
@@ -117,7 +118,7 @@ const ResetPasswordPage = () => {
           <div className="auth-success-loader">
             <div className="auth-success-bar" />
           </div>
-          <Link to="/login" className="auth-submit-btn" style={{ textDecoration: 'none', marginTop: 12 }}>
+          <Link to="/login" className="auth-submit-btn text-no-underline mt-12">
             Go to Sign In
           </Link>
         </div>

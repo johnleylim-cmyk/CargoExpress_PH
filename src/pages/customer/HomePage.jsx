@@ -85,12 +85,12 @@ const HomePage = () => {
     <PageTransition>
 
       {/* ── Hero ─────────────────────────────────────────────────── */}
-      <div className="hero animate-slide-up" style={{ marginBottom: 24 }}>
-        <p style={{ fontSize: '0.875rem', marginBottom: 4 }}>{greeting()},</p>
+      <div className="hero animate-slide-up mb-lg">
+        <p className="text-sm mb-4">{greeting()},</p>
         <h2>{userProfile?.name || (user?.email?.split('@')[0]) || 'Welcome'}</h2>
-        <p style={{ marginTop: 8 }}>Track and manage your shipments with ease.</p>
-        <form onSubmit={handleTrack} style={{ display: 'flex', gap: 10, marginTop: 20, position: 'relative' }}>
-          <div className="search-box" style={{ flex: 1 }}>
+        <p className="mt-8">Track and manage your shipments with ease.</p>
+        <form onSubmit={handleTrack} className="flex gap-10 mt-20 relative">
+          <div className="search-box flex-1">
             <Search size={16} className="search-icon" />
             <input
               aria-label="Tracking number"
@@ -102,9 +102,9 @@ const HomePage = () => {
           </div>
           <button
             type="submit"
-            className="btn btn-primary"
+            className="btn btn-primary flex-shrink-0"
             disabled={!trackingSearch.trim()}
-            style={{ flexShrink: 0, borderRadius: 10 }}
+            style={{ borderRadius: 10 }}
           >
             Track
           </button>
@@ -114,11 +114,11 @@ const HomePage = () => {
       {/* ── Loading Skeleton ─────────────────────────────────────── */}
       {loading && (
         <div>
-          <StaggerItem delay={0} style={{ marginBottom: 16 }}>
+          <StaggerItem delay={0} className="mb-md">
             <SkeletonStatCard />
           </StaggerItem>
           {[0, 1, 2].map(i => (
-            <StaggerItem key={i} delay={(i + 1) * 60} style={{ marginBottom: 12 }}>
+            <StaggerItem key={i} delay={(i + 1) * 60} className="mb-12">
               <SkeletonOrderCard />
             </StaggerItem>
           ))}
@@ -127,70 +127,66 @@ const HomePage = () => {
 
       {/* ── Nearest Active / Scheduled Trip Card ────────────────── */}
       {!loading && activeTrip && (
-        <StaggerItem delay={0} style={{ marginBottom: 24 }}>
-          <h3 style={{ fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <StaggerItem delay={0} className="mb-lg">
+          <h3 className="fw-700 mb-12 flex items-center gap-8">
             <Truck size={18} color="var(--primary)" /> Next Available Trip
           </h3>
-          <div style={{
+          <div className="rounded-lg p-20 text-inverse" style={{
             background: 'linear-gradient(135deg, var(--accent), #2D5A8A)',
-            borderRadius: 16, padding: 20, color: 'white',
             boxShadow: '0 8px 24px rgba(27,58,92,0.25)',
           }}>
             {/* Trip badge */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-              <span style={{
+            <div className="flex items-center justify-between mb-md">
+              <span className="text-xs fw-700" style={{
                 background: 'var(--primary-glow)', color: 'var(--primary-light)',
-                fontSize: '0.75rem', fontWeight: 700, padding: '4px 10px',
+                padding: '4px 10px',
                 borderRadius: 20, border: '1px solid rgba(232, 114, 42, 0.35)',
                 letterSpacing: '0.04em',
               }}>
                 {activeTrip.status === 'in_progress' ? 'In Progress' : 'Scheduled'}
               </span>
-              <span style={{ fontSize: '0.75rem', opacity: 0.7, fontWeight: 600 }}>
+              <span className="text-xs fw-600" style={{ opacity: 0.7 }}>
                 {activeTrip.trip_number}
               </span>
             </div>
 
             {/* Route */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-              <div style={{
-                width: 40, height: 40, borderRadius: '50%',
+            <div className="flex items-center gap-10 mb-md">
+              <div className="w-40 h-40 rounded-full flex items-center justify-center flex-shrink-0" style={{
                 background: 'var(--primary-glow)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0,
               }}>
                 <MapPin size={20} color="var(--primary-light)" />
               </div>
               <div>
-                <div style={{ fontSize: '0.75rem', opacity: 0.6, marginBottom: 2 }}>Route</div>
-                <div style={{ fontWeight: 800, fontSize: '1.0625rem' }}>
+                <div className="text-xs mb-2" style={{ opacity: 0.6 }}>Route</div>
+                <div className="fw-800" style={{ fontSize: '1.0625rem' }}>
                   {activeTrip.origin} → {activeTrip.destination}
                 </div>
               </div>
             </div>
 
             {/* Dates + Capacity row */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 20 }}>
-              <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 10, padding: '10px 12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+            <div className="mb-20" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+              <div className="rounded-md" style={{ background: 'rgba(255,255,255,0.08)', padding: '10px 12px' }}>
+                <div className="flex items-center gap-6 mb-4">
                   <Calendar size={13} opacity={0.7} />
-                  <span style={{ fontSize: '0.65rem', opacity: 0.65, fontWeight: 600, textTransform: 'uppercase' }}>Departure</span>
+                  <span className="fw-600 text-uppercase" style={{ fontSize: '0.65rem', opacity: 0.65 }}>Departure</span>
                 </div>
-                <div style={{ fontWeight: 700, fontSize: '0.8125rem' }}>{fmtDate(activeTrip.departure_date)}</div>
+                <div className="fw-700" style={{ fontSize: '0.8125rem' }}>{fmtDate(activeTrip.departure_date)}</div>
               </div>
-              <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 10, padding: '10px 12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+              <div className="rounded-md" style={{ background: 'rgba(255,255,255,0.08)', padding: '10px 12px' }}>
+                <div className="flex items-center gap-6 mb-4">
                   <Calendar size={13} opacity={0.7} />
-                  <span style={{ fontSize: '0.65rem', opacity: 0.65, fontWeight: 600, textTransform: 'uppercase' }}>ETA</span>
+                  <span className="fw-600 text-uppercase" style={{ fontSize: '0.65rem', opacity: 0.65 }}>ETA</span>
                 </div>
-                <div style={{ fontWeight: 700, fontSize: '0.8125rem' }}>{fmtDate(activeTrip.arrival_date)}</div>
+                <div className="fw-700" style={{ fontSize: '0.8125rem' }}>{fmtDate(activeTrip.arrival_date)}</div>
               </div>
-              <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 10, padding: '10px 12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+              <div className="rounded-md" style={{ background: 'rgba(255,255,255,0.08)', padding: '10px 12px' }}>
+                <div className="flex items-center gap-6 mb-4">
                   <Weight size={13} opacity={0.7} />
-                  <span style={{ fontSize: '0.65rem', opacity: 0.65, fontWeight: 600, textTransform: 'uppercase' }}>Avail.</span>
+                  <span className="fw-600 text-uppercase" style={{ fontSize: '0.65rem', opacity: 0.65 }}>Avail.</span>
                 </div>
-                <div style={{ fontWeight: 700, fontSize: '0.8125rem' }}>
+                <div className="fw-700" style={{ fontSize: '0.8125rem' }}>
                   {availableSlots > 0 ? `${availableSlots.toFixed(0)} kg` : 'Full'}
                 </div>
               </div>
@@ -198,9 +194,8 @@ const HomePage = () => {
 
             {/* Price per kilo badge */}
             {activeTrip.price_per_kg && (
-              <div style={{
-                fontSize: '0.8125rem', opacity: 0.8, marginBottom: 12,
-                fontWeight: 600,
+              <div className="mb-12 fw-600" style={{
+                fontSize: '0.8125rem', opacity: 0.8,
               }}>
                 ₱{parseFloat(activeTrip.price_per_kg).toFixed(2)} / kg
               </div>
@@ -210,12 +205,11 @@ const HomePage = () => {
             <button
               type="button"
               onClick={() => handleBookFromTrip(activeTrip)}
+              className="w-full border-none fw-700 cursor-pointer flex items-center justify-center gap-8 rounded-md"
               style={{
-                width: '100%', padding: '13px', borderRadius: 10, border: 'none',
+                padding: '13px',
                 background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
-                color: 'white', fontWeight: 700, fontSize: '0.9375rem',
-                cursor: 'pointer', display: 'flex', alignItems: 'center',
-                justifyContent: 'center', gap: 8,
+                color: 'white', fontSize: '0.9375rem',
                 boxShadow: '0 4px 16px var(--primary-glow)',
               }}
             >
@@ -228,25 +222,25 @@ const HomePage = () => {
 
       {/* ── Active Shipments ─────────────────────────────────────── */}
       {!loading && activeOrders.length > 0 && (
-        <StaggerItem delay={60} style={{ marginBottom: 24 }}>
+        <StaggerItem delay={60} className="mb-lg">
           <div className="flex items-center justify-between mb-md">
-            <h3 style={{ fontWeight: 700 }}>Active Shipments</h3>
+            <h3 className="fw-700">Active Shipments</h3>
             <Link to="/customer/orders" className="customer-inline-action text-sm text-primary font-medium">
               View All <ArrowRight size={14} />
             </Link>
           </div>
           {activeOrders.slice(0, 3).map((order, index) => (
-            <StaggerItem key={order.id} delay={(index + 2) * 60} style={{ marginBottom: 12 }}>
-              <Link to={`/customer/orders/${order.id}`} className="card card-interactive" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
-                <div className="card-body" style={{ padding: 16 }}>
-                  <div className="flex items-center justify-between" style={{ marginBottom: 8 }}>
-                    <span style={{ fontWeight: 700, fontSize: '0.9375rem', color: 'var(--accent)' }}>{order.tracking_number}</span>
+            <StaggerItem key={order.id} delay={(index + 2) * 60} className="mb-12">
+              <Link to={`/customer/orders/${order.id}`} className="card card-interactive block text-no-underline" style={{ color: 'inherit' }}>
+                <div className="card-body p-16">
+                  <div className="flex items-center justify-between mb-8">
+                    <span className="fw-700 text-accent" style={{ fontSize: '0.9375rem' }}>{order.tracking_number}</span>
                     <StatusBadge status={order.status} />
                   </div>
                   <div className="text-sm text-secondary">
                     {order.origin || '—'} → {order.destination || '—'}
                   </div>
-                  <div className="text-xs text-tertiary" style={{ marginTop: 4 }}>
+                  <div className="text-xs text-tertiary mt-4">
                     {order.receiver_name} • ₱{parseFloat(order.shipping_cost || 0).toFixed(2)}
                   </div>
                 </div>
@@ -259,16 +253,16 @@ const HomePage = () => {
       {/* ── Announcements ────────────────────────────────────────── */}
       {!loading && announcements.length > 0 && (
         <StaggerItem delay={120}>
-          <h3 style={{ fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Megaphone size={18} style={{ color: 'var(--primary)' }} />
+          <h3 className="fw-700 mb-12 flex items-center gap-8">
+            <Megaphone size={18} className="text-primary" />
             Announcements
           </h3>
           {announcements.slice(0, 3).map((a, index) => (
-            <StaggerItem key={a.id} className="card" delay={(index + 4) * 60} style={{ marginBottom: 12 }}>
-              <div className="card-body" style={{ padding: 16 }}>
-                <div style={{ fontWeight: 600, marginBottom: 4 }}>{a.title}</div>
+            <StaggerItem key={a.id} className="card mb-12" delay={(index + 4) * 60}>
+              <div className="card-body p-16">
+                <div className="fw-600 mb-4">{a.title}</div>
                 <div className="text-sm text-secondary">{a.content}</div>
-                <div className="text-xs text-tertiary" style={{ marginTop: 8 }}>
+                <div className="text-xs text-tertiary mt-8">
                   {new Date(a.created_at).toLocaleDateString()}
                 </div>
               </div>

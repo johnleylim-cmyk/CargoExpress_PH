@@ -224,14 +224,14 @@ const ForgotPasswordPage = () => {
               </div>
             )}
 
-            <Link to="/login" className="auth-submit-btn" style={{ textDecoration: 'none', marginTop: 20 }}>
+            <Link to="/login" className="auth-submit-btn text-no-underline mt-20">
               <ArrowLeft size={16} /> Back to Sign In
             </Link>
 
             <div className="auth-card-footer">
               <p>Wrong email? <button
-                className="auth-link"
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, font: 'inherit' }}
+                className="auth-link bg-none border-none cursor-pointer p-0"
+                style={{ font: 'inherit' }}
                 onClick={() => { setSent(false); setError(''); setCountdown(0); if (timerRef.current) clearInterval(timerRef.current); }}
               >Try again</button></p>
             </div>

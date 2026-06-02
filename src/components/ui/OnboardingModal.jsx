@@ -42,7 +42,6 @@ const OnboardingModal = () => {
   useEffect(() => {
     const done = localStorage.getItem(ONBOARDING_KEY);
     if (!done) {
-      // Small delay so the page renders first
       const timer = setTimeout(() => setShow(true), 800);
       return () => clearTimeout(timer);
     }
@@ -82,23 +81,19 @@ const OnboardingModal = () => {
       aria-label="Welcome tour"
     >
       <div className={`onboarding-card ${exiting ? 'onboarding-card-exit' : 'onboarding-card-enter'}`}>
-        {/* Skip button */}
         {!isLast && (
           <button className="onboarding-skip" onClick={handleSkip} type="button">
             Skip <X size={14} />
           </button>
         )}
 
-        {/* Icon */}
         <div className="onboarding-icon" style={{ background: current.color }}>
           <Icon size={36} strokeWidth={1.8} />
         </div>
 
-        {/* Content */}
         <h2 className="onboarding-title">{current.title}</h2>
         <p className="onboarding-desc">{current.description}</p>
 
-        {/* Progress dots */}
         <div className="onboarding-dots">
           {STEPS.map((_, i) => (
             <button
@@ -111,7 +106,6 @@ const OnboardingModal = () => {
           ))}
         </div>
 
-        {/* Action button */}
         <button className="onboarding-btn" onClick={handleNext} type="button">
           {isLast ? (
             <>

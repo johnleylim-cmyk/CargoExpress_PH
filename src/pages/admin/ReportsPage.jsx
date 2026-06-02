@@ -72,14 +72,14 @@ const ReportsPage = () => {
       <div className="report-controls no-print">
         <div>
           <h1 className="admin-page-title">
-            <FileText size={24} style={{ color: 'var(--primary)' }} />
+            <FileText size={24} className="text-primary" />
             Reports & Analytics
           </h1>
           <p className="admin-page-subtitle">
             Generate, view, and print detailed business reports
           </p>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div className="flex gap-8">
           <button type="button" className="btn btn-ghost btn-sm" onClick={loadReport} disabled={loading}>
             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             Refresh
@@ -149,17 +149,17 @@ const ReportsPage = () => {
 
       {/* ── Error State ── */}
       {error && (
-        <div className="card" style={{ padding: 24, textAlign: 'center', color: 'var(--error)', marginTop: 16 }}>
-          <AlertTriangle size={32} style={{ marginBottom: 8 }} />
+        <div className="card p-24 text-center text-error mt-16">
+          <AlertTriangle size={32} className="mb-8" />
           <p>{error}</p>
-          <button type="button" className="btn btn-primary btn-sm" style={{ marginTop: 12 }} onClick={loadReport}>Retry</button>
+          <button type="button" className="btn btn-primary btn-sm mt-12" onClick={loadReport}>Retry</button>
         </div>
       )}
 
       {/* ── Loading State ── */}
       {loading && (
-        <div style={{ marginTop: 20 }}>
-          <div className="grid grid-4" style={{ marginBottom: 20 }}>
+        <div className="mt-20">
+          <div className="grid grid-4 mb-20">
             {[0, 1, 2, 3].map(i => <SkeletonStatCard key={i} />)}
           </div>
           <div className="card card-body"><SkeletonText lines={8} /></div>
@@ -181,18 +181,18 @@ const ReportsPage = () => {
                 </svg>
               </div>
               <div>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0 }}>
+                <h1 className="text-2xl fw-800 m-0">
                   <span style={{ color: '#1B3A5C' }}>CARGO</span><span style={{ color: '#E8722A' }}>EXPRESS</span>
-                  <span style={{ color: '#94A3B8', fontWeight: 400, fontSize: '0.875rem', marginLeft: 8 }}>PH</span>
+                  <span className="text-tertiary fw-400 text-sm ml-8">PH</span>
                 </h1>
-                <p style={{ fontSize: '0.75rem', color: '#64748B', margin: 0 }}>Cargo Delivery & Logistics</p>
+                <p className="text-xs text-secondary m-0">Cargo Delivery & Logistics</p>
               </div>
             </div>
             <div className="print-report-meta">
-              <h2 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#0F172A', margin: '0 0 4px 0' }}>
+              <h2 className="text-lg fw-700 m-0 mb-4" style={{ color: '#0F172A' }}>
                 {period === 'custom' ? 'Custom Period Report' : `${period.charAt(0).toUpperCase() + period.slice(1)} Report`}
               </h2>
-              <p style={{ fontSize: '0.8rem', color: '#64748B', margin: 0 }}>{data.periodLabel}</p>
+              <p className="text-secondary m-0" style={{ fontSize: '0.8rem' }}>{data.periodLabel}</p>
               <p style={{ fontSize: '0.7rem', color: '#94A3B8', margin: '2px 0 0 0' }}>Generated: {formatDateTime(data.generatedAt)}</p>
             </div>
           </div>
@@ -209,7 +209,7 @@ const ReportsPage = () => {
           {hasData && (
             <>
               {/* ── Summary Cards ── */}
-              <div className="grid grid-4 report-summary-cards" style={{ marginBottom: 20, marginTop: 16 }}>
+              <div className="grid grid-4 report-summary-cards mb-20 mt-16">
                 {[
                   { label: 'Total Orders', value: s.totalOrders, icon: Package, gradient: 'linear-gradient(135deg, var(--primary), var(--primary-light))', prefix: '', decimals: 0 },
                   { label: 'Delivered', value: s.deliveredCount, icon: CheckCircle, gradient: 'linear-gradient(135deg, #10B981, #34D399)', prefix: '', decimals: 0 },
@@ -226,12 +226,12 @@ const ReportsPage = () => {
               </div>
 
               {/* ── Two Column: Status + Financial ── */}
-              <div className="grid grid-2" style={{ marginBottom: 20 }}>
+              <div className="grid grid-2 mb-20">
                 {/* Status Breakdown */}
                 <div className="card stagger-item" style={{ animationDelay: '240ms' }}>
                   <div className="card-header">
-                    <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <Package size={18} style={{ color: 'var(--primary)' }} />
+                    <h3 className="flex items-center gap-8">
+                      <Package size={18} className="text-primary" />
                       Order Status Breakdown
                     </h3>
                   </div>
@@ -240,16 +240,16 @@ const ReportsPage = () => {
                       <thead>
                         <tr>
                           <th>Status</th>
-                          <th style={{ textAlign: 'center' }}>Count</th>
-                          <th style={{ textAlign: 'right' }}>Percentage</th>
+                          <th className="text-center">Count</th>
+                          <th className="text-right">Percentage</th>
                         </tr>
                       </thead>
                       <tbody>
                         {STATUS_ORDER.filter(st => data.statusBreakdown[st]).map(st => (
                           <tr key={st}>
                             <td data-label="Status"><StatusBadge status={st} /></td>
-                            <td data-label="Count" style={{ textAlign: 'center', fontWeight: 600 }}>{data.statusBreakdown[st]}</td>
-                            <td data-label="Percentage" style={{ textAlign: 'right', color: 'var(--text-secondary)' }}>
+                            <td data-label="Count" className="text-center fw-600">{data.statusBreakdown[st]}</td>
+                            <td data-label="Percentage" className="text-right text-secondary">
                               {s.totalOrders > 0 ? ((data.statusBreakdown[st] / s.totalOrders) * 100).toFixed(1) : 0}%
                             </td>
                           </tr>
@@ -262,8 +262,8 @@ const ReportsPage = () => {
                 {/* Financial Summary */}
                 <div className="card stagger-item" style={{ animationDelay: '300ms' }}>
                   <div className="card-header">
-                    <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <CreditCard size={18} style={{ color: 'var(--primary)' }} />
+                    <h3 className="flex items-center gap-8">
+                      <CreditCard size={18} className="text-primary" />
                       Financial Summary
                     </h3>
                   </div>
@@ -275,11 +275,11 @@ const ReportsPage = () => {
                       </div>
                       <div className="report-financial-item">
                         <span className="report-financial-label">Total Collected</span>
-                        <span className="report-financial-value" style={{ color: 'var(--success)' }}>{formatCurrency(s.totalCollected)}</span>
+                        <span className="report-financial-value text-success">{formatCurrency(s.totalCollected)}</span>
                       </div>
                       <div className="report-financial-item">
                         <span className="report-financial-label">Outstanding Balance</span>
-                        <span className="report-financial-value" style={{ color: 'var(--error)' }}>{formatCurrency(s.totalOutstanding)}</span>
+                        <span className="report-financial-value text-error">{formatCurrency(s.totalOutstanding)}</span>
                       </div>
                       <div className="report-financial-item">
                         <span className="report-financial-label">Total Weight Shipped</span>
@@ -287,20 +287,20 @@ const ReportsPage = () => {
                       </div>
                     </div>
 
-                    <div style={{ borderTop: '1px solid var(--border)', margin: '16px 0', paddingTop: 16 }}>
-                      <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Payment Methods</div>
+                    <div className="mt-16 mb-16" style={{ borderTop: '1px solid var(--border)', paddingTop: 16 }}>
+                      <div className="fw-700 text-secondary mb-12 text-uppercase" style={{ fontSize: '0.8rem', letterSpacing: '0.05em' }}>Payment Methods</div>
                       {[
                         { label: 'Cash', count: s.cashCount, total: s.cashTotal, color: '#10B981' },
                         { label: 'GCash', count: s.gcashCount, total: s.gcashTotal, color: '#3B82F6' },
                         { label: 'Pay Later', count: s.paylaterCount, total: s.paylaterTotal, color: '#F59E0B' },
                       ].map((pm, i) => (
-                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: i < 2 ? '1px solid var(--border-light)' : 'none' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <div style={{ width: 8, height: 8, borderRadius: '50%', background: pm.color }} />
-                            <span style={{ fontSize: '0.875rem' }}>{pm.label}</span>
-                            <span className="badge" style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)', fontSize: '0.7rem' }}>{pm.count} orders</span>
+                        <div key={i} className="flex justify-between items-center" style={{ padding: '6px 0', borderBottom: i < 2 ? '1px solid var(--border-light)' : 'none' }}>
+                          <div className="flex items-center gap-8">
+                            <div className="w-8 h-8 rounded-full" style={{ background: pm.color }} />
+                            <span className="text-sm">{pm.label}</span>
+                            <span className="badge text-secondary" style={{ background: 'var(--bg-secondary)', fontSize: '0.7rem' }}>{pm.count} orders</span>
                           </div>
-                          <span style={{ fontWeight: 700, fontSize: '0.875rem' }}>{formatCurrency(pm.total)}</span>
+                          <span className="fw-700 text-sm">{formatCurrency(pm.total)}</span>
                         </div>
                       ))}
                     </div>
@@ -310,10 +310,10 @@ const ReportsPage = () => {
 
               {/* ── Route Performance ── */}
               {data.routeBreakdown.length > 0 && (
-                <div className="card stagger-item" style={{ animationDelay: '360ms', marginBottom: 20 }}>
+                <div className="card stagger-item mb-20" style={{ animationDelay: '360ms' }}>
                   <div className="card-header">
-                    <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <MapPin size={18} style={{ color: 'var(--primary)' }} />
+                    <h3 className="flex items-center gap-8">
+                      <MapPin size={18} className="text-primary" />
                       Route Performance
                     </h3>
                   </div>
@@ -323,23 +323,23 @@ const ReportsPage = () => {
                         <thead>
                           <tr>
                             <th>Route</th>
-                            <th style={{ textAlign: 'center' }}>Orders</th>
-                            <th style={{ textAlign: 'right' }}>Revenue</th>
-                            <th style={{ textAlign: 'right' }}>Weight</th>
+                            <th className="text-center">Orders</th>
+                            <th className="text-right">Revenue</th>
+                            <th className="text-right">Weight</th>
                           </tr>
                         </thead>
                         <tbody>
                           {data.routeBreakdown.map((r, i) => (
                             <tr key={i}>
-                              <td data-label="Route" style={{ fontWeight: 600 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                  <Truck size={14} style={{ color: 'var(--primary)', flexShrink: 0 }} />
+                              <td data-label="Route" className="fw-600">
+                                <div className="flex items-center gap-6">
+                                  <Truck size={14} className="text-primary flex-shrink-0" />
                                   {r.route}
                                 </div>
                               </td>
-                              <td data-label="Orders" style={{ textAlign: 'center' }}>{r.count}</td>
-                              <td data-label="Revenue" style={{ textAlign: 'right', fontWeight: 600 }}>{formatCurrency(r.revenue)}</td>
-                              <td data-label="Weight" style={{ textAlign: 'right', color: 'var(--text-secondary)' }}>{formatWeight(r.weight)}</td>
+                              <td data-label="Orders" className="text-center">{r.count}</td>
+                              <td data-label="Revenue" className="text-right fw-600">{formatCurrency(r.revenue)}</td>
+                              <td data-label="Weight" className="text-right text-secondary">{formatWeight(r.weight)}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -350,17 +350,17 @@ const ReportsPage = () => {
               )}
 
               {/* ── Detailed Order List ── */}
-              <div className="card stagger-item" style={{ animationDelay: '420ms', marginBottom: 20 }}>
-                <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <FileText size={18} style={{ color: 'var(--primary)' }} />
+              <div className="card stagger-item mb-20" style={{ animationDelay: '420ms' }}>
+                <div className="card-header flex justify-between items-center">
+                  <h3 className="flex items-center gap-8">
+                    <FileText size={18} className="text-primary" />
                     Detailed Order List
                   </h3>
-                  <span className="badge" style={{ background: 'var(--primary-bg)', color: 'var(--primary)' }}>
+                  <span className="badge text-primary" style={{ background: 'var(--primary-bg)' }}>
                     {data.orders.length} orders
                   </span>
                 </div>
-                <div className="card-body" style={{ padding: 0 }}>
+                <div className="card-body p-0">
                   <div style={{ overflowX: 'auto' }}>
                     <table className="report-table report-table-striped">
                       <thead>
@@ -369,8 +369,8 @@ const ReportsPage = () => {
                           <th>Customer</th>
                           <th>Route</th>
                           <th>Status</th>
-                          <th style={{ textAlign: 'right' }}>Weight</th>
-                          <th style={{ textAlign: 'right' }}>Amount</th>
+                          <th className="text-right">Weight</th>
+                          <th className="text-right">Amount</th>
                           <th>Payment</th>
                           <th>Date</th>
                         </tr>
@@ -378,33 +378,32 @@ const ReportsPage = () => {
                       <tbody>
                         {data.orders.map((order) => (
                           <tr key={order.id}>
-                            <td data-label="Tracking #" style={{ fontWeight: 600, fontFamily: 'monospace', fontSize: '0.8rem', color: 'var(--primary)' }}>
+                            <td data-label="Tracking #" className="fw-600 text-primary" style={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
                               {order.tracking_number}
                             </td>
                             <td data-label="Customer">
-                              <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>{order.sender_name || order.profiles?.name || '—'}</div>
+                              <div className="fw-500" style={{ fontSize: '0.85rem' }}>{order.sender_name || order.profiles?.name || '—'}</div>
                             </td>
-                            <td data-label="Route" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                            <td data-label="Route" className="text-secondary" style={{ fontSize: '0.8rem' }}>
                               {order.origin || '—'} → {order.destination || '—'}
                             </td>
                             <td data-label="Status"><StatusBadge status={order.status} /></td>
-                            <td data-label="Weight" style={{ textAlign: 'right', fontSize: '0.85rem' }}>
+                            <td data-label="Weight" className="text-right" style={{ fontSize: '0.85rem' }}>
                               {formatWeight(parseFloat(order.actual_weight || order.package_weight || 0))}
                             </td>
-                            <td data-label="Amount" style={{ textAlign: 'right', fontWeight: 600, fontSize: '0.85rem' }}>
+                            <td data-label="Amount" className="text-right fw-600" style={{ fontSize: '0.85rem' }}>
                               {formatCurrency(parseFloat(order.shipping_cost || 0))}
                             </td>
                             <td data-label="Payment">
-                              <span className="badge" style={{
+                              <span className="badge text-capitalize" style={{
                                 background: order.payment_method === 'cash' ? '#ECFDF5' : order.payment_method === 'gcash' ? '#EFF6FF' : '#FFFBEB',
                                 color: order.payment_method === 'cash' ? '#059669' : order.payment_method === 'gcash' ? '#2563EB' : '#D97706',
-                                fontSize: '0.7rem',
-                                textTransform: 'capitalize'
+                                fontSize: '0.7rem'
                               }}>
                                 {order.payment_method || '—'}
                               </span>
                             </td>
-                            <td data-label="Date" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+                            <td data-label="Date" className="text-secondary" style={{ fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
                               {formatDate(order.created_at)}
                             </td>
                           </tr>
@@ -417,15 +416,15 @@ const ReportsPage = () => {
 
               {/* ── Print Footer ── */}
               <div className="print-report-footer">
-                <div style={{ borderTop: '2px solid #E2E8F0', paddingTop: 16, marginTop: 24 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div className="mt-24" style={{ borderTop: '2px solid #E2E8F0', paddingTop: 16 }}>
+                  <div className="flex justify-between items-start">
                     <div>
-                      <p style={{ fontSize: '0.75rem', fontWeight: 600, color: '#0F172A', margin: '0 0 2px 0' }}>CargoExpress PH</p>
-                      <p style={{ fontSize: '0.65rem', color: '#94A3B8', margin: 0 }}>Cargo Delivery & Logistics Services</p>
+                      <p className="text-xs fw-600" style={{ color: '#0F172A', margin: '0 0 2px 0' }}>CargoExpress PH</p>
+                      <p className="text-tertiary m-0" style={{ fontSize: '0.65rem' }}>Cargo Delivery & Logistics Services</p>
                     </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <p style={{ fontSize: '0.65rem', color: '#94A3B8', margin: '0 0 2px 0' }}>This is a system-generated report.</p>
-                      <p style={{ fontSize: '0.65rem', color: '#94A3B8', margin: 0 }}>Generated on {formatDateTime(data.generatedAt)}</p>
+                    <div className="text-right">
+                      <p className="text-tertiary" style={{ fontSize: '0.65rem', margin: '0 0 2px 0' }}>This is a system-generated report.</p>
+                      <p className="text-tertiary m-0" style={{ fontSize: '0.65rem' }}>Generated on {formatDateTime(data.generatedAt)}</p>
                     </div>
                   </div>
                 </div>

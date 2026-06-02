@@ -47,8 +47,8 @@ const OrdersPage = () => {
 
   return (
     <PageTransition>
-      <h2 style={{ fontWeight: 800, marginBottom: 20 }}>My Orders</h2>
-      <StaggerItem className="search-box" delay={0} style={{ marginBottom: 16 }}>
+      <h2 className="fw-800 mb-20">My Orders</h2>
+      <StaggerItem className="search-box mb-16" delay={0}>
         <Search size={16} className="search-icon" />
         <input
           aria-label="Search tracking number"
@@ -74,18 +74,18 @@ const OrdersPage = () => {
       {loading ? (
         <div>
           {[0, 1, 2].map(i => (
-            <StaggerItem key={i} delay={(i + 2) * 60} style={{ marginBottom: 12 }}>
+            <StaggerItem key={i} delay={(i + 2) * 60} className="mb-12">
               <SkeletonOrderCard />
             </StaggerItem>
           ))}
         </div>
       ) : error ? (
         <div className="card animate-scale-in text-center" style={{ padding: 40 }}>
-          <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#FEF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div className="flex items-center justify-center mx-auto mb-16" style={{ width: 56, height: 56, borderRadius: '50%', background: '#FEF2F2' }}>
             <AlertCircle size={28} color="#EF4444" />
           </div>
-          <h3 style={{ color: '#DC2626', marginBottom: 8 }}>Error Loading Orders</h3>
-          <p className="text-secondary text-sm" style={{ marginBottom: 20 }}>{error}</p>
+          <h3 className="mb-8" style={{ color: '#DC2626' }}>Error Loading Orders</h3>
+          <p className="text-secondary text-sm mb-20">{error}</p>
           <button type="button" className="btn btn-primary" onClick={() => loadOrders()}>Retry</button>
         </div>
       ) : filtered.length === 0 ? (
@@ -100,15 +100,15 @@ const OrdersPage = () => {
         </div>
       ) : (
         filtered.map((order, index) => (
-          <StaggerItem key={order.id} delay={(index + 2) * 60} style={{ marginBottom: 12 }}>
-            <Link to={`/customer/orders/${order.id}`} className="card card-interactive" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
-              <div className="card-body" style={{ padding: 16 }}>
-                <div className="flex items-center justify-between" style={{ marginBottom: 6 }}>
-                  <span style={{ fontWeight: 700, color: 'var(--accent)' }}>{order.tracking_number}</span>
+          <StaggerItem key={order.id} delay={(index + 2) * 60} className="mb-12">
+            <Link to={`/customer/orders/${order.id}`} className="card card-interactive block text-no-underline" style={{ color: 'inherit' }}>
+              <div className="card-body p-16">
+                <div className="flex items-center justify-between mb-6">
+                  <span className="fw-700 text-accent">{order.tracking_number}</span>
                   <StatusBadge status={order.status} size="sm" />
                 </div>
                 <div className="text-sm text-secondary">{order.origin} → {order.destination}</div>
-                <div className="flex items-center justify-between" style={{ marginTop: 8 }}>
+                <div className="flex items-center justify-between mt-8">
                   <span className="text-xs text-tertiary">To: {order.receiver_name}</span>
                   <span className="text-sm font-bold">₱{parseFloat(order.shipping_cost || 0).toFixed(2)}</span>
                 </div>

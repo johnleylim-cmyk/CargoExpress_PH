@@ -5,6 +5,7 @@ import ErrorBoundary from '../ui/ErrorBoundary';
 import PageTransition from '../ui/PageTransition';
 import CommandPalette from '../ui/CommandPalette';
 import { Menu, Container, Search } from 'lucide-react';
+import ThemeToggle from '../ui/ThemeToggle';
 import { useAuth } from '../../contexts/AuthContext';
 
 const COLLAPSE_KEY = 'sidebar_collapsed';
@@ -84,6 +85,7 @@ const AdminLayout = () => {
 
   return (
     <div className={`app-layout${sidebarCollapsed ? ' sidebar-collapsed' : ''}${sidebarOpen ? ' sidebar-drawer-open' : ''}`}>
+      <a href="#admin-main-content" className="skip-link">Skip to main content</a>
       <Sidebar
         isOpen={sidebarOpen}
         onClose={closeSidebar}
@@ -92,7 +94,7 @@ const AdminLayout = () => {
       />
       <div className="main-content">
         <header className="topbar">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div className="flex items-center gap-12">
             <button
               className="btn-icon btn-ghost mobile-menu-toggle"
               type="button"
@@ -106,20 +108,21 @@ const AdminLayout = () => {
             <div className="topbar-title">
               <Container size={22} color="var(--primary)" className="topbar-logo-icon" />
               <span>
-                <span style={{ color: 'var(--accent)' }}>CARGO</span>
-                <span style={{ color: 'var(--primary)' }}>EXPRESS</span>
+                <span className="text-accent">CARGO</span>
+                <span className="text-primary">EXPRESS</span>
               </span>
             </div>
           </div>
           <div className="topbar-actions">
+            <ThemeToggle />
             {/* Command Palette Trigger */}
             <button
-              className="btn-icon btn-ghost"
+              className="btn-icon btn-ghost gap-6 text-tertiary"
               type="button"
               onClick={() => setCmdPaletteOpen(true)}
               title="Search (Ctrl+K)"
               aria-label="Open command palette"
-              style={{ gap: 6, fontSize: '0.8125rem', color: 'var(--text-tertiary)' }}
+              style={{ fontSize: '0.8125rem' }}
             >
               <Search size={17} />
               <kbd style={{
@@ -137,7 +140,7 @@ const AdminLayout = () => {
             </div>
           </div>
         </header>
-        <PageTransition as="main" className="page-content">
+        <PageTransition as="main" id="admin-main-content" className="page-content">
           <ErrorBoundary>
             <Outlet />
           </ErrorBoundary>

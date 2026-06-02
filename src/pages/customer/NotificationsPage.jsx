@@ -80,12 +80,12 @@ const NotificationsPage = () => {
 
   return (
     <div className="page-transition">
-      <div className="section-header" style={{ marginBottom: 20 }}>
+      <div className="section-header mb-20">
         <div>
-          <h2 style={{ fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <h2 className="fw-800 flex items-center gap-8">
             Notifications
             {unreadCount > 0 && (
-              <span className="badge badge-pending" style={{ fontSize: '0.75rem' }}>
+              <span className="badge badge-pending text-xs">
                 {unreadCount} new
               </span>
             )}
@@ -104,11 +104,11 @@ const NotificationsPage = () => {
       </div>
 
       {loading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="flex flex-col gap-12">
           {[0, 1, 2, 3].map(i => (
-            <div key={i} className="card card-body stagger-item" style={{ animationDelay: `${i * 60}ms`, display: 'flex', gap: 12 }}>
-              <div className="skeleton skeleton-avatar" style={{ width: 40, height: 40 }} />
-              <div style={{ flex: 1 }}>
+            <div key={i} className="card card-body stagger-item flex gap-12" style={{ animationDelay: `${i * 60}ms` }}>
+              <div className="skeleton skeleton-avatar w-40 h-40" />
+              <div className="flex-1">
                 <SkeletonText lines={2} />
               </div>
             </div>

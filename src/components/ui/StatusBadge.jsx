@@ -23,7 +23,7 @@ const StatusBadge = ({ status, size = 'default' }) => {
   const active = isActiveStatus(status);
 
   return (
-    <span className={`badge ${statusToClass(status)} ${size === 'sm' ? 'text-xs' : ''}`}>
+    <span className={`badge ${statusToClass(status)} ${size === 'sm' ? 'text-xs' : ''}`} aria-label={`Status: ${label}`}>
       <span className={`badge-dot ${active ? 'animated' : ''}`} />
       {label}
     </span>

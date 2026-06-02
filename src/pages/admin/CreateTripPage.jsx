@@ -54,7 +54,7 @@ const CreateTripPage = () => {
 
   return (
     <div className="page-transition">
-      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost" style={{ marginBottom: 16 }}>
+      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost mb-16">
         <ArrowLeft size={18} /> Back
       </button>
       <div className="admin-page-header">
@@ -67,9 +67,9 @@ const CreateTripPage = () => {
       <form onSubmit={handleSubmit}>
 
         {/* ── Route ─────────────────────────────────────── */}
-        <div className="card stagger-item" style={{ marginBottom: 16, animationDelay: '0ms' }}>
+        <div className="card stagger-item mb-16" style={{ animationDelay: '0ms' }}>
           <div className="card-body">
-            <h3 style={{ fontWeight: 700, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <h3 className="fw-700 mb-16 flex items-center gap-8">
               <Truck size={18} color="var(--primary)" /> Route *
             </h3>
             <div className="admin-route-options">
@@ -78,17 +78,16 @@ const CreateTripPage = () => {
                   type="button" key={r.label}
                   onClick={() => handleRouteSelect(r)}
                   aria-pressed={form.origin === r.origin}
-                  className="card-interactive admin-route-option"
+                  className="card-interactive admin-route-option flex-1 p-20 cursor-pointer text-center"
                   style={{
-                    flex: 1, padding: 20, borderRadius: 12,
-                    border: form.origin === r.origin ? '2px solid var(--primary)' : '1.5px solid #E2E8F0',
-                    background: form.origin === r.origin ? '#FFF7F0' : 'white',
-                    cursor: 'pointer', textAlign: 'center',
+                    borderRadius: 12,
+                    border: form.origin === r.origin ? '2px solid var(--primary)' : '1.5px solid var(--border)',
+                    background: form.origin === r.origin ? 'var(--primary-bg)' : 'var(--surface)',
                   }}
                 >
-                  <Truck size={22} color={form.origin === r.origin ? 'var(--primary)' : '#94A3B8'} style={{ margin: '0 auto 8px' }} />
-                  <div style={{ fontWeight: 700, fontSize: '0.9375rem' }}>{r.label}</div>
-                  <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: 4 }}>
+                  <Truck size={22} color={form.origin === r.origin ? 'var(--primary)' : 'var(--text-tertiary)'} className="mx-auto mb-8" />
+                  <div className="fw-700" style={{ fontSize: '0.9375rem' }}>{r.label}</div>
+                  <div className="text-xs text-tertiary mt-4">
                     {r.origin} → {r.destination}
                   </div>
                 </button>
@@ -98,12 +97,12 @@ const CreateTripPage = () => {
         </div>
 
         {/* ── Schedule ──────────────────────────────────── */}
-        <div className="card stagger-item" style={{ marginBottom: 16, animationDelay: '60ms' }}>
+        <div className="card stagger-item mb-16" style={{ animationDelay: '60ms' }}>
           <div className="card-body">
-            <h3 style={{ fontWeight: 700, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <h3 className="fw-700 mb-16 flex items-center gap-8">
               <Calendar size={18} color="var(--primary)" /> Schedule *
             </h3>
-            <div className="grid grid-2" style={{ gap: 16 }}>
+            <div className="grid grid-2 gap-16">
               <div className="form-group">
                 <label className="form-label" htmlFor="trip-departure-date">Departure Date & Time *</label>
                 <input id="trip-departure-date" type="datetime-local" className="form-input" value={form.departure_date} onChange={e => u('departure_date', e.target.value)} required />
@@ -117,30 +116,30 @@ const CreateTripPage = () => {
         </div>
 
         {/* ── Capacity & Pricing ────────────────────────── */}
-        <div className="card stagger-item" style={{ marginBottom: 16, animationDelay: '120ms' }}>
+        <div className="card stagger-item mb-16" style={{ animationDelay: '120ms' }}>
           <div className="card-body">
-            <h3 style={{ fontWeight: 700, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <h3 className="fw-700 mb-16 flex items-center gap-8">
               <Package size={18} color="var(--primary)" /> Capacity & Pricing *
             </h3>
-            <div className="grid grid-2" style={{ gap: 16 }}>
+            <div className="grid grid-2 gap-16">
               <div className="form-group">
                 <label className="form-label" htmlFor="trip-capacity">Capacity (kg) *</label>
                 <input id="trip-capacity" type="number" className="form-input" value={form.capacity} onChange={e => u('capacity', e.target.value)} placeholder="e.g. 1000" min="1" step="1" required aria-describedby="trip-capacity-helper" />
-                <p id="trip-capacity-helper" style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: 4 }}>Maximum total cargo weight for this trip.</p>
+                <p id="trip-capacity-helper" className="text-xs text-tertiary mt-4">Maximum total cargo weight for this trip.</p>
               </div>
               <div className="form-group">
                 <label className="form-label" htmlFor="trip-price-per-kg">Amount per Kilo (₱) *</label>
-                <div style={{ position: 'relative' }}>
+                <div className="relative">
                   <DollarSign size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', pointerEvents: 'none' }} />
                   <input id="trip-price-per-kg" type="number" className="form-input" value={form.price_per_kg} onChange={e => u('price_per_kg', e.target.value)} placeholder="e.g. 70" min="0.01" step="0.01" style={{ paddingLeft: 34 }} required aria-describedby="trip-price-helper" />
                 </div>
-                <p id="trip-price-helper" style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: 4 }}>Cost per kilogram for bookings on this trip.</p>
+                <p id="trip-price-helper" className="text-xs text-tertiary mt-4">Cost per kilogram for bookings on this trip.</p>
               </div>
             </div>
 
             {/* Live preview — informational display, not a feedback notification */}
             {form.capacity && form.price_per_kg && (
-              <div className="alert-banner" style={{ marginTop: 8, background: 'linear-gradient(135deg, #FFF7F0, #FFF3E8)', border: '1.5px solid var(--primary-light)', color: '#92400E' }}>
+              <div className="alert-banner mt-8" style={{ background: 'var(--primary-bg)', border: '1.5px solid var(--primary-light)', color: 'var(--text)' }}>
                 <Lightbulb size={16} /> At ₱{parseFloat(form.price_per_kg).toFixed(2)}/kg, a full trip of {Number(form.capacity).toLocaleString()} kg
                 = <strong>₱{(Number(form.capacity) * Number(form.price_per_kg)).toLocaleString()} max revenue</strong>
               </div>
@@ -149,10 +148,10 @@ const CreateTripPage = () => {
         </div>
 
         {/* ── Notes ───────────────────────────────────── */}
-        <div className="card stagger-item" style={{ marginBottom: 24, animationDelay: '180ms' }}>
+        <div className="card stagger-item mb-24" style={{ animationDelay: '180ms' }}>
           <div className="card-body">
-            <h3 style={{ fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <FileText size={18} color="#94A3B8" /> Notes <span style={{ fontWeight: 400, color: '#94A3B8', fontSize: '0.8125rem' }}>(Optional)</span>
+            <h3 className="fw-700 mb-12 flex items-center gap-8">
+              <FileText size={18} color="#94A3B8" /> Notes <span className="fw-400" style={{ color: '#94A3B8', fontSize: '0.8125rem' }}>(Optional)</span>
             </h3>
             <label className="sr-only" htmlFor="trip-notes">Trip notes</label>
             <textarea id="trip-notes" className="form-textarea" value={form.notes} onChange={e => u('notes', e.target.value)} placeholder="Any special instructions, remarks, or conditions for this trip..." rows={3} />

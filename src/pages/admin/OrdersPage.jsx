@@ -63,7 +63,7 @@ const AdminOrdersPage = () => {
           />
         </div>
       </div>
-      <div className="tabs admin-mobile-tabs" role="tablist" aria-label="Order status filters" style={{ marginBottom: 16 }}>
+      <div className="tabs admin-mobile-tabs mb-16" role="tablist" aria-label="Order status filters">
         {tabs.map((t, i) => (
           <button
             key={t}
@@ -107,18 +107,18 @@ const AdminOrdersPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.03, type: 'spring', stiffness: 260, damping: 24 }}
                   >
-                    <td data-label="Tracking"><Link to={`/admin/orders/${o.id}`} style={{ fontWeight: 700, color: 'var(--accent)' }}>{o.tracking_number}</Link></td>
+                    <td data-label="Tracking"><Link to={`/admin/orders/${o.id}`} className="fw-700 text-accent">{o.tracking_number}</Link></td>
                     <td data-label="Customer">{o.profiles?.name || o.sender_name}</td>
                     <td data-label="Route" className="text-sm">{o.origin} → {o.destination}</td>
                     <td data-label="Weight">{o.actual_weight || o.package_weight} kg</td>
-                    <td data-label="Cost" style={{ fontWeight: 600 }}>₱{parseFloat(o.shipping_cost || 0).toFixed(2)}</td>
+                    <td data-label="Cost" className="fw-600">₱{parseFloat(o.shipping_cost || 0).toFixed(2)}</td>
                     <td data-label="Status"><StatusBadge status={o.status} size="sm" /></td>
                     <td data-label="Date" className="text-xs text-secondary">{new Date(o.created_at).toLocaleDateString()}</td>
                   </motion.tr>
                 ))}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={7} style={{ padding: 0, border: 'none' }}>
+                    <td colSpan={7} className="p-0 b-0">
                       <EmptyState
                         icon={Package}
                         title="No orders found"

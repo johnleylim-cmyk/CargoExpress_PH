@@ -68,7 +68,7 @@ const ContactInquiriesPage = () => {
     return (
       <div className="page-transition">
         <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
-          <AlertCircle size={32} style={{ marginBottom: 8 }} />
+          <AlertCircle size={32} className="mb-8" />
           <h3>Error</h3>
           <p>{error}</p>
           <button type="button" className="btn btn-primary mt-md" onClick={loadInquiries}>Retry</button>
@@ -82,11 +82,11 @@ const ContactInquiriesPage = () => {
       {/* Header */}
       <div className="admin-page-header">
         <div>
-          <h1 style={{ fontWeight: 800, fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <h1 className="fw-800 text-2xl flex items-center gap-10">
             <Mail size={24} color="var(--primary)" />
             Contact Inquiries
             {newCount > 0 && (
-              <span className="badge badge-warning" style={{ fontSize: '0.75rem' }}>
+              <span className="badge badge-warning text-xs">
                 {newCount} new
               </span>
             )}
@@ -106,9 +106,8 @@ const ContactInquiriesPage = () => {
             type="button"
             role="tab"
             aria-selected={filter === f}
-            className={`btn btn-sm ${filter === f ? 'btn-primary' : 'btn-outline'}`}
+            className={`btn btn-sm ${filter === f ? 'btn-primary' : 'btn-outline'} text-capitalize`}
             onClick={() => setFilter(f)}
-            style={{ textTransform: 'capitalize' }}
           >
             {f === 'all' ? `All (${inquiries.length})` : `${f} (${inquiries.filter(i => i.status === f).length})`}
           </button>
@@ -148,15 +147,15 @@ const ContactInquiriesPage = () => {
                   return (
                     <tr
                       key={inq.id}
+                      className="cursor-pointer"
                       style={{
-                        cursor: 'pointer',
                         background: inq.status === 'new' ? 'rgba(245, 158, 11, 0.04)' : undefined,
                       }}
                       onClick={() => handleView(inq)}
                     >
                       <td data-label="Name">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div className="sidebar-user-avatar" style={{ width: 32, height: 32, fontSize: '0.75rem', flexShrink: 0 }}>
+                        <div className="flex items-center gap-8">
+                          <div className="sidebar-user-avatar w-32 h-32 text-xs flex-shrink-0">
                             {(inq.name || '?')[0].toUpperCase()}
                           </div>
                           <span style={{ fontWeight: inq.status === 'new' ? 700 : 500 }}>
@@ -169,12 +168,9 @@ const ContactInquiriesPage = () => {
                       </td>
                       <td data-label="Message">
                         <div
-                          className="text-sm"
+                          className="text-sm truncate"
                           style={{
                             maxWidth: 280,
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
                             fontWeight: inq.status === 'new' ? 600 : 400,
                           }}
                         >
@@ -190,7 +186,7 @@ const ContactInquiriesPage = () => {
                         })}
                       </td>
                       <td data-label="Actions">
-                        <div style={{ display: 'flex', gap: 4 }} onClick={e => e.stopPropagation()}>
+                        <div className="flex gap-4" onClick={e => e.stopPropagation()}>
                           <button
                             className="btn-icon btn-ghost"
                             type="button"
@@ -230,7 +226,7 @@ const ContactInquiriesPage = () => {
         <div className="modal-overlay" onClick={() => setSelectedInquiry(null)}>
           <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 520 }}>
             <div className="modal-header">
-              <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <h3 className="flex items-center gap-8">
                 <MessageSquare size={18} />
                 Inquiry Details
               </h3>
@@ -240,40 +236,39 @@ const ContactInquiriesPage = () => {
             </div>
             <div className="modal-body">
               <div style={{
-                background: '#F8FAFC', borderRadius: 10, padding: 16, marginBottom: 16,
-                display: 'flex', alignItems: 'center', gap: 12,
-              }}>
-                <div className="sidebar-user-avatar" style={{ width: 44, height: 44, fontSize: '1rem', flexShrink: 0 }}>
+                background: '#F8FAFC', borderRadius: 10,
+              }} className="p-16 mb-16 flex items-center gap-12">
+                <div className="sidebar-user-avatar text-base flex-shrink-0" style={{ width: 44, height: 44 }}>
                   {(selectedInquiry.name || '?')[0].toUpperCase()}
                 </div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '1rem' }}>{selectedInquiry.name}</div>
+                  <div className="fw-700 text-base">{selectedInquiry.name}</div>
                   {selectedInquiry.phone && (
-                    <div className="text-sm text-secondary" style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                    <div className="text-sm text-secondary flex items-center gap-4 mt-2">
                       <Phone size={12} /> {selectedInquiry.phone}
                     </div>
                   )}
                 </div>
-                <div style={{ marginLeft: 'auto' }}>
+                <div className="ml-auto">
                   <span className={`badge ${(STATUS_CONFIG[selectedInquiry.status] || STATUS_CONFIG.new).className}`}>
                     {(STATUS_CONFIG[selectedInquiry.status] || STATUS_CONFIG.new).label}
                   </span>
                 </div>
               </div>
 
-              <div style={{ marginBottom: 16 }}>
-                <div className="text-xs text-tertiary font-bold" style={{ marginBottom: 6, textTransform: 'uppercase' }}>
+              <div className="mb-16">
+                <div className="text-xs text-tertiary font-bold mb-6 text-uppercase">
                   Message
                 </div>
-                <div style={{
+                <div className="p-16" style={{
                   background: 'white', border: '1px solid #E2E8F0', borderRadius: 10,
-                  padding: 16, fontSize: '0.9375rem', lineHeight: 1.7, whiteSpace: 'pre-wrap',
+                  fontSize: '0.9375rem', lineHeight: 1.7, whiteSpace: 'pre-wrap',
                 }}>
                   {selectedInquiry.message}
                 </div>
               </div>
 
-              <div className="text-xs text-tertiary" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <div className="text-xs text-tertiary flex items-center gap-4">
                 <Clock size={12} />
                 Submitted {new Date(selectedInquiry.created_at).toLocaleString('en-PH', {
                   month: 'long', day: 'numeric', year: 'numeric',
@@ -295,7 +290,7 @@ const ContactInquiriesPage = () => {
                   Mark as Resolved
                 </button>
               ) : (
-                <span className="text-sm text-secondary" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span className="text-sm text-secondary flex items-center gap-6">
                   <CheckCircle size={14} color="#10B981" /> Resolved
                 </span>
               )}

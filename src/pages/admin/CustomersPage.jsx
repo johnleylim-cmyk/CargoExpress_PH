@@ -69,7 +69,7 @@ const CustomersPage = () => {
               <tbody>
                 {filtered.map((c, i) => (
                   <tr key={c.id} className="stagger-item" style={{ animationDelay: `${i * 30}ms` }}>
-                    <td data-label="Name"><Link to={`/admin/customers/${c.id}`} style={{ fontWeight: 700, color: 'var(--accent)' }}>{c.name}</Link></td>
+                    <td data-label="Name"><Link to={`/admin/customers/${c.id}`} className="fw-700 text-accent">{c.name}</Link></td>
                     <td data-label="Email" className="text-sm">{c.email}</td><td data-label="Phone" className="text-sm">{c.phone || '—'}</td>
                     <td data-label="Province" className="text-sm">{c.address_province || '—'}</td>
                     <td data-label="Joined" className="text-xs text-secondary">{new Date(c.created_at).toLocaleDateString()}</td>
@@ -77,7 +77,7 @@ const CustomersPage = () => {
                 ))}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={5} style={{ padding: 0, border: 'none' }}>
+                    <td colSpan={5} className="p-0 b-0">
                       <EmptyState
                         icon={Users}
                         title="No customers found"

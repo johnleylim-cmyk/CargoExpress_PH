@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate, Link, useLocation } from 'react-router-dom';
 import { Bell, User, Container, LogOut, Menu, X, MessageSquare, Package, MapPin, Plus, Home, ChevronRight } from 'lucide-react';
+import ThemeToggle from '../ui/ThemeToggle';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { getUnreadNotificationCount } from '../../lib/database';
@@ -125,6 +126,7 @@ const CustomerLayout = () => {
     <>
     <OnboardingModal />
     <div className="customer-layout-v2">
+      <a href="#customer-main-content" className="skip-link">Skip to main content</a>
       {/* ─── Top Navigation Bar ─── */}
       <header className="customer-navbar">
         <div className="customer-navbar-inner">
@@ -132,8 +134,8 @@ const CustomerLayout = () => {
           <Link to="/customer" className="customer-navbar-logo">
             <Container size={24} color="var(--primary)" />
             <span className="customer-navbar-brand">
-              <span style={{ color: 'var(--accent)' }}>CARGO</span>
-              <span style={{ color: 'var(--primary)' }}>EXPRESS</span>
+              <span className="text-accent">CARGO</span>
+              <span className="text-primary">EXPRESS</span>
             </span>
           </Link>
 
@@ -155,6 +157,7 @@ const CustomerLayout = () => {
 
           {/* Right: Icons + Avatar */}
           <div className="customer-navbar-right">
+            <ThemeToggle />
             <Link
               to="/customer/notifications"
               className="customer-nav-icon-btn"
@@ -168,7 +171,7 @@ const CustomerLayout = () => {
             </Link>
 
             {/* Profile Dropdown */}
-            <div style={{ position: 'relative' }} ref={dropdownRef}>
+            <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="customer-avatar-btn"
@@ -185,21 +188,21 @@ const CustomerLayout = () => {
               {dropdownOpen && (
                 <div className="customer-dropdown">
                   <div className="customer-dropdown-header">
-                    <div style={{ fontWeight: 600, color: 'var(--text)', fontSize: '0.875rem' }}>
+                    <div className="fw-600 text-sm">
                       {getDisplayName(userProfile, user?.email)}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: 2 }}>
+                    <div className="text-xs text-secondary mt-2">
                       {user?.email}
                     </div>
                   </div>
-                  <div style={{ padding: 8 }}>
+                  <div className="p-8">
                     <Link
                       to="/customer/personal-info"
                       onClick={() => setDropdownOpen(false)}
                       className="customer-dropdown-item"
                     >
                       <User size={16} /> Account Settings
-                      <ChevronRight size={14} style={{ marginLeft: 'auto', opacity: 0.4 }} />
+                      <ChevronRight size={14} className="ml-auto" style={{ opacity: 0.4 }} />
                     </Link>
                     <button onClick={handleLogout} className="customer-dropdown-item danger">
                       <LogOut size={16} /> Logout
@@ -213,7 +216,7 @@ const CustomerLayout = () => {
       </header>
 
       {/* ─── Page Content ─── */}
-      <PageTransition as="main" className="customer-main" key={location.pathname}>
+      <PageTransition as="main" id="customer-main-content" className="customer-main" key={location.pathname}>
         <ErrorBoundary>
           <Outlet />
         </ErrorBoundary>
@@ -240,7 +243,7 @@ const CustomerLayout = () => {
                 </>
               ) : (
                 <>
-                  <div style={{ position: 'relative', display: 'inline-flex' }}>
+                  <div className="relative inline-flex">
                     <item.icon size={20} />
                     {item.hasBadge && unreadCount > 0 && (
                       <span className="notification-badge-sm">{unreadCount > 9 ? '9+' : unreadCount}</span>

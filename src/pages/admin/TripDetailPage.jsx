@@ -53,18 +53,18 @@ const TripDetailPage = () => {
 
   if (loading) return (
     <div className="page-transition">
-      <div className="skeleton skeleton-text" style={{ width: '80px', marginBottom: 16 }} />
-      <div className="skeleton skeleton-text" style={{ width: '200px', height: 28, marginBottom: 8 }} />
-      <div className="skeleton skeleton-text" style={{ width: '250px', marginBottom: 20 }} />
-      <div className="card" style={{ marginBottom: 16 }}><div className="card-body"><SkeletonText lines={2} /></div></div>
-      <div className="card" style={{ marginBottom: 16 }}><div className="card-body"><SkeletonText lines={3} /></div></div>
+      <div className="skeleton skeleton-text w-80 mb-16" />
+      <div className="skeleton skeleton-text mb-8" style={{ width: '200px', height: 28 }} />
+      <div className="skeleton skeleton-text mb-20" style={{ width: '250px' }} />
+      <div className="card mb-16"><div className="card-body"><SkeletonText lines={2} /></div></div>
+      <div className="card mb-16"><div className="card-body"><SkeletonText lines={3} /></div></div>
     </div>
   );
   if (error) return (
     <div className="page-transition">
       <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
         <h3>Error Loading Trip</h3>
-        <p style={{ margin: '8px 0 20px' }}>{error}</p>
+        <p className="mt-8 mb-20">{error}</p>
         <button type="button" className="btn btn-primary" onClick={() => load()}>Retry</button>
       </div>
     </div>
@@ -74,14 +74,14 @@ const TripDetailPage = () => {
 
   return (
     <div className="page-transition">
-      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost" style={{marginBottom:16}}><ArrowLeft size={18}/> Back</button>
-      <div className="flex items-center justify-between" style={{marginBottom:20}}>
-        <div><h1 style={{fontWeight:800}}>{trip.trip_number}</h1><p className="text-sm text-secondary">{trip.origin} → {trip.destination}</p></div>
+      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost mb-16"><ArrowLeft size={18}/> Back</button>
+      <div className="flex items-center justify-between mb-20">
+        <div><h1 className="fw-800">{trip.trip_number}</h1><p className="text-sm text-secondary">{trip.origin} → {trip.destination}</p></div>
         <StatusBadge status={trip.status}/>
       </div>
 
       {/* Actions */}
-      <div className="card admin-section-card admin-action-card stagger-item" style={{marginBottom:16, animationDelay: '60ms'}}><div className="card-body"><div className="admin-action-group">
+      <div className="card admin-section-card admin-action-card stagger-item mb-16" style={{ animationDelay: '60ms'}}><div className="card-body"><div className="admin-action-group">
         {trip.status==='scheduled' && <button type="button" className="btn btn-primary" onClick={()=>openConfirm('in_progress', 'Start Trip', `Start trip ${trip.trip_number}? This will mark it as in progress.`, 'info')} disabled={saving}><Play size={16}/> Start Trip</button>}
         {trip.status==='in_progress' && <button type="button" className="btn btn-success" onClick={()=>openConfirm('arrived', 'Mark Arrived', `Mark trip ${trip.trip_number} as arrived at destination?`, 'success')} disabled={saving}><Flag size={16}/> Mark Arrived</button>}
         {trip.status==='arrived' && <button type="button" className="btn btn-primary" onClick={()=>openConfirm('completed', 'Complete Trip', `Complete trip ${trip.trip_number}? All orders should be delivered.`, 'success')} disabled={saving}><CheckCircle size={16}/> Complete</button>}
@@ -91,7 +91,7 @@ const TripDetailPage = () => {
       </div></div>
 
       {/* Capacity */}
-      <div className="card admin-section-card stagger-item" style={{marginBottom:16, animationDelay: '120ms'}}>
+      <div className="card admin-section-card stagger-item mb-16" style={{ animationDelay: '120ms'}}>
         <div className="card-body">
           <CapacityTracker currentWeight={current_weight} maxCapacity={trip.capacity} tripNumber={trip.trip_number} />
         </div>
@@ -105,7 +105,7 @@ const TripDetailPage = () => {
             <thead><tr><th>Tracking</th><th>Sender</th><th>Receiver</th><th>Weight</th><th>Status</th></tr></thead>
             <tbody>
               {orders.map(o=>(
-                <tr key={o.id}><td data-label="Tracking" style={{fontWeight:600}}>{o.tracking_number}</td><td data-label="Sender">{o.sender_name}</td><td data-label="Receiver">{o.receiver_name}</td>
+                <tr key={o.id}><td data-label="Tracking" className="fw-600">{o.tracking_number}</td><td data-label="Sender">{o.sender_name}</td><td data-label="Receiver">{o.receiver_name}</td>
                 <td data-label="Weight">{o.actual_weight||o.package_weight} kg</td><td data-label="Status"><StatusBadge status={o.status} size="sm"/></td></tr>
               ))}
               {orders.length===0&&<tr><td colSpan={5} className="text-center text-secondary" style={{padding:30}}>No orders assigned</td></tr>}

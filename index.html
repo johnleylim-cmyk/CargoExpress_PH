@@ -17,6 +17,23 @@
     <meta name="msapplication-TileColor" content="#E8722A" />
     <meta name="msapplication-navbutton-color" content="#E8722A" />
     <meta name="color-scheme" content="dark light" />
+    <script>
+      (function () {
+        try {
+          var storedTheme = localStorage.getItem('cargoexpress_theme');
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme = storedTheme === 'dark' || storedTheme === 'light'
+            ? storedTheme
+            : prefersDark ? 'dark' : 'light';
+
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.style.colorScheme = theme;
+        } catch (error) {
+          document.documentElement.setAttribute('data-theme', 'light');
+          document.documentElement.style.colorScheme = 'light';
+        }
+      })();
+    </script>
 
     <!-- ====== PWA Manifest ====== -->
     <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />

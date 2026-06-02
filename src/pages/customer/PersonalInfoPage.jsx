@@ -110,10 +110,10 @@ const PersonalInfoPage = () => {
 
   return (
     <div className="animate-slide-up">
-      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost" style={{ marginBottom: 16 }}>
+      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost mb-16">
         <ArrowLeft size={18} /> Back
       </button>
-      <h2 style={{ fontWeight: 800, marginBottom: 20 }}>Personal Information</h2>
+      <h2 className="fw-800 mb-20">Personal Information</h2>
 
       <div className="card">
         <div className="card-body">
@@ -253,10 +253,9 @@ const PersonalInfoPage = () => {
           {/* Save */}
           <button
             type="button"
-            className="btn btn-primary btn-lg w-full"
+            className="btn btn-primary btn-lg w-full justify-center mt-8"
             onClick={handleSave}
             disabled={loading}
-            style={{ justifyContent: 'center', marginTop: 8 }}
           >
             {loading
               ? <><Loader size={18} className="animate-spin" /> Saving...</>

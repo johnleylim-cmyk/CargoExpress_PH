@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { ToastProvider } from './hooks/useToast';
 import { Container } from 'lucide-react';
 import { lazy, Suspense } from 'react';
@@ -48,6 +49,7 @@ const ContactInquiriesPage = lazy(() => import('./pages/admin/ContactInquiriesPa
 // Public Pages
 const TrackingPage = lazy(() => import('./pages/public/TrackingPage'));
 const AboutPage = lazy(() => import('./pages/public/AboutPage'));
+const NotFoundPage = lazy(() => import('./pages/public/NotFoundPage'));
 
 // ─── Loading Screens ────────────────────────────────────────────────────────
 
@@ -119,6 +121,7 @@ const RootRedirect = () => {
 function App() {
   return (
     <BrowserRouter>
+      <ThemeProvider>
       <ToastProvider>
         <AuthProvider>
           <Suspense fallback={<LoadingScreen />}>
@@ -168,11 +171,12 @@ function App() {
             </Route>
 
             {/* 404 */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFoundPage /></Suspense>} />
           </Routes>
         </Suspense>
         </AuthProvider>
       </ToastProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

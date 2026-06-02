@@ -32,9 +32,9 @@ const CustomerDetailPage = () => {
 
   if (loading) return (
     <div className="page-transition">
-      <div className="skeleton skeleton-text" style={{ width: '80px', marginBottom: 16 }} />
-      <div className="card" style={{ marginBottom: 16 }}><div className="card-body"><SkeletonText lines={3} /></div></div>
-      <div className="grid grid-4" style={{ marginBottom: 16 }}>
+      <div className="skeleton skeleton-text w-80 mb-16" />
+      <div className="card mb-16"><div className="card-body"><SkeletonText lines={3} /></div></div>
+      <div className="grid grid-4 mb-16">
         {Array.from({ length: 4 }, (_, i) => <SkeletonStatCard key={i} />)}
       </div>
     </div>
@@ -43,7 +43,7 @@ const CustomerDetailPage = () => {
     <div className="page-transition">
       <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
         <h3>Error Loading Customer</h3>
-        <p style={{ margin: '8px 0 20px' }}>{error}</p>
+        <p className="mt-8 mb-20">{error}</p>
         <button type="button" className="btn btn-primary" onClick={() => load()}>Retry</button>
       </div>
     </div>
@@ -53,17 +53,17 @@ const CustomerDetailPage = () => {
 
   return (
     <div className="page-transition">
-      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost" style={{marginBottom:16}}><ArrowLeft size={18}/> Back</button>
-      <div className="card stagger-item" style={{marginBottom:16,overflow:'visible', animationDelay: '0ms'}}>
+      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost mb-16"><ArrowLeft size={18}/> Back</button>
+      <div className="card stagger-item mb-16" style={{overflow:'visible', animationDelay: '0ms'}}>
         <div style={{background:'linear-gradient(135deg, var(--accent), var(--primary))',height:60,borderRadius:'12px 12px 0 0'}}/>
         <div style={{padding:'0 24px 24px',marginTop:-30}}>
-          <div style={{width:60,height:60,borderRadius:'50%',background:'linear-gradient(135deg,var(--primary),var(--primary-light))',display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontSize:'1.25rem',fontWeight:800,border:'3px solid white'}}>{(customer.name||'U')[0].toUpperCase()}</div>
-          <h2 style={{fontWeight:800,marginTop:8}}>{customer.name}</h2>
+          <div className="flex items-center justify-center text-xl fw-800" style={{width:60,height:60,borderRadius:'50%',background:'linear-gradient(135deg,var(--primary),var(--primary-light))',color:'white',border:'3px solid white'}}>{(customer.name||'U')[0].toUpperCase()}</div>
+          <h2 className="fw-800 mt-8">{customer.name}</h2>
           <div className="text-sm text-secondary">{customer.email} • {customer.phone || '—'}</div>
-          <div className="text-xs text-tertiary" style={{marginTop:4}}>{[customer.address_province,customer.address_city].filter(Boolean).join(', ')||'No address'}</div>
+          <div className="text-xs text-tertiary mt-4">{[customer.address_province,customer.address_city].filter(Boolean).join(', ')||'No address'}</div>
         </div>
       </div>
-      <div className="grid grid-4" style={{marginBottom:16}}>
+      <div className="grid grid-4 mb-16">
         {[
           {l:'Total Orders', v:summary.totalOrders, g:'linear-gradient(135deg,#3B82F6,#60A5FA)', isNum: true},
           {l:'Completed', v:summary.completedOrders, g:'linear-gradient(135deg,#10B981,#34D399)', isNum: true},
@@ -85,7 +85,7 @@ const CustomerDetailPage = () => {
             <thead><tr><th>Tracking</th><th>Route</th><th>Cost</th><th>Status</th><th>Date</th></tr></thead>
             <tbody>
               {orders.map(o=>(
-                <tr key={o.id}><td data-label="Tracking" style={{fontWeight:600}}>{o.tracking_number}</td><td data-label="Route" className="text-sm">{o.origin} → {o.destination}</td>
+                <tr key={o.id}><td data-label="Tracking" className="fw-600">{o.tracking_number}</td><td data-label="Route" className="text-sm">{o.origin} → {o.destination}</td>
                 <td data-label="Cost">₱{parseFloat(o.shipping_cost||0).toFixed(2)}</td><td data-label="Status"><StatusBadge status={o.status} size="sm"/></td>
                 <td data-label="Date" className="text-xs text-secondary">{new Date(o.created_at).toLocaleDateString()}</td></tr>
               ))}

@@ -49,31 +49,31 @@ const TripAssignModal = ({ order, onClose, onAssign }) => {
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
       <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 480 }}>
         <div className="modal-header">
-          <h3><Truck size={18} style={{ display: 'inline', marginRight: 8 }} />Assign to Trip</h3>
+          <h3><Truck size={18} className="inline mr-8" />Assign to Trip</h3>
           <button className="btn-icon btn-ghost" onClick={onClose}><X size={20} /></button>
         </div>
 
         <div className="modal-body">
-          <div style={{
-            background: '#F8FAFC', borderRadius: 8, padding: 12, marginBottom: 16,
-            fontSize: '0.8125rem', color: '#64748B',
+          <div className="text-secondary mb-16" style={{
+            background: '#F8FAFC', borderRadius: 8, padding: 12,
+            fontSize: '0.8125rem',
           }}>
-            <MapPin size={14} style={{ display: 'inline', marginRight: 6 }} />
+            <MapPin size={14} className="inline mr-6" />
             Route: <strong>{order.origin} → {order.destination}</strong>
           </div>
 
           {loading ? (
             <div className="text-center" style={{ padding: 30 }}>
-              <Loader size={24} className="animate-spin" style={{ margin: '0 auto' }} />
+              <Loader size={24} className="animate-spin mx-auto" />
             </div>
           ) : trips.length === 0 ? (
-            <div className="text-center" style={{ padding: 30, color: '#94A3B8' }}>
+            <div className="text-center text-tertiary" style={{ padding: 30 }}>
               <Truck size={40} style={{ opacity: 0.3, margin: '0 auto 12px' }} />
               <p>No active trips for this route</p>
-              <p style={{ fontSize: '0.75rem', marginTop: 4 }}>Create a trip with matching origin/destination first</p>
+              <p className="text-xs mt-4">Create a trip with matching origin/destination first</p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div className="flex flex-col gap-8">
               {trips.map(trip => {
                 const isSelected = selectedTrip?.id === trip.id;
                 const capPct = trip.capacity > 0 ? (trip.current_weight / trip.capacity) * 100 : 0;
@@ -93,8 +93,8 @@ const TripAssignModal = ({ order, onClose, onAssign }) => {
                       transition: 'all 0.2s ease',
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                      <span style={{ fontWeight: 700, color: 'var(--accent)' }}>{trip.trip_number}</span>
+                    <div className="flex justify-between items-center mb-6">
+                      <span className="fw-700 text-accent">{trip.trip_number}</span>
                       <span style={{
                         fontSize: '0.6875rem', fontWeight: 600, padding: '2px 8px',
                         borderRadius: 4,
@@ -104,7 +104,7 @@ const TripAssignModal = ({ order, onClose, onAssign }) => {
                         {trip.status}
                       </span>
                     </div>
-                    <div style={{ fontSize: '0.8125rem', color: '#64748B', marginBottom: 6 }}>
+                    <div className="text-secondary mb-6" style={{ fontSize: '0.8125rem' }}>
                       {trip.origin} → {trip.destination}
                     </div>
                     <div className="capacity-bar" style={{ height: 6, borderRadius: 3 }}>
@@ -113,11 +113,11 @@ const TripAssignModal = ({ order, onClose, onAssign }) => {
                         style={{ width: `${Math.min(100, capPct)}%` }}
                       />
                     </div>
-                    <div style={{ fontSize: '0.6875rem', color: '#94A3B8', marginTop: 4 }}>
+                    <div className="text-tertiary mt-4" style={{ fontSize: '0.6875rem' }}>
                       {(trip.current_weight || 0).toFixed(1)} / {trip.capacity} kg
                     </div>
                     {exceedsCapacity && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.6875rem', color: '#B45309', marginTop: 6 }}>
+                      <div className="flex items-center gap-4 mt-6" style={{ fontSize: '0.6875rem', color: '#B45309' }}>
                         <AlertTriangle size={12} />
                         Exceeds capacity by {overloadWeight.toFixed(1)} kg. Admin override allowed.
                       </div>

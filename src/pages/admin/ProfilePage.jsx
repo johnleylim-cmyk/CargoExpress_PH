@@ -9,10 +9,10 @@ const AdminProfilePage = () => {
 
   return (
     <div className="page-transition" style={{ maxWidth: 520 }}>
-      <h1 style={{ fontWeight: 800, fontSize: '1.5rem', marginBottom: 24 }}>Profile</h1>
+      <h1 className="fw-800 text-2xl mb-24">Profile</h1>
 
       {/* Profile Card */}
-      <div className="profile-card-premium" style={{ marginBottom: 20 }}>
+      <div className="profile-card-premium mb-20">
         <div className="profile-card-banner" />
         <div className="profile-card-avatar">
           {(userProfile?.name || 'A')[0].toUpperCase()}
@@ -27,10 +27,10 @@ const AdminProfilePage = () => {
       </div>
 
       {/* Menu Items */}
-      <div className="card" style={{ marginBottom: 20 }}>
+      <div className="card mb-20">
         <button className="profile-menu-item" onClick={() => navigate('/admin/personal-info')}>
           <User size={18} />
-          <div style={{ flex: 1 }}>
+          <div className="flex-1">
             <div className="font-semibold text-sm">Personal Information</div>
             <div className="text-xs text-tertiary">Edit your profile details</div>
           </div>
@@ -39,7 +39,7 @@ const AdminProfilePage = () => {
       </div>
 
       {/* Sign Out */}
-      <button className="btn btn-outline btn-block btn-lg" onClick={handleLogout} style={{ justifyContent: 'center', color: 'var(--error)', borderColor: '#FECACA' }}>
+      <button className="btn btn-outline btn-block btn-lg justify-center" onClick={handleLogout} style={{ color: 'var(--error)', borderColor: '#FECACA' }}>
         <LogOut size={18} /> Sign Out
       </button>
     </div>

@@ -73,7 +73,7 @@ const AnnouncementsPage = () => {
       </div>
 
       {showForm && (
-        <div className="card animate-scale-in" style={{marginBottom:16}}><div className="card-body">
+        <div className="card animate-scale-in mb-16"><div className="card-body">
           <div className="form-group"><label className="form-label" htmlFor="announcement-title">Title</label><input id="announcement-title" className="form-input" value={form.title} onChange={e=>setForm(p=>({...p,title:e.target.value}))}/></div>
           <div className="form-group"><label className="form-label" htmlFor="announcement-content">Content</label><textarea id="announcement-content" className="form-textarea" value={form.content} onChange={e=>setForm(p=>({...p,content:e.target.value}))}/></div>
           <div className="admin-form-actions">
@@ -84,7 +84,7 @@ const AnnouncementsPage = () => {
       )}
 
       {loading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="flex flex-col gap-12">
           {Array.from({ length: 3 }, (_, i) => <SkeletonCard key={i} />)}
         </div>
       ) : error ? (
@@ -96,14 +96,14 @@ const AnnouncementsPage = () => {
         <EmptyState icon={Megaphone} title="No announcements yet" description="Create your first announcement to keep customers informed." actionLabel="Create Announcement" onAction={() => setShowForm(true)} />
       ) : (
         items.map((a, i) => (
-          <div key={a.id} className="card stagger-item" style={{marginBottom:12, animationDelay: `${i * 60}ms`}}>
-            <div className="card-body" style={{padding:16}}>
+          <div key={a.id} className="card stagger-item mb-12" style={{animationDelay: `${i * 60}ms`}}>
+            <div className="card-body p-16">
               <div className="admin-announcement-header">
-                <h3 className="admin-announcement-title" style={{fontWeight:700}}>{a.title}</h3>
+                <h3 className="admin-announcement-title fw-700">{a.title}</h3>
                 <button type="button" className="btn btn-ghost btn-icon admin-card-action" onClick={()=>setDeleteTarget(a.id)} aria-label={`Delete ${a.title}`}><Trash2 size={16}/></button>
               </div>
               <p className="text-sm text-secondary">{a.content}</p>
-              <div className="text-xs text-tertiary" style={{marginTop:8}}>by {a.profiles?.name||'Admin'} • {new Date(a.created_at).toLocaleDateString()}</div>
+              <div className="text-xs text-tertiary mt-8">by {a.profiles?.name||'Admin'} • {new Date(a.created_at).toLocaleDateString()}</div>
             </div>
           </div>
         ))

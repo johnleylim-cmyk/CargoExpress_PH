@@ -117,9 +117,9 @@ const AdminPersonalInfoPage = () => {
     <div className="animate-fade-in">
 
       {/* ── Basic Info ─────────────────────────────────────────────── */}
-      <div className="card" style={{ marginBottom: 16 }}>
+      <div className="card mb-16">
         <div className="card-body">
-          <h3 style={{ fontWeight: 700, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <h3 className="fw-700 mb-16 flex items-center gap-8">
             <User size={18} color="var(--primary)" /> Basic Information
           </h3>
 
@@ -160,16 +160,16 @@ const AdminPersonalInfoPage = () => {
       </div>
 
       {/* ── Business Contact ───────────────────────────────────────── */}
-      <div className="card" style={{ marginBottom: 16 }}>
+      <div className="card mb-16">
         <div className="card-body">
-          <h3 style={{ fontWeight: 700, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <h3 className="fw-700 mb-4 flex items-center gap-8">
             <Phone size={18} color="var(--primary)" /> Business Contact Numbers
           </h3>
-          <p className="form-helper" style={{ marginBottom: 16 }}>
+          <p className="form-helper mb-16">
             These numbers will be shown in the Contact Us section of the app.
           </p>
 
-          <div className="grid grid-2" style={{ gap: 16 }}>
+          <div className="grid grid-2 gap-16">
             <div className="form-group">
               <label className="form-label" htmlFor="admin-smart-phone">Smart / TNT Number</label>
               <div className="form-input-wrapper">
@@ -205,12 +205,12 @@ const AdminPersonalInfoPage = () => {
       </div>
 
       {/* ── Social Media ───────────────────────────────────────────── */}
-      <div className="card" style={{ marginBottom: 16 }}>
+      <div className="card mb-16">
         <div className="card-body">
-          <h3 style={{ fontWeight: 700, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <h3 className="fw-700 mb-4 flex items-center gap-8">
             <Globe size={18} color="var(--primary)" /> Social Media
           </h3>
-          <p className="form-helper" style={{ marginBottom: 16 }}>
+          <p className="form-helper mb-16">
             Paste the full URL of your Facebook page.
           </p>
 
@@ -239,18 +239,18 @@ const AdminPersonalInfoPage = () => {
       </div>
 
       {/* ── Business Addresses ─────────────────────────────────────── */}
-      <div className="card" style={{ marginBottom: 24 }}>
+      <div className="card mb-24">
         <div className="card-body">
-          <h3 style={{ fontWeight: 700, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <h3 className="fw-700 mb-4 flex items-center gap-8">
             <MapPin size={18} color="var(--primary)" /> Business Addresses
           </h3>
-          <p className="form-helper" style={{ marginBottom: 16 }}>
+          <p className="form-helper mb-16">
             These addresses will be shown to customers for pickup and delivery reference.
           </p>
 
           <div className="form-group">
             <label className="form-label" htmlFor="admin-manila-address">Manila Address</label>
-            <div className="form-input-wrapper" style={{ alignItems: 'flex-start' }}>
+            <div className="form-input-wrapper items-start">
               <Building size={15} className="form-input-icon" style={{ marginTop: 14 }} />
               <textarea
                 id="admin-manila-address"
@@ -265,7 +265,7 @@ const AdminPersonalInfoPage = () => {
 
           <div className="form-group">
             <label className="form-label" htmlFor="admin-bohol-address">Bohol Address</label>
-            <div className="form-input-wrapper" style={{ alignItems: 'flex-start' }}>
+            <div className="form-input-wrapper items-start">
               <MapPin size={15} className="form-input-icon" style={{ marginTop: 14 }} />
               <textarea
                 id="admin-bohol-address"

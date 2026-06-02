@@ -285,8 +285,8 @@ const LoginPage = () => {
               <Container size={20} color="white" />
             </div>
             <span>
-              <span style={{ color: 'var(--accent)' }}>CARGO</span>
-              <span style={{ color: 'var(--primary)' }}>EXPRESS PH</span>
+              <span className="text-accent">CARGO</span>
+              <span className="text-primary">EXPRESS PH</span>
             </span>
           </div>
 
@@ -496,7 +496,7 @@ const LoginPage = () => {
               </div>
             ) : (
               /* ── Active Chat ── */
-              <div className="chat-active" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <div className="chat-active flex flex-col h-full">
                 {/* Header */}
                 <div className="chat-window-header">
                   <div className="chat-header-left">

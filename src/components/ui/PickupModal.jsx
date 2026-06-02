@@ -274,28 +274,28 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
     
     return (
       <div className="modal-overlay">
-        <div className="modal" style={{ maxWidth: 400, textAlign: 'center' }}>
+        <div className="modal text-center" style={{ maxWidth: 400 }}>
           <div className="modal-header">
             <h3><Smartphone size={18} /> GCash Payment</h3>
             <button className="btn-icon btn-ghost" onClick={() => { setQrData(null); setSaving(false); }}><X size={20} /></button>
           </div>
           <div className="modal-body" style={{ padding: '30px 20px' }}>
-            <h4 style={{ marginBottom: 16 }}>Please ask customer to scan this QR</h4>
-            <div style={{ background: '#F8FAFC', padding: 20, borderRadius: 16, display: 'inline-block', border: '2px solid #E2E8F0', marginBottom: 20 }}>
+            <h4 className="mb-16">Please ask customer to scan this QR</h4>
+            <div style={{ background: '#F8FAFC', padding: 20, borderRadius: 16, display: 'inline-block', border: '2px solid #E2E8F0' }} className="mb-20">
               <img src={qrUrl} alt="GCash QR" style={{ width: 250, height: 250 }} />
             </div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#10B981', marginBottom: 12 }}>
+            <div className="text-2xl fw-800 text-success mb-12">
               ₱{estimatedCost.toFixed(2)}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, color: '#64748B', fontSize: '0.875rem' }}>
+            <div className="flex items-center justify-center gap-8 text-secondary text-sm">
               <Loader size={16} className="animate-spin" />
               {pollStatus || 'Waiting for payment...'}
             </div>
             {error && (
-              <div style={{ color: '#EF4444', marginTop: 16, fontSize: '0.875rem' }}>{error}</div>
+              <div className="text-error mt-16 text-sm">{error}</div>
             )}
           </div>
-          <div className="modal-footer" style={{ justifyContent: 'center' }}>
+          <div className="modal-footer justify-center">
             <button className="btn btn-outline" onClick={() => { setQrData(null); setSaving(false); }}>Cancel & Try Another Method</button>
           </div>
         </div>
@@ -315,17 +315,16 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
 
         <div className="modal-body">
           {/* Order summary */}
-          <div className="pickup-summary-card" style={{
-            background: '#F8FAFC', borderRadius: 8, padding: 14, marginBottom: 20,
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          <div className="pickup-summary-card flex justify-between items-center mb-20" style={{
+            background: '#F8FAFC', borderRadius: 8, padding: 14,
           }}>
             <div>
-              <div style={{ fontWeight: 700, color: 'var(--accent)' }}>{order.tracking_number}</div>
-              <div style={{ fontSize: '0.8125rem', color: '#64748B' }}>
+              <div className="fw-700 text-accent">{order.tracking_number}</div>
+              <div className="text-secondary" style={{ fontSize: '0.8125rem' }}>
                 {order.sender_name} → {order.receiver_name}
               </div>
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>
+              <div className="text-xs text-tertiary">
               Est. {order.package_weight} kg
             </div>
           </div>
@@ -343,7 +342,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
           {/* Actual Weight */}
           <div className="form-group">
             <label className="form-label">
-              <Scale size={14} style={{ display: 'inline', marginRight: 6 }} />
+              <Scale size={14} className="inline mr-6" />
               Actual Weight (kg) *
             </label>
             <input
@@ -356,7 +355,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
               min="0.1"
             />
             {form.actual_weight && (
-              <div style={{ fontSize: '0.75rem', color: '#10B981', marginTop: 4 }}>
+              <div className="text-xs text-success mt-4">
                 Estimated cost: ₱{estimatedCost.toFixed(2)}
               </div>
             )}
@@ -365,17 +364,16 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
           {/* Payment Method */}
           <div className="form-group">
             <label className="form-label">
-              <CreditCard size={14} style={{ display: 'inline', marginRight: 6 }} />
+              <CreditCard size={14} className="inline mr-6" />
               Payment Method *
             </label>
-            <div className="pickup-segment-row" style={{ display: 'flex', gap: 8 }}>
+            <div className="pickup-segment-row flex gap-8">
               {PAYMENT_METHODS.map(m => (
                 <button
                   key={m}
                   type="button"
-                  className={`btn ${form.payment_method === m ? 'btn-primary' : 'btn-outline'} btn-sm`}
+                  className={`btn ${form.payment_method === m ? 'btn-primary' : 'btn-outline'} btn-sm flex-1 justify-center text-capitalize`}
                   onClick={() => setForm(p => ({ ...p, payment_method: m }))}
-                  style={{ flex: 1, justifyContent: 'center', textTransform: 'capitalize' }}
                 >
                   {m === 'gcash' ? 'GCash' : m === 'paylater' ? 'Pay Later' : 'Cash'}
                 </button>
@@ -386,14 +384,13 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
           {/* Payer Type */}
           <div className="form-group">
             <label className="form-label">Who Pays?</label>
-            <div className="pickup-segment-row" style={{ display: 'flex', gap: 8 }}>
+            <div className="pickup-segment-row flex gap-8">
               {['sender', 'receiver'].map(t => (
                 <button
                   key={t}
                   type="button"
-                  className={`btn ${form.payer_type === t ? 'btn-secondary' : 'btn-outline'} btn-sm`}
-                  onClick={() => setForm(p => ({ ...p, payer_type: t }))}
-                  style={{ flex: 1, justifyContent: 'center', textTransform: 'capitalize' }}
+                    className={`btn ${form.payer_type === t ? 'btn-secondary' : 'btn-outline'} btn-sm flex-1 justify-center text-capitalize`}
+                    onClick={() => setForm(p => ({ ...p, payer_type: t }))}
                 >
                   {t}
                 </button>
@@ -403,12 +400,12 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
 
           {/* Pay Later Options */}
           {isPayLater && (
-            <div style={{ background: '#FFFBEB', borderRadius: 8, padding: 14, marginBottom: 16, border: '1px solid #FDE68A' }}>
-              <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#92400E', marginBottom: 8 }}>
-                <AlertTriangle size={14} style={{ display: 'inline', marginRight: 6 }} />
+            <div className="mb-16" style={{ background: '#FFFBEB', borderRadius: 8, padding: 14, border: '1px solid #FDE68A' }}>
+              <div className="mb-8" style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#92400E' }}>
+                <AlertTriangle size={14} className="inline mr-6" />
                 Pay Later Details
               </div>
-              <div className="form-group" style={{ marginBottom: 12 }}>
+              <div className="form-group mb-12">
                 <label className="form-label">Downpayment (₱)</label>
                 <input
                   type="number"
@@ -419,9 +416,9 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
                   min="0"
                 />
               </div>
-              <div className="form-group" style={{ marginBottom: 0 }}>
+              <div className="form-group mb-0">
                 <label className="form-label">
-                  <Calendar size={14} style={{ display: 'inline', marginRight: 6 }} />
+                  <Calendar size={14} className="inline mr-6" />
                   Promised Payment Date *
                 </label>
                 <input
@@ -432,7 +429,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
                   min={new Date().toISOString().split('T')[0]}
                 />
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#92400E', marginTop: 8 }}>
+              <div className="text-xs mt-8" style={{ color: '#92400E' }}>
                 Balance: ₱{remainingBalance.toFixed(2)}
               </div>
             </div>
@@ -455,13 +452,13 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
           {/* Photo Upload */}
           <div className="form-group">
             <label className="form-label">
-              <Camera size={14} style={{ display: 'inline', marginRight: 6 }} />
+              <Camera size={14} className="inline mr-6" />
               Pickup Proof Photos * (1-3)
             </label>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 8 }}>
+            <div className="flex gap-10 flex-wrap mb-8">
               {photoPreviews.map((preview, i) => (
-                <div key={i} style={{ position: 'relative', width: 90, height: 90, borderRadius: 8, overflow: 'hidden', border: '2px solid #E2E8F0' }}>
-                  <img src={preview} alt={`Photo ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div key={i} className="relative overflow-hidden" style={{ width: 90, height: 90, borderRadius: 8, border: '2px solid #E2E8F0' }}>
+                  <img src={preview} alt={`Photo ${i + 1}`} className="w-full h-full" style={{ objectFit: 'cover' }} />
                   <button
                     type="button"
                     onClick={() => removePhoto(i)}

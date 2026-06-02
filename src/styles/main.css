@@ -1,0 +1,34 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   CARGOEXPRESS PH — Main Stylesheet
+   Modular CSS architecture — imports organized by layer
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Design Tokens (no output, only CSS variables) ── */
+@import './tokens.css';
+
+/* ── 2. Base & Reset ── */
+@import './base.css';
+
+/* ── 3. Component Styles ── */
+@import './components.css';
+@import './data.css';
+@import './feedback.css';
+@import './loading-search.css';
+@import './tabs-steps.css';
+@import './chatbot.css';
+
+/* ── 4. Layouts ── */
+@import './layout-admin.css';
+@import './layout-customer.css';
+
+/* ── 5. Page-Specific Styles ── */
+@import './auth.css';
+@import './pages.css';
+@import './tracking.css';
+@import './remaining.css';
+
+/* ── 6. Animations & Utilities ── */
+@import './animations-utils.css';
+
+/* ── 7. Responsive Overrides ── */
+@import './responsive.css';

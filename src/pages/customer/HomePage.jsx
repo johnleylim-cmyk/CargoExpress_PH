@@ -93,6 +93,7 @@ const HomePage = () => {
           <div className="search-box" style={{ flex: 1 }}>
             <Search size={16} className="search-icon" />
             <input
+              aria-label="Tracking number"
               placeholder="Enter tracking number (CE-XXXXXXXX)"
               value={trackingSearch}
               onChange={e => setTrackingSearch(e.target.value)}
@@ -207,6 +208,7 @@ const HomePage = () => {
 
             {/* Book Cargo CTA */}
             <button
+              type="button"
               onClick={() => handleBookFromTrip(activeTrip)}
               style={{
                 width: '100%', padding: '13px', borderRadius: 10, border: 'none',

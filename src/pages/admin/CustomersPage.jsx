@@ -32,7 +32,10 @@ const CustomersPage = () => {
         <h1 style={{ fontWeight: 800, fontSize: '1.5rem' }}>Customers</h1>
         <span className="badge badge-info">{customers.length} total</span>
       </div>
-      <div className="search-box" style={{ marginBottom: 16 }}><Search size={16} className="search-icon" /><input placeholder="Search customers..." value={search} onChange={e => setSearch(e.target.value)} /></div>
+      <div className="search-box" style={{ marginBottom: 16 }}>
+        <Search size={16} className="search-icon" />
+        <input aria-label="Search customers" placeholder="Search customers..." value={search} onChange={e => setSearch(e.target.value)} />
+      </div>
       {loading ? (
         <div className="card animate-fade-in">
           <div className="table-container">
@@ -48,7 +51,7 @@ const CustomersPage = () => {
         <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
           <h3>Error</h3>
           <p>{error}</p>
-          <button className="btn btn-primary mt-md" onClick={loadCustomers}>Retry</button>
+          <button type="button" className="btn btn-primary mt-md" onClick={loadCustomers}>Retry</button>
         </div>
       ) : (
         <div className="card animate-fade-in">

@@ -13,7 +13,7 @@ const pageVariants = {
   exit: { opacity: 0, y: -10, transition: { duration: 0.15 } }
 };
 
-const PageTransition = ({ children, className = '', delay = 0, as = 'div', style = {} }) => {
+const PageTransition = ({ children, className = '', delay = 0, as = 'div', style = {}, ...rest }) => {
   const MotionComponent = motion[as] || motion.div;
 
   return (
@@ -25,6 +25,7 @@ const PageTransition = ({ children, className = '', delay = 0, as = 'div', style
       exit="exit"
       style={{ width: '100%', ...style }}
       transition={delay ? { ...springPhysics, delay: delay / 1000 } : undefined}
+      {...rest}
     >
       {children}
     </MotionComponent>
@@ -36,7 +37,7 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 }
 };
 
-export const StaggerItem = ({ children, index, delay, className = '', style = {} }) => {
+export const StaggerItem = ({ children, index, delay, className = '', style = {}, ...rest }) => {
   let calculatedDelay = 0;
   if (delay !== undefined) {
     calculatedDelay = delay / 1000;
@@ -56,6 +57,7 @@ export const StaggerItem = ({ children, index, delay, className = '', style = {}
       animate="visible"
       transition={customTransition}
       style={style}
+      {...rest}
     >
       {children}
     </motion.div>

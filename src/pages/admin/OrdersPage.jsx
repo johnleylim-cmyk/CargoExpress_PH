@@ -48,12 +48,20 @@ const AdminOrdersPage = () => {
       </div>
       <div className="search-box" style={{ marginBottom: 16 }}>
         <Search size={16} className="search-icon" />
-        <input placeholder="Search tracking, sender, or receiver..." value={search} onChange={e => setSearch(e.target.value)} />
+        <input
+          aria-label="Search orders"
+          placeholder="Search tracking, sender, or receiver..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
       </div>
-      <div className="tabs admin-mobile-tabs" style={{ marginBottom: 16 }}>
+      <div className="tabs admin-mobile-tabs" role="tablist" aria-label="Order status filters" style={{ marginBottom: 16 }}>
         {tabs.map((t, i) => (
           <button
             key={t}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === t}
             className={`tab ${activeTab === t ? 'active' : ''}`}
             onClick={() => setActiveTab(t)}
           >
@@ -76,7 +84,7 @@ const AdminOrdersPage = () => {
         <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
           <h3>Error</h3>
           <p>{error}</p>
-          <button className="btn btn-primary mt-md" onClick={loadOrders}>Retry</button>
+          <button type="button" className="btn btn-primary mt-md" onClick={loadOrders}>Retry</button>
         </div>
       ) : (
         <div className="card animate-fade-in">

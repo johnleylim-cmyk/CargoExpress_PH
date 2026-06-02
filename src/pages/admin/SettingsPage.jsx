@@ -49,10 +49,13 @@ const SettingsPage = () => {
       <h1 style={{ fontWeight: 800, fontSize: '1.5rem', marginBottom: 24 }}>Settings</h1>
 
       {/* Tabs */}
-      <div className="tabs" style={{ marginBottom: 24 }}>
+      <div className="tabs" role="tablist" aria-label="Settings sections" style={{ marginBottom: 24 }}>
         {tabItems.map((tab) => (
           <button
             key={tab.key}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`tab ${activeTab === tab.key ? 'active' : ''}`}
           >
@@ -73,7 +76,7 @@ const SettingsPage = () => {
             <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
               <h3>Error</h3>
               <p>{error}</p>
-              <button className="btn btn-primary mt-md" onClick={load}>Retry</button>
+              <button type="button" className="btn btn-primary mt-md" onClick={load}>Retry</button>
             </div>
           ) : (
             <div className="card animate-fade-in">
@@ -85,10 +88,11 @@ const SettingsPage = () => {
               <div className="card-body">
 
                 <div className="form-group">
-                  <label className="form-label">Price per Kilogram (₱)</label>
+                  <label className="form-label" htmlFor="settings-price-per-kilo">Price per Kilogram (₱)</label>
                   <div className="form-input-wrapper" style={{ maxWidth: 220 }}>
                     <DollarSign size={15} className="form-input-icon" />
                     <input
+                      id="settings-price-per-kilo"
                       type="number"
                       className="form-input form-input-icon-left"
                       value={pricePerKilo}
@@ -105,6 +109,7 @@ const SettingsPage = () => {
 
                 <div className="admin-form-actions">
                   <button
+                    type="button"
                     className="btn btn-primary admin-form-submit"
                     onClick={handleSave}
                     disabled={saving}

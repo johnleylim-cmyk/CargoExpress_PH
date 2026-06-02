@@ -33,7 +33,6 @@ const OrdersPage = () => {
       const data = await getOrders(user.id, false);
       if (isMounted) setOrders(data || []);
     } catch (err) {
-      setError(err.message || 'Failed to load orders.');
       if (isMounted) setError(err.message || 'Failed to load orders.');
     } finally {
       if (isMounted) setLoading(false);
@@ -51,11 +50,25 @@ const OrdersPage = () => {
       <h2 style={{ fontWeight: 800, marginBottom: 20 }}>My Orders</h2>
       <StaggerItem className="search-box" delay={0} style={{ marginBottom: 16 }}>
         <Search size={16} className="search-icon" />
-        <input placeholder="Search tracking number..." value={search} onChange={e => setSearch(e.target.value)} />
+        <input
+          aria-label="Search tracking number"
+          placeholder="Search tracking number..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
       </StaggerItem>
-      <StaggerItem className="tabs customer-order-tabs" delay={60}>
+      <StaggerItem className="tabs customer-order-tabs" role="tablist" aria-label="Order status filters" delay={60}>
         {tabs.map(t => (
-          <button key={t} className={`tab ${activeTab === t ? 'active' : ''}`} onClick={() => setActiveTab(t)}>{t}</button>
+          <button
+            key={t}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === t}
+            className={`tab ${activeTab === t ? 'active' : ''}`}
+            onClick={() => setActiveTab(t)}
+          >
+            {t}
+          </button>
         ))}
       </StaggerItem>
       {loading ? (
@@ -73,7 +86,7 @@ const OrdersPage = () => {
           </div>
           <h3 style={{ color: '#DC2626', marginBottom: 8 }}>Error Loading Orders</h3>
           <p className="text-secondary text-sm" style={{ marginBottom: 20 }}>{error}</p>
-          <button className="btn btn-primary" onClick={() => loadOrders()}>Retry</button>
+          <button type="button" className="btn btn-primary" onClick={() => loadOrders()}>Retry</button>
         </div>
       ) : filtered.length === 0 ? (
         <div className="animate-scale-in">

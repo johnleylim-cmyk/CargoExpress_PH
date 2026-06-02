@@ -155,7 +155,12 @@ const CustomerLayout = () => {
 
           {/* Right: Icons + Avatar */}
           <div className="customer-navbar-right">
-            <Link to="/customer/notifications" className="customer-nav-icon-btn" title="Notifications">
+            <Link
+              to="/customer/notifications"
+              className="customer-nav-icon-btn"
+              title="Notifications"
+              aria-label="Notifications"
+            >
               <Bell size={20} />
               {unreadCount > 0 && (
                 <span className="notification-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
@@ -168,6 +173,9 @@ const CustomerLayout = () => {
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="customer-avatar-btn"
                 title="Account"
+                aria-label="Open account menu"
+                aria-haspopup="menu"
+                aria-expanded={dropdownOpen}
               >
                 <div className="customer-avatar">
                   {getInitials(userProfile?.name)}
@@ -212,7 +220,7 @@ const CustomerLayout = () => {
       </PageTransition>
 
       {/* ─── Bottom Tab Bar (Mobile Only) ─── */}
-      <nav className="customer-bottom-nav">
+      <nav className="customer-bottom-nav" aria-label="Customer navigation">
         <div className="customer-bottom-nav-inner">
           {bottomNavItems.map(item => (
             <NavLink

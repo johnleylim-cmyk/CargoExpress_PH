@@ -163,6 +163,11 @@ input, select, textarea {
   font-family: inherit; outline: none;
 }
 
+:where(button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
 ::selection {
   background: var(--primary-glow);
   color: var(--primary-dark);
@@ -178,7 +183,7 @@ input, select, textarea {
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
-  min-height: 40px;
+  min-height: 44px;
   gap: 8px; padding: 10px 20px;
   border-radius: var(--radius-sm); font-weight: 600; font-size: 0.875rem;
   transition: var(--transition); border: none; cursor: pointer;
@@ -253,8 +258,8 @@ input, select, textarea {
 }
 .btn-lg { padding: 14px 28px; font-size: 1rem; border-radius: var(--radius-md); }
 .btn-icon {
-  min-width: 40px;
-  min-height: 40px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 8px;
   border-radius: var(--radius-sm);
   display: inline-flex;
@@ -262,8 +267,8 @@ input, select, textarea {
   justify-content: center;
 }
 .btn-icon.btn-sm {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   padding: 0;
 }
 .btn-block { width: 100%; }
@@ -342,7 +347,7 @@ input, select, textarea {
 .form-label .required { color: var(--error); font-size: 0.75rem; }
 
 .form-input, .form-select, .form-textarea {
-  width: 100%; padding: 10px 14px;
+  width: 100%; min-height: 44px; padding: 10px 14px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   font-size: 0.9375rem;
@@ -554,8 +559,8 @@ input, select, textarea {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   margin-left: auto;
   border: 1px solid var(--sidebar-border);
   border-radius: var(--radius-sm);
@@ -594,7 +599,7 @@ input, select, textarea {
 
 .sidebar-link {
   display: flex; align-items: center; gap: 12px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
   color: var(--sidebar-text);
@@ -733,7 +738,7 @@ input, select, textarea {
 .customer-navbar-logo {
   display: flex; align-items: center; gap: 8px;
   text-decoration: none; flex-shrink: 0;
-  min-height: 40px;
+  min-height: 44px;
   padding: 6px 0;
 }
 .customer-navbar-brand {
@@ -747,7 +752,7 @@ input, select, textarea {
 .customer-nav-link {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 8px 14px; border-radius: var(--radius-sm);
-  min-height: 40px;
+  min-height: 44px;
   font-size: 0.875rem; font-weight: 500;
   color: var(--text-secondary);
   text-decoration: none; transition: var(--transition);
@@ -811,7 +816,7 @@ input, select, textarea {
 }
 .customer-nav-icon-btn {
   display: flex; align-items: center; justify-content: center;
-  width: 38px; height: 38px; border-radius: var(--radius-sm);
+  width: 44px; height: 44px; border-radius: var(--radius-sm);
   color: var(--text-secondary); text-decoration: none;
   transition: var(--transition);
   position: relative;
@@ -871,10 +876,12 @@ input, select, textarea {
 
 /* Avatar */
 .customer-avatar-btn {
+  width: 44px; height: 44px;
   background: none; border: none; cursor: pointer; padding: 0;
+  display: flex; align-items: center; justify-content: center;
 }
 .customer-avatar {
-  width: 36px; height: 36px; border-radius: 50%;
+  width: 40px; height: 40px; border-radius: 50%;
   background: linear-gradient(135deg, var(--primary), var(--primary-light));
   display: flex; align-items: center; justify-content: center;
   color: white; font-size: 0.875rem; font-weight: 700;
@@ -940,7 +947,7 @@ input, select, textarea {
 .customer-mobile-link.danger:hover { background: var(--error-bg); }
 
 /* Customer Main */
-.customer-main { padding: 24px 20px 100px; max-width: 860px; margin: 0 auto; }
+.customer-main { padding: 24px 20px 120px; max-width: 860px; margin: 0 auto; }
 
 /* ── Customer Bottom Tab Bar (Mobile) — Premium Floating Pill ── */
 .customer-bottom-nav {
@@ -1065,8 +1072,8 @@ input, select, textarea {
   .customer-bottom-nav { display: block; }
   .customer-navbar-inner { padding: 0 16px; height: 56px; }
   .customer-main {
-    padding: 16px 16px calc(110px + env(safe-area-inset-bottom, 0px));
-    scroll-padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
+    padding: 16px 16px calc(144px + env(safe-area-inset-bottom, 0px));
+    scroll-padding-bottom: calc(144px + env(safe-area-inset-bottom, 0px));
   }
 }
 @media (min-width: 900px) {
@@ -1445,8 +1452,8 @@ input, select, textarea {
   position: absolute;
   top: 4px;
   right: 4px;
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: #EF4444;
   color: white;
@@ -1819,7 +1826,7 @@ input, select, textarea {
   position: relative; display: flex; align-items: center;
 }
 .search-box input {
-  width: 100%; padding: 10px 14px 10px 40px;
+  width: 100%; min-height: 44px; padding: 10px 14px 10px 40px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   font-size: 0.875rem;
@@ -2379,6 +2386,7 @@ input, select, textarea {
 .tabs::-webkit-scrollbar { display: none; }
 
 .tab {
+  min-height: 44px;
   padding: 10px 18px; font-size: 0.875rem; font-weight: 500;
   color: var(--text-secondary);
   border-bottom: 2px solid transparent; margin-bottom: -2px;
@@ -2411,7 +2419,7 @@ input, select, textarea {
   display: flex; align-items: center; gap: 8px; flex: 1; position: relative;
 }
 .step-number {
-  width: 34px; height: 34px; border-radius: 50%;
+  width: 40px; height: 40px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 0.8125rem; font-weight: 700;
   border: 2px solid var(--border); color: var(--text-tertiary);
@@ -2632,11 +2640,12 @@ input, select, textarea {
 
 /* Password toggle button */
 .form-pw-toggle {
-  position: absolute; right: 12px;
+  position: absolute; right: 4px;
   background: none; border: none; cursor: pointer;
   color: var(--text-tertiary);
   display: flex; align-items: center; justify-content: center;
-  padding: 4px; border-radius: 6px;
+  width: 44px; height: 44px;
+  padding: 0; border-radius: 8px;
   transition: var(--transition);
 }
 .form-pw-toggle:hover { color: var(--text-secondary); background: var(--bg-secondary); }
@@ -2651,6 +2660,9 @@ input, select, textarea {
 }
 .login-pw-header .form-label { margin-bottom: 0; }
 .login-forgot-link {
+  min-height: 44px;
+  display: inline-flex; align-items: center;
+  padding: 0 4px;
   font-size: 0.8rem; font-weight: 600; color: var(--primary);
   text-decoration: none; transition: var(--transition);
   white-space: nowrap;
@@ -2739,10 +2751,12 @@ input, select, textarea {
 }
 .login-footer-sep { color: var(--border-hover); font-size: 0.8rem; }
 .login-footer-btn {
+  min-height: 44px;
+  display: inline-flex; align-items: center;
   background: none; border: none; font-size: 0.8125rem; font-weight: 500;
   color: var(--text-tertiary); cursor: pointer; text-decoration: none;
   transition: var(--transition);
-  padding: 2px 4px; border-radius: 4px;
+  padding: 0 8px; border-radius: 6px;
 }
 .login-footer-btn:hover { color: var(--primary); }
 .login-footer-btn:focus-visible {
@@ -2985,7 +2999,7 @@ input, select, textarea {
 .chat-action-btn, .chat-close-btn {
   background: rgba(255,255,255,0.12); border: none; cursor: pointer;
   color: rgba(255,255,255,0.85); border-radius: 8px;
-  width: 30px; height: 30px;
+  width: 44px; height: 44px;
   display: flex; align-items: center; justify-content: center;
   transition: var(--transition);
 }
@@ -3276,7 +3290,7 @@ input, select, textarea {
 
 /* ── Send button ── */
 .chat-send-btn {
-  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
   background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: white; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
@@ -4319,7 +4333,7 @@ input, select, textarea {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 4px 0;
   font-size: 0.875rem;
   font-weight: 600;
@@ -4332,7 +4346,7 @@ input, select, textarea {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 40px;
+  min-height: 44px;
   max-width: 100%;
   font-size: 0.875rem;
   font-weight: 600;
@@ -5311,7 +5325,7 @@ input, select, textarea {
    Tables transform into stacked card layout on mobile (< 640px)
    ═══════════════════════════════════════════════════════════════════════ */
 
-@media (max-width: 640px) {
+@media (max-width: 820px) {
   /* Transform table into card-based layout */
   .data-table thead {
     display: none;
@@ -5474,7 +5488,7 @@ input, select, textarea {
   background: none; border: none;
   color: var(--text-tertiary); font-size: 0.8125rem; font-weight: 500;
   cursor: pointer; display: flex; align-items: center; gap: 4px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 8px 12px; border-radius: var(--radius-sm);
   transition: var(--transition);
 }
@@ -5827,7 +5841,7 @@ input, select, textarea {
   color: #1D4ED8;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 820px) {
   .admin-mobile-tabs,
   .report-period-tabs.no-print {
     display: grid;
@@ -5840,7 +5854,7 @@ input, select, textarea {
   .admin-mobile-tabs .tab,
   .report-period-tab {
     min-width: 0;
-    min-height: 40px;
+    min-height: 44px;
     padding: 8px 10px;
     border: 1px solid var(--border);
     border-radius: var(--radius-full);
@@ -5877,7 +5891,7 @@ input, select, textarea {
 
   .admin-filter-row .btn {
     min-width: 0;
-    min-height: 40px;
+    min-height: 44px;
     justify-content: center;
   }
 
@@ -5905,17 +5919,17 @@ input, select, textarea {
   }
 
   .admin-page-header > .btn {
-    min-height: 40px;
+    min-height: 44px;
   }
 
   .btn-sm {
-    min-height: 40px;
+    min-height: 44px;
     padding: 9px 14px;
   }
 
   .btn-icon.btn-sm {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
   }
 
   .admin-form-actions {
@@ -5965,13 +5979,13 @@ input, select, textarea {
   }
 
   .report-period-tab {
-    min-height: 40px;
+    min-height: 44px;
     padding: 9px 14px;
   }
 }
 
-/* Mobile admin table hardening */
-@media (max-width: 640px) {
+/* Narrow-screen admin table hardening */
+@media (max-width: 820px) {
   .modal {
     max-height: calc(100dvh - 24px);
   }
@@ -6027,7 +6041,7 @@ input, select, textarea {
 
   .customer-order-tabs .tab {
     min-width: 0;
-    min-height: 40px;
+    min-height: 44px;
     padding: 8px 10px;
     border: 1px solid var(--border);
     border-radius: var(--radius-full);
@@ -6108,7 +6122,7 @@ input, select, textarea {
 
   .data-table td a,
   .report-table td a {
-    min-height: 40px;
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
     max-width: 100%;
@@ -6191,7 +6205,7 @@ input, select, textarea {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 820px) {
   .status-timeline {
     overflow-x: visible;
     padding: 2px 0 0;

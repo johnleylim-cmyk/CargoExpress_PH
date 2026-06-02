@@ -124,10 +124,11 @@ const AdminPersonalInfoPage = () => {
           </h3>
 
           <div className="form-group">
-            <label className="form-label">Full Name *</label>
+            <label className="form-label" htmlFor="admin-profile-name">Full Name *</label>
             <div className="form-input-wrapper">
               <User size={15} className="form-input-icon" />
               <input
+                id="admin-profile-name"
                 className={`form-input form-input-icon-left ${fieldErrors.name ? 'error' : ''}`}
                 placeholder="Admin Name"
                 value={form.name}
@@ -138,10 +139,11 @@ const AdminPersonalInfoPage = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Primary Mobile Number</label>
+            <label className="form-label" htmlFor="admin-profile-phone">Primary Mobile Number</label>
             <div className="form-input-wrapper">
               <Phone size={15} className="form-input-icon" />
               <input
+                id="admin-profile-phone"
                 className={`form-input form-input-icon-left ${fieldErrors.phone ? 'error' : ''}`}
                 placeholder="09xxxxxxxxx"
                 value={form.phone}
@@ -169,10 +171,11 @@ const AdminPersonalInfoPage = () => {
 
           <div className="grid grid-2" style={{ gap: 16 }}>
             <div className="form-group">
-              <label className="form-label">Smart / TNT Number</label>
+              <label className="form-label" htmlFor="admin-smart-phone">Smart / TNT Number</label>
               <div className="form-input-wrapper">
                 <Smartphone size={15} className="form-input-icon" />
                 <input
+                  id="admin-smart-phone"
                   className={`form-input form-input-icon-left ${fieldErrors.smart_phone ? 'error' : ''}`}
                   placeholder="09xxxxxxxxx"
                   value={form.smart_phone}
@@ -183,10 +186,11 @@ const AdminPersonalInfoPage = () => {
               {fieldErrors.smart_phone && <p className="form-error">{fieldErrors.smart_phone}</p>}
             </div>
             <div className="form-group">
-              <label className="form-label">Globe / TM Number</label>
+              <label className="form-label" htmlFor="admin-globe-phone">Globe / TM Number</label>
               <div className="form-input-wrapper">
                 <Globe size={15} className="form-input-icon" />
                 <input
+                  id="admin-globe-phone"
                   className={`form-input form-input-icon-left ${fieldErrors.globe_phone ? 'error' : ''}`}
                   placeholder="09xxxxxxxxx"
                   value={form.globe_phone}
@@ -211,10 +215,11 @@ const AdminPersonalInfoPage = () => {
           </p>
 
           <div className="form-group">
-            <label className="form-label">Facebook Page Link</label>
+            <label className="form-label" htmlFor="admin-facebook-link">Facebook Page Link</label>
             <div className="form-input-wrapper">
               <Link2 size={15} className="form-input-icon" />
               <input
+                id="admin-facebook-link"
                 className={`form-input form-input-icon-left ${fieldErrors.facebook_link ? 'error' : ''}`}
                 placeholder="https://www.facebook.com/your-page"
                 value={form.facebook_link}
@@ -244,10 +249,11 @@ const AdminPersonalInfoPage = () => {
           </p>
 
           <div className="form-group">
-            <label className="form-label">Manila Address</label>
+            <label className="form-label" htmlFor="admin-manila-address">Manila Address</label>
             <div className="form-input-wrapper" style={{ alignItems: 'flex-start' }}>
               <Building size={15} className="form-input-icon" style={{ marginTop: 14 }} />
               <textarea
+                id="admin-manila-address"
                 className="form-textarea form-input-icon-left"
                 placeholder="Complete Manila office/depot address"
                 value={form.manila_address}
@@ -258,10 +264,11 @@ const AdminPersonalInfoPage = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Bohol Address</label>
+            <label className="form-label" htmlFor="admin-bohol-address">Bohol Address</label>
             <div className="form-input-wrapper" style={{ alignItems: 'flex-start' }}>
               <MapPin size={15} className="form-input-icon" style={{ marginTop: 14 }} />
               <textarea
+                id="admin-bohol-address"
                 className="form-textarea form-input-icon-left"
                 placeholder="Complete Bohol office/depot address"
                 value={form.bohol_address}
@@ -276,6 +283,7 @@ const AdminPersonalInfoPage = () => {
       {/* Save */}
       <div className="admin-form-actions">
         <button
+          type="button"
           className="btn btn-primary btn-lg admin-form-submit"
           onClick={handleSave}
           disabled={loading}

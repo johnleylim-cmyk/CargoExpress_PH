@@ -50,7 +50,6 @@ const ReportsPage = () => {
       setData(result);
     } catch (e) {
       setError(e.message || 'Failed to load report data.');
-      setError(e.message || 'Failed to load report data.');
     } finally {
       setLoading(false);
     }
@@ -81,12 +80,12 @@ const ReportsPage = () => {
           </p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="btn btn-ghost btn-sm" onClick={loadReport} disabled={loading}>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={loadReport} disabled={loading}>
             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             Refresh
           </button>
           {hasData && (
-            <button className="btn btn-primary btn-sm" onClick={handlePrint}>
+            <button type="button" className="btn btn-primary btn-sm" onClick={handlePrint}>
               <Printer size={16} />
               Print Report
             </button>
@@ -95,10 +94,13 @@ const ReportsPage = () => {
       </div>
 
       {/* ── Period Tabs ── */}
-      <div className="report-period-tabs no-print">
+      <div className="report-period-tabs no-print" role="tablist" aria-label="Report period">
         {PERIODS.map(p => (
           <button
             key={p.key}
+            type="button"
+            role="tab"
+            aria-selected={period === p.key}
             className={`report-period-tab ${period === p.key ? 'active' : ''}`}
             onClick={() => setPeriod(p.key)}
           >
@@ -113,8 +115,9 @@ const ReportsPage = () => {
         <div className="report-custom-range no-print stagger-item">
           <div className="report-date-inputs">
             <div className="form-group">
-              <label className="form-label">Start Date</label>
+              <label className="form-label" htmlFor="report-start-date">Start Date</label>
               <input
+                id="report-start-date"
                 type="date"
                 className="form-input"
                 value={customStart}
@@ -122,8 +125,9 @@ const ReportsPage = () => {
               />
             </div>
             <div className="form-group">
-              <label className="form-label">End Date</label>
+              <label className="form-label" htmlFor="report-end-date">End Date</label>
               <input
+                id="report-end-date"
                 type="date"
                 className="form-input"
                 value={customEnd}
@@ -132,6 +136,7 @@ const ReportsPage = () => {
             </div>
           </div>
           <button
+            type="button"
             className="btn btn-primary btn-sm"
             onClick={loadReport}
             disabled={!customStart || !customEnd || loading}
@@ -147,7 +152,7 @@ const ReportsPage = () => {
         <div className="card" style={{ padding: 24, textAlign: 'center', color: 'var(--error)', marginTop: 16 }}>
           <AlertTriangle size={32} style={{ marginBottom: 8 }} />
           <p>{error}</p>
-          <button className="btn btn-primary btn-sm" style={{ marginTop: 12 }} onClick={loadReport}>Retry</button>
+          <button type="button" className="btn btn-primary btn-sm" style={{ marginTop: 12 }} onClick={loadReport}>Retry</button>
         </div>
       )}
 

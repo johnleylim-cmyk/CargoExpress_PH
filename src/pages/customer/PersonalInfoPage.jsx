@@ -110,7 +110,7 @@ const PersonalInfoPage = () => {
 
   return (
     <div className="animate-slide-up">
-      <button onClick={() => navigate(-1)} className="btn btn-ghost" style={{ marginBottom: 16 }}>
+      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost" style={{ marginBottom: 16 }}>
         <ArrowLeft size={18} /> Back
       </button>
       <h2 style={{ fontWeight: 800, marginBottom: 20 }}>Personal Information</h2>
@@ -120,10 +120,11 @@ const PersonalInfoPage = () => {
 
           {/* Full Name */}
           <div className="form-group">
-            <label className="form-label">Full Name <span className="required">*</span></label>
+            <label className="form-label" htmlFor="profile-name">Full Name <span className="required">*</span></label>
             <div className="form-input-wrapper">
               <User size={15} className="form-input-icon" />
               <input
+                id="profile-name"
                 className={`form-input form-input-icon-left ${fieldErrors.name ? 'error' : ''}`}
                 placeholder="Juan Dela Cruz"
                 value={form.name}
@@ -135,10 +136,11 @@ const PersonalInfoPage = () => {
 
           {/* Facebook Name */}
           <div className="form-group">
-            <label className="form-label">Facebook Name <span className="required">*</span></label>
+            <label className="form-label" htmlFor="profile-facebook-name">Facebook Name <span className="required">*</span></label>
             <div className="form-input-wrapper">
               <MessageSquare size={15} className="form-input-icon" />
               <input
+                id="profile-facebook-name"
                 className={`form-input form-input-icon-left ${fieldErrors.facebook_name ? 'error' : ''}`}
                 placeholder="Juan Dela Cruz on FB"
                 value={form.facebook_name}
@@ -150,10 +152,11 @@ const PersonalInfoPage = () => {
 
           {/* Mobile Number */}
           <div className="form-group">
-            <label className="form-label">Mobile Number <span className="required">*</span></label>
+            <label className="form-label" htmlFor="profile-phone">Mobile Number <span className="required">*</span></label>
             <div className="form-input-wrapper">
               <Phone size={15} className="form-input-icon" />
               <input
+                id="profile-phone"
                 className={`form-input form-input-icon-left ${fieldErrors.phone ? 'error' : ''}`}
                 placeholder="09xxxxxxxxx"
                 value={form.phone}
@@ -170,10 +173,11 @@ const PersonalInfoPage = () => {
 
           {/* Province */}
           <div className="form-group">
-            <label className="form-label">Province</label>
+            <label className="form-label" htmlFor="profile-province">Province</label>
             <div className="form-input-wrapper">
               <Map size={15} className="form-input-icon" />
               <select
+                id="profile-province"
                 className="form-select form-input-icon-left"
                 value={form.address_province}
                 onChange={e => { setField('address_province', e.target.value); setField('address_city', ''); }}
@@ -186,10 +190,11 @@ const PersonalInfoPage = () => {
 
           {/* City / Municipality */}
           <div className="form-group">
-            <label className="form-label">City / Municipality</label>
+            <label className="form-label" htmlFor="profile-city">City / Municipality</label>
             <div className="form-input-wrapper">
               <Building size={15} className="form-input-icon" />
               <select
+                id="profile-city"
                 className="form-select form-input-icon-left"
                 value={form.address_city}
                 onChange={e => setField('address_city', e.target.value)}
@@ -202,10 +207,11 @@ const PersonalInfoPage = () => {
 
           {/* Barangay */}
           <div className="form-group">
-            <label className="form-label">Barangay</label>
+            <label className="form-label" htmlFor="profile-barangay">Barangay</label>
             <div className="form-input-wrapper">
               <MapPin size={15} className="form-input-icon" />
               <input
+                id="profile-barangay"
                 className="form-input form-input-icon-left"
                 placeholder="Barangay name"
                 value={form.address_barangay}
@@ -216,10 +222,11 @@ const PersonalInfoPage = () => {
 
           {/* Street */}
           <div className="form-group">
-            <label className="form-label">Street</label>
+            <label className="form-label" htmlFor="profile-street">Street</label>
             <div className="form-input-wrapper">
               <Home size={15} className="form-input-icon" />
               <input
+                id="profile-street"
                 className="form-input form-input-icon-left"
                 placeholder="Street name"
                 value={form.address_street}
@@ -230,10 +237,11 @@ const PersonalInfoPage = () => {
 
           {/* Lot / Block / Unit */}
           <div className="form-group">
-            <label className="form-label">Lot / Block / Unit</label>
+            <label className="form-label" htmlFor="profile-lot-block">Lot / Block / Unit</label>
             <div className="form-input-wrapper">
               <Hash size={15} className="form-input-icon" />
               <input
+                id="profile-lot-block"
                 className="form-input form-input-icon-left"
                 placeholder="Lot/Block/Unit No."
                 value={form.address_lot_block}
@@ -244,6 +252,7 @@ const PersonalInfoPage = () => {
 
           {/* Save */}
           <button
+            type="button"
             className="btn btn-primary btn-lg w-full"
             onClick={handleSave}
             disabled={loading}

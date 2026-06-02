@@ -97,7 +97,7 @@ const SupportChatPage = () => {
       </div>
 
       {/* Messages Area */}
-      <div className="support-chat-messages">
+      <div className="support-chat-messages" role="log" aria-live="polite" aria-label="Support chat messages">
         {messages.length === 0 && (
           <EmptyState
             icon={MessageSquare}
@@ -145,13 +145,21 @@ const SupportChatPage = () => {
         <input
           className="form-input"
           placeholder="Type your message..."
+          aria-label="Type your support message"
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
           style={{ flex: 1, borderRadius: 'var(--radius-full)', paddingLeft: 18 }}
           disabled={sending}
         />
-        <button className="chat-send-btn" onClick={handleSend} disabled={!input.trim() || sending} style={{ width: 44, height: 44 }}>
+        <button
+          className="chat-send-btn"
+          type="button"
+          onClick={handleSend}
+          disabled={!input.trim() || sending}
+          aria-label={sending ? 'Sending message' : 'Send message'}
+          style={{ width: 44, height: 44 }}
+        >
           {sending ? <Loader size={18} className="animate-spin" /> : <Send size={18} />}
         </button>
       </div>

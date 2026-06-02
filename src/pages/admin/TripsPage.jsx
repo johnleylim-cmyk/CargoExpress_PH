@@ -35,12 +35,15 @@ const AdminTripsPage = () => {
     <div className="page-transition">
       <div className="flex items-center justify-between" style={{ marginBottom: 24 }}>
         <h1 style={{ fontWeight: 800, fontSize: '1.5rem' }}>Trips</h1>
-        <button className="btn btn-primary" onClick={() => navigate('/admin/trips/create')}><Plus size={16} /> Create Trip</button>
+        <button type="button" className="btn btn-primary" onClick={() => navigate('/admin/trips/create')}><Plus size={16} /> Create Trip</button>
       </div>
-      <div className="tabs admin-mobile-tabs" style={{ marginBottom: 16 }}>
+      <div className="tabs admin-mobile-tabs" role="tablist" aria-label="Trip status filters" style={{ marginBottom: 16 }}>
         {tabs.map((t, i) => (
           <button
             key={t}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === t}
             className={`tab stagger-item ${activeTab === t ? 'active' : ''}`}
             onClick={() => setActiveTab(t)}
             style={{ animationDelay: `${i * 40}ms` }}
@@ -57,7 +60,7 @@ const AdminTripsPage = () => {
         <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
           <h3>Error</h3>
           <p>{error}</p>
-          <button className="btn btn-primary mt-md" onClick={loadTrips}>Retry</button>
+          <button type="button" className="btn btn-primary mt-md" onClick={loadTrips}>Retry</button>
         </div>
       ) : filtered.length === 0 ? (
         <EmptyState

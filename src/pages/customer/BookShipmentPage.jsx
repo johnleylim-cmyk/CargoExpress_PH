@@ -188,27 +188,28 @@ const BookShipmentPage = () => {
     const isSender = prefix === 'sender';
     const cities = isSender ? senderCities : receiverCities;
     const getProvinces = isSender ? getSenderProvinces : getReceiverProvinces;
+    const id = (field) => `${prefix}-${field}`;
     return (
       <div className="grid grid-2" style={{ gap: 16 }}>
-        <div className="form-group" style={{ gridColumn: '1 / -1' }}><label className="form-label">Full Name *</label><input className="form-input" value={form[`${prefix}_name`]} onChange={handleTextChange(`${prefix}_name`)} required /></div>
-        <div className="form-group"><label className="form-label">Mobile Number *</label><input className="form-input" value={form[`${prefix}_phone`]} onChange={handlePhoneChange(`${prefix}_phone`)} inputMode="numeric" maxLength={11} placeholder="09xxxxxxxxx" required /></div>
-        <div className="form-group"><label className="form-label">Facebook Name *</label><input className="form-input" value={form[`${prefix}_facebook`]} onChange={handleTextChange(`${prefix}_facebook`)} placeholder="Your name on Facebook" required /></div>
-        <div className="form-group"><label className="form-label">Province *</label>
-          <select className="form-select" value={form[`${prefix}_province`]} onChange={e => { u(`${prefix}_province`, e.target.value); u(`${prefix}_city`, ''); }}>
+        <div className="form-group" style={{ gridColumn: '1 / -1' }}><label className="form-label" htmlFor={id('name')}>Full Name *</label><input id={id('name')} className="form-input" value={form[`${prefix}_name`]} onChange={handleTextChange(`${prefix}_name`)} required /></div>
+        <div className="form-group"><label className="form-label" htmlFor={id('phone')}>Mobile Number *</label><input id={id('phone')} className="form-input" value={form[`${prefix}_phone`]} onChange={handlePhoneChange(`${prefix}_phone`)} inputMode="numeric" maxLength={11} placeholder="09xxxxxxxxx" required /></div>
+        <div className="form-group"><label className="form-label" htmlFor={id('facebook')}>Facebook Name *</label><input id={id('facebook')} className="form-input" value={form[`${prefix}_facebook`]} onChange={handleTextChange(`${prefix}_facebook`)} placeholder="Your name on Facebook" required /></div>
+        <div className="form-group"><label className="form-label" htmlFor={id('province')}>Province *</label>
+          <select id={id('province')} className="form-select" value={form[`${prefix}_province`]} onChange={e => { u(`${prefix}_province`, e.target.value); u(`${prefix}_city`, ''); }}>
             <option value="">Select Province</option>
             {getProvinces().map(p => <option key={p} value={p}>{p}</option>)}
           </select>
         </div>
-        <div className="form-group"><label className="form-label">City / Municipality *</label>
-          <select className="form-select" value={form[`${prefix}_city`]} onChange={e => u(`${prefix}_city`, e.target.value)} disabled={!form[`${prefix}_province`]}>
+        <div className="form-group"><label className="form-label" htmlFor={id('city')}>City / Municipality *</label>
+          <select id={id('city')} className="form-select" value={form[`${prefix}_city`]} onChange={e => u(`${prefix}_city`, e.target.value)} disabled={!form[`${prefix}_province`]}>
             <option value="">Select City</option>
             {cities.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
-        <div className="form-group"><label className="form-label">Barangay *</label><input className="form-input" value={form[`${prefix}_barangay`]} onChange={handleTextChange(`${prefix}_barangay`)} required /></div>
-        <div className="form-group"><label className="form-label">Street *</label><input className="form-input" value={form[`${prefix}_street`]} onChange={handleTextChange(`${prefix}_street`)} required /></div>
-        <div className="form-group"><label className="form-label">Lot / Block / Purok</label><input className="form-input" value={form[`${prefix}_lot_block`]} onChange={handleTextChange(`${prefix}_lot_block`)} /></div>
-        <div className="form-group"><label className="form-label">Landmark</label><input className="form-input" value={form[`${prefix}_landmark`]} onChange={handleTextChange(`${prefix}_landmark`)} placeholder="Near what building/place?" /></div>
+        <div className="form-group"><label className="form-label" htmlFor={id('barangay')}>Barangay *</label><input id={id('barangay')} className="form-input" value={form[`${prefix}_barangay`]} onChange={handleTextChange(`${prefix}_barangay`)} required /></div>
+        <div className="form-group"><label className="form-label" htmlFor={id('street')}>Street *</label><input id={id('street')} className="form-input" value={form[`${prefix}_street`]} onChange={handleTextChange(`${prefix}_street`)} required /></div>
+        <div className="form-group"><label className="form-label" htmlFor={id('lot-block')}>Lot / Block / Purok</label><input id={id('lot-block')} className="form-input" value={form[`${prefix}_lot_block`]} onChange={handleTextChange(`${prefix}_lot_block`)} /></div>
+        <div className="form-group"><label className="form-label" htmlFor={id('landmark')}>Landmark</label><input id={id('landmark')} className="form-input" value={form[`${prefix}_landmark`]} onChange={handleTextChange(`${prefix}_landmark`)} placeholder="Near what building/place?" /></div>
       </div>
     );
   };
@@ -237,8 +238,8 @@ const BookShipmentPage = () => {
           </div>
         </div>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-          <button className="btn btn-outline" onClick={() => navigate('/customer/orders')} style={{ flex: 1 }}><Package size={16} /> View Orders</button>
-          <button className="btn btn-primary" onClick={() => { setSuccess(null); setStep(1); setForm(p => ({ ...p, package_description: '', package_weight: '', trip_id: '' })); setUseRegisteredReceiver(false); setUseRegisteredSender(false); }} style={{ flex: 1 }}><ArrowRight size={16} /> Book Another</button>
+          <button type="button" className="btn btn-outline" onClick={() => navigate('/customer/orders')} style={{ flex: 1 }}><Package size={16} /> View Orders</button>
+          <button type="button" className="btn btn-primary" onClick={() => { setSuccess(null); setStep(1); setForm(p => ({ ...p, package_description: '', package_weight: '', trip_id: '' })); setUseRegisteredReceiver(false); setUseRegisteredSender(false); }} style={{ flex: 1 }}><ArrowRight size={16} /> Book Another</button>
         </div>
       </div>
     </div>
@@ -248,17 +249,17 @@ const BookShipmentPage = () => {
 
   return (
     <div className="page-transition">
-      <button onClick={() => step > 1 ? setStep(step - 1) : navigate(-1)} className="btn btn-ghost" style={{ marginBottom: 16 }}>
+      <button type="button" onClick={() => step > 1 ? setStep(step - 1) : navigate(-1)} className="btn btn-ghost" style={{ marginBottom: 16 }}>
         <ArrowLeft size={18} /> {step > 1 ? 'Back' : 'Cancel'}
       </button>
       <h2 style={{ fontWeight: 800, marginBottom: 8 }}>Book Shipment</h2>
 
       {/* Step Progress */}
-      <div className="step-progress">
+      <div className="step-progress" role="list" aria-label="Booking progress">
         {steps.map((s, i) => (
-          <div key={s} style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+          <div key={s} role="listitem" style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
             <div className={`step ${step > i + 1 ? 'completed' : step === i + 1 ? 'active' : ''}`}>
-              <div className="step-number">{i + 1}</div>
+              <div className="step-number" aria-current={step === i + 1 ? 'step' : undefined}>{i + 1}</div>
               <span className="step-label">{s}</span>
             </div>
             {i < steps.length - 1 && <div className="step-connector" style={{ background: step > i + 1 ? '#10B981' : '#E2E8F0' }} />}
@@ -277,7 +278,8 @@ const BookShipmentPage = () => {
           )}
           <div className="customer-route-options">
             {ROUTES.map(r => (
-              <button key={r.label} className="customer-route-option card card-interactive" onClick={() => handleRouteChange(r.label)}
+              <button key={r.label} type="button" className="customer-route-option card card-interactive" onClick={() => handleRouteChange(r.label)}
+                aria-pressed={form.route === r.label}
                 style={{ border: form.route === r.label ? '2px solid var(--primary)' : '1.5px solid #E2E8F0', background: form.route === r.label ? '#FFF7F0' : 'white' }}>
                 <Truck size={24} color={form.route === r.label ? 'var(--primary)' : '#94A3B8'} style={{ margin: '0 auto 8px' }} />
                 <div className="customer-route-option-label">{r.label}</div>
@@ -294,14 +296,14 @@ const BookShipmentPage = () => {
           )}
           {form.route && filteredTrips.length > 0 && (
             <div style={{ marginTop: 16 }}>
-              <label className="form-label">Select Trip (Optional)</label>
-              <select className="form-select" value={form.trip_id} onChange={e => u('trip_id', e.target.value)}>
+              <label className="form-label" htmlFor="booking-trip">Select Trip (Optional)</label>
+              <select id="booking-trip" className="form-select" value={form.trip_id} onChange={e => u('trip_id', e.target.value)}>
                 <option value="">No specific trip</option>
                 {filteredTrips.map(t => <option key={t.id} value={t.id}>{t.trip_number} - {new Date(t.departure_date).toLocaleDateString()} - PHP {parseFloat(t.price_per_kg || pricePerKilo).toFixed(2)}/kg</option>)}
               </select>
             </div>
           )}
-          <button className="btn btn-primary btn-lg w-full mt-lg" disabled={!form.route} onClick={() => setStep(2)} style={{ justifyContent: 'center' }}>Continue</button>
+          <button type="button" className="btn btn-primary btn-lg w-full mt-lg" disabled={!form.route} onClick={() => setStep(2)} style={{ justifyContent: 'center' }}>Continue</button>
         </div></div>
       )}
 
@@ -316,7 +318,7 @@ const BookShipmentPage = () => {
             </div>
           )}
           {renderAddressFields('sender')}
-          <button className="btn btn-primary btn-lg w-full" style={{ marginTop: 20, justifyContent: 'center' }} onClick={() => {
+          <button type="button" className="btn btn-primary btn-lg w-full" style={{ marginTop: 20, justifyContent: 'center' }} onClick={() => {
             const err = validateSender();
             if (err) { toast.error(err); return; }
             setStep(3);
@@ -335,7 +337,7 @@ const BookShipmentPage = () => {
             </div>
           )}
           {renderAddressFields('receiver')}
-          <button className="btn btn-primary btn-lg w-full" style={{ marginTop: 20, justifyContent: 'center' }} onClick={() => {
+          <button type="button" className="btn btn-primary btn-lg w-full" style={{ marginTop: 20, justifyContent: 'center' }} onClick={() => {
             const err = validateReceiver();
             if (err) { toast.error(err); return; }
             const v = validateRouteProvinces(form.sender_province, form.receiver_province, selectedRoute);
@@ -349,14 +351,14 @@ const BookShipmentPage = () => {
       {step === 4 && (
         <div className="card animate-fade-in"><div className="card-body">
           <h3 style={{ fontWeight: 700, marginBottom: 16 }}><Package size={18} style={{ display: 'inline', marginRight: 8 }} />Package Details</h3>
-          <div className="form-group"><label className="form-label">Description (Optional)</label><input className="form-input" value={form.package_description} onChange={e => u('package_description', e.target.value)} placeholder="e.g. Documents, Clothes, etc." /></div>
+          <div className="form-group"><label className="form-label" htmlFor="package-description">Description (Optional)</label><input id="package-description" className="form-input" value={form.package_description} onChange={e => u('package_description', e.target.value)} placeholder="e.g. Documents, Clothes, etc." /></div>
           <div className="form-group">
-            <label className="form-label">Estimated Weight (kg) *</label>
-            <input type="number" className="form-input" value={form.package_weight} onChange={e => u('package_weight', e.target.value)} placeholder="0.0" min="0.1" step="0.1" required />
-            <p style={{ fontSize: '0.75rem', color: '#64748B', marginTop: 4 }}>Note: This is an estimate. Final weight may be updated by the admin during weighing.</p>
+            <label className="form-label" htmlFor="package-weight">Estimated Weight (kg) *</label>
+            <input id="package-weight" type="number" className="form-input" value={form.package_weight} onChange={e => u('package_weight', e.target.value)} placeholder="0.0" min="0.1" step="0.1" required aria-describedby="package-weight-helper" />
+            <p id="package-weight-helper" style={{ fontSize: '0.75rem', color: '#64748B', marginTop: 4 }}>Note: This is an estimate. Final weight may be updated by the admin during weighing.</p>
           </div>
-          <div className="form-group"><label className="form-label">Who Pays?</label>
-            <select className="form-select" value={form.payer_type} onChange={e => u('payer_type', e.target.value)}>
+          <div className="form-group"><label className="form-label" htmlFor="payer-type">Who Pays?</label>
+            <select id="payer-type" className="form-select" value={form.payer_type} onChange={e => u('payer_type', e.target.value)}>
               <option value="sender">Sender</option><option value="receiver">Receiver</option>
             </select>
           </div>
@@ -367,7 +369,7 @@ const BookShipmentPage = () => {
               <div className="text-xs text-tertiary">{form.package_weight} kg x PHP {effectivePricePerKilo}/kg</div>
             </div>
           )}
-          <button className="btn btn-primary btn-lg w-full" onClick={() => {
+          <button type="button" className="btn btn-primary btn-lg w-full" onClick={() => {
             const packageWeight = parseFloat(form.package_weight);
             if (!Number.isFinite(packageWeight) || packageWeight <= 0) { toast.error('Package weight must be greater than 0 kg.'); return; }
             setStep(5);
@@ -401,7 +403,7 @@ const BookShipmentPage = () => {
             <div className="text-sm text-secondary">Estimated Cost</div>
             <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--primary)' }}>₱{cost.toFixed(2)}</div>
           </div>
-          <button className="btn btn-primary btn-lg w-full" onClick={handleSubmit} disabled={loading} style={{ justifyContent: 'center' }}>
+          <button type="button" className="btn btn-primary btn-lg w-full" onClick={handleSubmit} disabled={loading} style={{ justifyContent: 'center' }}>
             {loading ? <Loader size={18} className="animate-spin" /> : 'Confirm Booking'}
           </button>
         </div></div>

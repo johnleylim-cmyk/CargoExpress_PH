@@ -4,6 +4,7 @@ import { SkeletonStatCard, SkeletonText } from '../../components/ui/SkeletonLoad
 import AnimatedCounter from '../../components/ui/AnimatedCounter';
 import StatusBadge from '../../components/ui/StatusBadge';
 import EmptyState from '../../components/ui/EmptyState';
+import ResponsiveFilterControls from '../../components/ui/ResponsiveFilterControls';
 import {
   FileText, Printer, Calendar, Package, CheckCircle,
   DollarSign, TrendingUp, Truck, MapPin, BarChart3,
@@ -94,21 +95,16 @@ const ReportsPage = () => {
       </div>
 
       {/* ── Period Tabs ── */}
-      <div className="report-period-tabs no-print" role="tablist" aria-label="Report period">
-        {PERIODS.map(p => (
-          <button
-            key={p.key}
-            type="button"
-            role="tab"
-            aria-selected={period === p.key}
-            className={`report-period-tab ${period === p.key ? 'active' : ''}`}
-            onClick={() => setPeriod(p.key)}
-          >
-            <p.icon size={14} />
-            {p.label}
-          </button>
-        ))}
-      </div>
+      <ResponsiveFilterControls
+        options={PERIODS.map(p => ({ value: p.key, label: p.label, icon: p.icon }))}
+        value={period}
+        onChange={setPeriod}
+        ariaLabel="Report period"
+        label="Period"
+        desktopClassName="report-period-tabs"
+        buttonClassName={(option, active) => `report-period-tab ${active ? 'active' : ''}`}
+        className="no-print report-period-filter"
+      />
 
       {/* ── Custom Date Range ── */}
       {period === 'custom' && (

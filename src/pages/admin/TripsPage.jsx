@@ -4,6 +4,7 @@ import { getTrips, withTimeout } from '../../lib/database';
 import StatusBadge from '../../components/ui/StatusBadge';
 import { SkeletonCard } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
+import ResponsiveFilterControls from '../../components/ui/ResponsiveFilterControls';
 import { Plus, Truck, Calendar, MapPin } from 'lucide-react';
 
 const tabs = ['All', 'scheduled', 'in_progress', 'arrived', 'completed', 'cancelled'];
@@ -30,6 +31,11 @@ const AdminTripsPage = () => {
   };
 
   const filtered = activeTab === 'All' ? trips : trips.filter(t => t.status === activeTab);
+  const filterOptions = tabs.map(t => ({
+    value: t,
+    label: t === 'All' ? 'All' : t.replace(/_/g, ' '),
+    count: t === 'All' ? trips.length : trips.filter(trip => trip.status === t).length,
+  }));
 
   return (
     <div className="page-transition">
@@ -44,21 +50,15 @@ const AdminTripsPage = () => {
           <button type="button" className="btn btn-primary" onClick={() => navigate('/admin/trips/create')}><Plus size={16} /> Create Trip</button>
         </div>
       </div>
-      <div className="tabs admin-mobile-tabs mb-16" role="tablist" aria-label="Trip status filters">
-        {tabs.map((t, i) => (
-          <button
-            key={t}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === t}
-            className={`tab stagger-item ${activeTab === t ? 'active' : ''}`}
-            onClick={() => setActiveTab(t)}
-            style={{ animationDelay: `${i * 40}ms` }}
-          >
-            {t === 'All' ? 'All' : t.replace(/_/g, ' ')}
-          </button>
-        ))}
-      </div>
+      <ResponsiveFilterControls
+        options={filterOptions}
+        value={activeTab}
+        onChange={setActiveTab}
+        ariaLabel="Trip status filters"
+        label="Status"
+        desktopClassName="tabs admin-mobile-tabs"
+        className="mb-16"
+      />
       {loading ? (
         <div className="flex flex-col gap-12">
           {Array.from({ length: 3 }, (_, i) => <SkeletonCard key={i} />)}

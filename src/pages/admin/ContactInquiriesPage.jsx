@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getContactInquiries, updateContactInquiry } from '../../lib/database';
 import { SkeletonTableRow } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
+import ResponsiveFilterControls from '../../components/ui/ResponsiveFilterControls';
 import {
   Mail, Phone, Clock, CheckCircle, Eye,
   Loader, MessageSquare, AlertCircle, X
@@ -63,6 +64,11 @@ const ContactInquiriesPage = () => {
     : inquiries.filter(i => i.status === filter);
 
   const newCount = inquiries.filter(i => i.status === 'new').length;
+  const filterOptions = ['all', 'new', 'read', 'resolved'].map(f => ({
+    value: f,
+    label: f === 'all' ? 'All' : f,
+    count: f === 'all' ? inquiries.length : inquiries.filter(i => i.status === f).length,
+  }));
 
   if (error && !loading && inquiries.length === 0) {
     return (
@@ -99,20 +105,16 @@ const ContactInquiriesPage = () => {
       </div>
 
       {/* Filters */}
-      <div className="admin-filter-row" role="tablist" aria-label="Inquiry status filters">
-        {['all', 'new', 'read', 'resolved'].map(f => (
-          <button
-            key={f}
-            type="button"
-            role="tab"
-            aria-selected={filter === f}
-            className={`btn btn-sm ${filter === f ? 'btn-primary' : 'btn-outline'} text-capitalize`}
-            onClick={() => setFilter(f)}
-          >
-            {f === 'all' ? `All (${inquiries.length})` : `${f} (${inquiries.filter(i => i.status === f).length})`}
-          </button>
-        ))}
-      </div>
+      <ResponsiveFilterControls
+        options={filterOptions}
+        value={filter}
+        onChange={setFilter}
+        ariaLabel="Inquiry status filters"
+        label="Status"
+        desktopClassName="admin-filter-row"
+        buttonClassName={(option, active) => `btn btn-sm ${active ? 'btn-primary' : 'btn-outline'} text-capitalize`}
+        className="mb-16"
+      />
 
       {/* Table */}
       <div className="card">

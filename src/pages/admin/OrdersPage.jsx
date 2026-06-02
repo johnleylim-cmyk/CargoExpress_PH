@@ -5,6 +5,7 @@ import StatusBadge from '../../components/ui/StatusBadge';
 import { SkeletonTableRow } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
 import PageTransition from '../../components/ui/PageTransition';
+import ResponsiveFilterControls from '../../components/ui/ResponsiveFilterControls';
 import { motion } from 'framer-motion';
 import { Search, Package } from 'lucide-react';
 
@@ -40,6 +41,12 @@ const AdminOrdersPage = () => {
     return true;
   });
 
+  const filterOptions = tabs.map(t => ({
+    value: t,
+    label: t,
+    count: t === 'All' ? orders.length : orders.filter(o => o.status === t).length,
+  }));
+
   return (
     <PageTransition>
       <div className="admin-page-header">
@@ -63,20 +70,15 @@ const AdminOrdersPage = () => {
           />
         </div>
       </div>
-      <div className="tabs admin-mobile-tabs mb-16" role="tablist" aria-label="Order status filters">
-        {tabs.map((t, i) => (
-          <button
-            key={t}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === t}
-            className={`tab ${activeTab === t ? 'active' : ''}`}
-            onClick={() => setActiveTab(t)}
-          >
-            {t} {t !== 'All' ? `(${orders.filter(o => o.status === t).length})` : ''}
-          </button>
-        ))}
-      </div>
+      <ResponsiveFilterControls
+        options={filterOptions}
+        value={activeTab}
+        onChange={setActiveTab}
+        ariaLabel="Order status filters"
+        label="Status"
+        desktopClassName="tabs admin-mobile-tabs"
+        className="mb-16"
+      />
       {loading ? (
         <div className="card animate-fade-in">
           <div className="table-container">

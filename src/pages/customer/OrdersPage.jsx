@@ -6,6 +6,7 @@ import StatusBadge from '../../components/ui/StatusBadge';
 import { SkeletonOrderCard } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
 import PageTransition, { StaggerItem } from '../../components/ui/PageTransition';
+import ResponsiveFilterControls from '../../components/ui/ResponsiveFilterControls';
 import { Search, Package, AlertCircle } from 'lucide-react';
 
 const tabs = ['All', 'Pending', 'In Transit', 'Delivered', 'Cancelled'];
@@ -57,19 +58,15 @@ const OrdersPage = () => {
           onChange={e => setSearch(e.target.value)}
         />
       </StaggerItem>
-      <StaggerItem className="tabs customer-order-tabs" role="tablist" aria-label="Order status filters" delay={60}>
-        {tabs.map(t => (
-          <button
-            key={t}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === t}
-            className={`tab ${activeTab === t ? 'active' : ''}`}
-            onClick={() => setActiveTab(t)}
-          >
-            {t}
-          </button>
-        ))}
+      <StaggerItem className="mb-16" delay={60}>
+        <ResponsiveFilterControls
+          options={tabs.map(t => ({ value: t, label: t }))}
+          value={activeTab}
+          onChange={setActiveTab}
+          ariaLabel="Order status filters"
+          label="Status"
+          desktopClassName="tabs customer-order-tabs"
+        />
       </StaggerItem>
       {loading ? (
         <div>

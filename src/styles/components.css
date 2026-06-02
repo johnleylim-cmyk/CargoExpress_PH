@@ -309,6 +309,53 @@
   transform: rotate(15deg) scale(1.1);
 }
 
+/* --- RESPONSIVE FILTERS ------------------------------------------------ */
+
+.responsive-filter {
+  width: 100%;
+}
+
+.responsive-filter-tabs {
+  width: 100%;
+}
+
+.responsive-filter-select-wrap {
+  display: none;
+  width: 100%;
+}
+
+.responsive-filter-select-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.responsive-filter-select {
+  width: 100%;
+}
+
+.responsive-filter-current {
+  display: none;
+}
+
+@media (max-width: 820px) {
+  .responsive-filter-tabs {
+    display: none !important;
+  }
+
+  .responsive-filter-select-wrap {
+    display: block;
+  }
+
+  .report-period-filter .responsive-filter-select-wrap {
+    margin-bottom: 20px;
+  }
+}
+
 /* --- ERROR SECTION FALLBACK --------------------------------------------- */
 
 .error-section-fallback {

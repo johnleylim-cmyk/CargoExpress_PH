@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { getOrCreateConversation, getMessages, sendMessage } from '../../lib/database';
-import { Send, Bot, Loader, MessageSquare, AlertCircle } from 'lucide-react';
+import { Send, Bot, Loader, MessageSquare } from 'lucide-react';
 import EmptyState from '../../components/ui/EmptyState';
+import { useToast } from '../../hooks/useToast';
 
 const formatTime = (ts) => {
   if (!ts) return '';
@@ -12,12 +13,12 @@ const formatTime = (ts) => {
 
 const SupportChatPage = () => {
   const { user } = useAuth();
+  const toast = useToast();
   const [conversationId, setConversationId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const [error, setError] = useState('');
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -30,8 +31,7 @@ const SupportChatPage = () => {
         const history = await getMessages(conv.id);
         if (isMounted) { setMessages(history || []); setLoading(false); }
       } catch (err) {
-        // Chat init failed — user sees empty state
-        if (isMounted) { setError('Failed to load chat. Please try again.'); setLoading(false); }
+        if (isMounted) { toast.error('Failed to load chat. Please try again.'); setLoading(false); }
       }
     };
     initChat();
@@ -69,7 +69,7 @@ const SupportChatPage = () => {
         return [...prev, newMsg];
       });
     } catch (err) {
-      setError('Failed to send message. Please try again.');
+      toast.error('Failed to send message. Please try again.');
       setInput(text);
     } finally {
       setSending(false);
@@ -95,12 +95,6 @@ const SupportChatPage = () => {
         </h2>
         <p className="text-secondary text-sm">Message our admins for help with your shipments.</p>
       </div>
-
-      {error && (
-        <div className="alert-banner alert-banner-error" style={{ marginBottom: 12 }}>
-          <AlertCircle size={16} /> {error}
-        </div>
-      )}
 
       {/* Messages Area */}
       <div className="support-chat-messages">
@@ -157,12 +151,7 @@ const SupportChatPage = () => {
           style={{ flex: 1, borderRadius: 'var(--radius-full)', paddingLeft: 18 }}
           disabled={sending}
         />
-        <button
-          className="chat-send-btn"
-          onClick={handleSend}
-          disabled={!input.trim() || sending}
-          style={{ width: 44, height: 44 }}
-        >
+        <button className="chat-send-btn" onClick={handleSend} disabled={!input.trim() || sending} style={{ width: 44, height: 44 }}>
           {sending ? <Loader size={18} className="animate-spin" /> : <Send size={18} />}
         </button>
       </div>

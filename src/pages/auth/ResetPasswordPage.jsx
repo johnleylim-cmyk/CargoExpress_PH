@@ -1,52 +1,62 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { Container, Lock, Loader, CheckCircle, Eye, EyeOff, ShieldCheck, AlertTriangle, Circle } from 'lucide-react';
+import {
+  Container, Lock, Loader, CheckCircle2,
+  Eye, EyeOff, ShieldCheck, AlertTriangle, Check,
+} from 'lucide-react';
 
+/* ── Password strength helpers ───────────────────────────────────────── */
+const getPasswordStrength = (pw) => {
+  if (!pw) return { level: 0, label: '', color: '' };
+  let score = 0;
+  if (pw.length >= 8)        score++;
+  if (pw.length >= 12)       score++;
+  if (/[A-Z]/.test(pw))     score++;
+  if (/[0-9]/.test(pw))     score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  if (score <= 1) return { level: 1, label: 'Weak',   color: 'var(--error)'   };
+  if (score <= 2) return { level: 2, label: 'Fair',   color: 'var(--warning)' };
+  if (score <= 3) return { level: 3, label: 'Good',   color: 'var(--info)'    };
+  return              { level: 4, label: 'Strong', color: 'var(--success)'  };
+};
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ResetPasswordPage — World-Class Premium Redesign
+══════════════════════════════════════════════════════════════════════════ */
 const ResetPasswordPage = () => {
-  const [password, setPassword] = useState('');
+  const [password,        setPassword]        = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [showPassword,    setShowPassword]    = useState(false);
+  const [showConfirm,     setShowConfirm]     = useState(false);
+  const [loading,         setLoading]         = useState(false);
+  const [error,           setError]           = useState('');
+  const [success,         setSuccess]         = useState(false);
+  const [ready,           setReady]           = useState(false);
   const { changePassword } = useAuth();
   const navigate = useNavigate();
 
-  // Wait for Supabase to process the recovery token from the URL hash
+  // Give Supabase time to process the recovery token from the URL hash
   useEffect(() => {
-    // Supabase JS client auto-detects the recovery token in the URL hash
-    // and signs the user in with PASSWORD_RECOVERY event.
-    // Give it a moment to process.
     const timer = setTimeout(() => setReady(true), 1500);
     return () => clearTimeout(timer);
   }, []);
 
-  // Password strength checks
+  const pwStrength = getPasswordStrength(password);
+
   const checks = {
-    length: password.length >= 8,
+    length:    password.length >= 8,
     uppercase: /[A-Z]/.test(password),
     lowercase: /[a-z]/.test(password),
-    number: /[0-9]/.test(password),
+    number:    /[0-9]/.test(password),
   };
   const allChecks = Object.values(checks).every(Boolean);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
-    if (!allChecks) {
-      setError('Password does not meet all requirements');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
+    if (!allChecks)               return setError('Password does not meet all requirements.');
+    if (password !== confirmPassword) return setError('Passwords do not match.');
     setLoading(true);
     try {
       const result = await changePassword(password);
@@ -54,182 +64,246 @@ const ResetPasswordPage = () => {
         setError(result.error);
       } else {
         setSuccess(true);
-        // Redirect to login after 3 seconds
         setTimeout(() => navigate('/login'), 3000);
       }
     } catch (err) {
-      setError(err.message || 'Failed to update password');
+      setError(err.message || 'Failed to update password. Please try again.');
     }
     setLoading(false);
   };
 
-  // Loading state while Supabase processes the recovery token
+  /* ── Verifying token state ── */
   if (!ready) {
     return (
       <div className="auth-page">
-        <div className="auth-card" style={{ maxWidth: 440, textAlign: 'center' }}>
+        <div className="auth-orb auth-orb-1" aria-hidden="true" />
+        <div className="auth-orb auth-orb-2" aria-hidden="true" />
+        <div className="auth-card rp-loading-card">
           <div className="auth-brand">
-            <Container size={40} color="var(--primary)" style={{ marginBottom: 8 }} />
-            <h1><span>CARGO</span><span>EXPRESS PH</span></h1>
+            <div className="auth-brand-icon">
+              <Container size={24} color="white" />
+            </div>
+            <div className="auth-brand-text">
+              <span className="auth-brand-cargo">CARGO</span>
+              <span className="auth-brand-express">EXPRESS PH</span>
+            </div>
           </div>
-          <div style={{ padding: '40px 0' }}>
-            <Loader size={32} className="animate-spin" style={{ color: 'var(--primary)', marginBottom: 16 }} />
-            <p style={{ color: 'var(--text-secondary)' }}>Verifying your reset link...</p>
+          <div className="rp-verifying">
+            <div className="rp-verifying-spinner">
+              <Loader size={28} className="animate-spin" />
+            </div>
+            <p className="rp-verifying-text">Verifying your reset link…</p>
+            <p className="rp-verifying-sub">This only takes a moment</p>
           </div>
         </div>
       </div>
     );
   }
 
+  /* ── Success state ── */
+  if (success) {
+    return (
+      <div className="auth-page">
+        <div className="auth-orb auth-orb-1" aria-hidden="true" />
+        <div className="auth-orb auth-orb-2" aria-hidden="true" />
+        <div className="auth-card auth-success-card">
+          <div className="auth-success-icon">
+            <CheckCircle2 size={48} />
+          </div>
+          <h2 className="auth-success-title">Password Updated!</h2>
+          <p className="auth-success-sub">
+            Your new password is set. Redirecting you to sign in…
+          </p>
+          <div className="auth-success-loader">
+            <div className="auth-success-bar" />
+          </div>
+          <Link to="/login" className="auth-submit-btn" style={{ textDecoration: 'none', marginTop: 12 }}>
+            Go to Sign In
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Main reset form ── */
   return (
     <div className="auth-page">
-      <div className="auth-card" style={{ maxWidth: 440 }}>
+      <div className="auth-orb auth-orb-1" aria-hidden="true" />
+      <div className="auth-orb auth-orb-2" aria-hidden="true" />
+      <div className="auth-orb auth-orb-3" aria-hidden="true" />
+
+      <div className="auth-card fp-card">
+
+        {/* ── Brand ── */}
         <div className="auth-brand">
-          <Container size={40} color="var(--primary)" style={{ marginBottom: 8 }} />
-          <h1><span>CARGO</span><span>EXPRESS PH</span></h1>
+          <div className="auth-brand-icon">
+            <Container size={24} color="white" />
+          </div>
+          <div className="auth-brand-text">
+            <span className="auth-brand-cargo">CARGO</span>
+            <span className="auth-brand-express">EXPRESS PH</span>
+          </div>
         </div>
 
-        {!success ? (
-          <div className="animate-fade-in">
-            <div style={{ textAlign: 'center', marginBottom: 24 }}>
-              <div style={{
-                width: 56, height: 56, borderRadius: '50%',
-                background: 'var(--primary-bg)', display: 'flex',
-                alignItems: 'center', justifyContent: 'center',
-                margin: '0 auto 12px', color: 'var(--primary)',
-              }}>
-                <Lock size={24} />
+        <div className="animate-slide-up">
+
+          {/* Icon + heading */}
+          <div className="fp-hero">
+            <div className="fp-hero-icon fp-hero-icon-lock">
+              <Lock size={26} />
+            </div>
+            <h2 className="fp-title">Set New Password</h2>
+            <p className="fp-subtitle">
+              Choose a strong password to keep your account secure.
+            </p>
+          </div>
+
+          {error && (
+            <div className="auth-error-banner" role="alert">
+              <AlertTriangle size={15} />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} noValidate>
+
+            {/* New password */}
+            <div className="form-group">
+              <label className="form-label" htmlFor="reset-password">
+                New Password <span className="required">*</span>
+              </label>
+              <div className="form-input-wrapper">
+                <Lock size={15} className="form-input-icon" aria-hidden="true" />
+                <input
+                  id="reset-password"
+                  type={showPassword ? 'text' : 'password'}
+                  className="form-input form-input-icon-left form-input-icon-right"
+                  placeholder="Min. 8 characters"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  autoComplete="new-password"
+                  aria-required="true"
+                  aria-describedby="rp-strength"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="form-pw-toggle"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-pressed={showPassword}
+                >
+                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
               </div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: 4 }}>Set New Password</h2>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                Enter your new password below
-              </p>
+
+              {/* Strength meter */}
+              {password && (
+                <div className="pw-strength-wrap" id="rp-strength" aria-live="polite">
+                  <div className="pw-strength-bars">
+                    {[1,2,3,4].map(i => (
+                      <div
+                        key={i}
+                        className="pw-strength-bar"
+                        style={{ background: i <= pwStrength.level ? pwStrength.color : 'var(--border)' }}
+                      />
+                    ))}
+                  </div>
+                  <span className="pw-strength-label" style={{ color: pwStrength.color }}>
+                    {pwStrength.label}
+                  </span>
+                </div>
+              )}
             </div>
 
-            {error && (
-              <div className="alert-banner alert-banner-error">
-                <AlertTriangle size={16} /> {error}
+            {/* Requirements card */}
+            {password && (
+              <div className="rp-requirements" role="list" aria-label="Password requirements">
+                {[
+                  { key: 'length',    label: '8+ characters'    },
+                  { key: 'uppercase', label: 'Uppercase letter'  },
+                  { key: 'lowercase', label: 'Lowercase letter'  },
+                  { key: 'number',    label: 'Number'            },
+                ].map(({ key, label }) => (
+                  <div
+                    key={key}
+                    className={`rp-requirement-item ${checks[key] ? 'met' : ''}`}
+                    role="listitem"
+                    aria-label={`${label}: ${checks[key] ? 'met' : 'not met'}`}
+                  >
+                    <div className="rp-req-icon">
+                      <Check size={10} strokeWidth={3} />
+                    </div>
+                    {label}
+                  </div>
+                ))}
               </div>
             )}
 
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label className="form-label" htmlFor="reset-password">New Password</label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    id="reset-password"
-                    type={showPassword ? 'text' : 'password'}
-                    className="form-input"
-                    placeholder="Enter new password"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    required
-                    minLength={8}
-                    style={{ paddingRight: 44 }}
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    style={{
-                      position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
-                      background: 'none', border: 'none', cursor: 'pointer',
-                      color: 'var(--text-secondary)', padding: 4,
-                    }}
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
+            {/* Confirm password */}
+            <div className="form-group">
+              <label className="form-label" htmlFor="reset-confirm-password">
+                Confirm Password <span className="required">*</span>
+              </label>
+              <div className="form-input-wrapper">
+                <Lock size={15} className="form-input-icon" aria-hidden="true" />
+                <input
+                  id="reset-confirm-password"
+                  type={showConfirm ? 'text' : 'password'}
+                  className={`form-input form-input-icon-left form-input-icon-right ${
+                    confirmPassword && confirmPassword === password ? 'success' :
+                    confirmPassword && confirmPassword !== password ? 'error' : ''
+                  }`}
+                  placeholder="Repeat new password"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  required
+                  autoComplete="new-password"
+                  aria-required="true"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="form-pw-toggle"
+                  aria-label={showConfirm ? 'Hide password' : 'Show password'}
+                  aria-pressed={showConfirm}
+                >
+                  {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
               </div>
-
-              {/* Password strength indicators */}
-              {password.length > 0 && (
-                <div style={{
-                  background: 'var(--card-bg)', borderRadius: 12, padding: '12px 16px',
-                  marginBottom: 16, border: '1px solid var(--border)',
-                }}>
-                  {[
-                    { key: 'length', label: 'At least 8 characters' },
-                    { key: 'uppercase', label: 'One uppercase letter' },
-                    { key: 'lowercase', label: 'One lowercase letter' },
-                    { key: 'number', label: 'One number' },
-                  ].map(({ key, label }) => (
-                    <div key={key} style={{
-                      display: 'flex', alignItems: 'center', gap: 8,
-                      fontSize: '0.8125rem', marginBottom: 4,
-                      color: checks[key] ? 'var(--success)' : 'var(--text-secondary)',
-                    }}>
-                      {checks[key] ? <CheckCircle size={14} /> : <Circle size={14} />}
-                      {label}
-                    </div>
-                  ))}
-                </div>
+              {confirmPassword && password !== confirmPassword && (
+                <p className="form-error">Passwords don't match</p>
               )}
-
-              <div className="form-group">
-                <label className="form-label" htmlFor="reset-confirm-password">Confirm Password</label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    id="reset-confirm-password"
-                    type={showConfirm ? 'text' : 'password'}
-                    className="form-input"
-                    placeholder="Confirm new password"
-                    value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
-                    required
-                    minLength={8}
-                    style={{ paddingRight: 44 }}
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirm(!showConfirm)}
-                    aria-label={showConfirm ? 'Hide password' : 'Show password'}
-                    style={{
-                      position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
-                      background: 'none', border: 'none', cursor: 'pointer',
-                      color: 'var(--text-secondary)', padding: 4,
-                    }}
-                  >
-                    {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-                {confirmPassword && password !== confirmPassword && (
-                  <span style={{ color: 'var(--danger)', fontSize: '0.8125rem', marginTop: 4, display: 'block' }}>
-                    Passwords do not match
-                  </span>
-                )}
-              </div>
-
-              <button
-                type="submit"
-                className="btn btn-primary btn-lg btn-block"
-                disabled={loading || !allChecks || password !== confirmPassword}
-              >
-                {loading ? <Loader size={18} className="animate-spin" /> : <><ShieldCheck size={16} /> Update Password</>}
-              </button>
-            </form>
-          </div>
-        ) : (
-          <div className="animate-scale-in" style={{ textAlign: 'center' }}>
-            <div style={{
-              width: 72, height: 72, borderRadius: '50%',
-              background: 'var(--success-bg)', display: 'flex',
-              alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 16px', color: 'var(--success)',
-            }}>
-              <CheckCircle size={36} />
+              {confirmPassword && password === confirmPassword && allChecks && (
+                <p className="rp-match-ok">
+                  <CheckCircle2 size={13} /> Passwords match
+                </p>
+              )}
             </div>
-            <h2 style={{ fontSize: '1.375rem', fontWeight: 800, marginBottom: 8 }}>Password Updated!</h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: 24 }}>
-              Your password has been successfully changed. Redirecting to login...
+
+            <button
+              type="submit"
+              className="auth-submit-btn"
+              disabled={loading || !allChecks || password !== confirmPassword}
+              aria-busy={loading}
+            >
+              {loading
+                ? <><Loader size={16} className="animate-spin" /> Updating…</>
+                : <><ShieldCheck size={16} /> Update Password</>
+              }
+            </button>
+          </form>
+
+          <div className="auth-card-footer">
+            <p>
+              <Link to="/login" className="auth-link">
+                <ArrowLeft size={12} style={{ verticalAlign: 'middle', marginRight: 2 }} />
+                Back to Sign In
+              </Link>
             </p>
-            <Link to="/login" className="btn btn-primary btn-lg btn-block">
-              Go to Sign In
-            </Link>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

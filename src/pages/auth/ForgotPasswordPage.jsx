@@ -1,22 +1,28 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { Container, Mail, Loader, CheckCircle, ArrowLeft, Send, AlertTriangle } from 'lucide-react';
+import {
+  Container, Mail, Loader, CheckCircle2,
+  ArrowLeft, Send, AlertTriangle, RefreshCw, Inbox,
+} from 'lucide-react';
 
+/* ══════════════════════════════════════════════════════════════════════════
+   ForgotPasswordPage — World-Class Premium Redesign
+══════════════════════════════════════════════════════════════════════════ */
 const ForgotPasswordPage = () => {
-  const [email, setEmail] = useState('');
-  const [sent, setSent] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [email,     setEmail]     = useState('');
+  const [sent,      setSent]      = useState(false);
+  const [error,     setError]     = useState('');
+  const [loading,   setLoading]   = useState(false);
   const [countdown, setCountdown] = useState(0);
   const { resetPassword } = useAuth();
-  const timerRef = useRef(null);
+  const timerRef  = useRef(null);
+  const inputRef  = useRef(null);
 
-  // Cleanup timer on unmount to prevent state updates on unmounted component
+  // Focus email input on mount
   useEffect(() => {
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
+    inputRef.current?.focus();
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, []);
 
   const startCountdown = () => {
@@ -24,11 +30,7 @@ const ForgotPasswordPage = () => {
     setCountdown(60);
     timerRef.current = setInterval(() => {
       setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current);
-          timerRef.current = null;
-          return 0;
-        }
+        if (prev <= 1) { clearInterval(timerRef.current); timerRef.current = null; return 0; }
         return prev - 1;
       });
     }, 1000);
@@ -44,7 +46,7 @@ const ForgotPasswordPage = () => {
       setSent(true);
       startCountdown();
     } catch (err) {
-      setError(err.message || 'Something went wrong');
+      setError(err.message || 'Something went wrong. Please try again.');
     }
     setLoading(false);
   };
@@ -62,94 +64,178 @@ const ForgotPasswordPage = () => {
     setLoading(false);
   };
 
+  /* ── Countdown ring progress (0–100%) ── */
+  const ringProgress = countdown > 0 ? (countdown / 60) * 100 : 0;
+
   return (
     <div className="auth-page">
-      <div className="auth-card" style={{ maxWidth: 440 }}>
+      {/* Decorative orbs */}
+      <div className="auth-orb auth-orb-1" aria-hidden="true" />
+      <div className="auth-orb auth-orb-2" aria-hidden="true" />
+      <div className="auth-orb auth-orb-3" aria-hidden="true" />
+
+      <div className="auth-card fp-card">
+
+        {/* ── Brand ── */}
         <div className="auth-brand">
-          <Container size={40} color="var(--primary)" style={{ marginBottom: 8 }} />
-          <h1><span>CARGO</span><span>EXPRESS PH</span></h1>
+          <div className="auth-brand-icon">
+            <Container size={24} color="white" />
+          </div>
+          <div className="auth-brand-text">
+            <span className="auth-brand-cargo">CARGO</span>
+            <span className="auth-brand-express">EXPRESS PH</span>
+          </div>
         </div>
 
+        {/* ── Send state ── */}
         {!sent ? (
-          <div className="animate-fade-in">
-            <div style={{ textAlign: 'center', marginBottom: 24 }}>
-              <div style={{
-                width: 56, height: 56, borderRadius: '50%',
-                background: 'var(--primary-bg)', display: 'flex',
-                alignItems: 'center', justifyContent: 'center',
-                margin: '0 auto 12px', color: 'var(--primary)',
-              }}>
-                <Mail size={24} />
+          <div className="animate-slide-up">
+
+            {/* Icon + heading */}
+            <div className="fp-hero">
+              <div className="fp-hero-icon">
+                <Mail size={26} />
               </div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: 4 }}>Reset Password</h2>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                Enter your email and we'll send you a reset link
+              <h2 className="fp-title">Reset Password</h2>
+              <p className="fp-subtitle">
+                Enter the email linked to your account and we'll send you a secure reset link.
               </p>
             </div>
 
             {error && (
-              <div className="alert-banner alert-banner-error">
-                <AlertTriangle size={16} /> {error}
+              <div className="auth-error-banner" role="alert">
+                <AlertTriangle size={15} />
+                <span>{error}</span>
               </div>
             )}
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
               <div className="form-group">
-                <label className="form-label" htmlFor="forgot-email">Email Address</label>
-                <input
-                  id="forgot-email"
-                  type="email"
-                  className="form-input"
-                  placeholder="you@email.com"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                />
+                <label className="form-label" htmlFor="forgot-email">
+                  Email Address
+                </label>
+                <div className="form-input-wrapper">
+                  <Mail size={15} className="form-input-icon" aria-hidden="true" />
+                  <input
+                    ref={inputRef}
+                    id="forgot-email"
+                    type="email"
+                    className="form-input form-input-icon-left"
+                    placeholder="you@email.com"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    required
+                    autoComplete="email"
+                    aria-required="true"
+                  />
+                </div>
               </div>
-              <button type="submit" className="btn btn-primary btn-lg btn-block" disabled={loading}>
-                {loading ? <Loader size={18} className="animate-spin" /> : <><Send size={16} /> Send Reset Link</>}
+
+              <button
+                type="submit"
+                className="auth-submit-btn"
+                disabled={loading || !email.trim()}
+                aria-busy={loading}
+              >
+                {loading
+                  ? <><Loader size={16} className="animate-spin" /> Sending…</>
+                  : <><Send size={16} /> Send Reset Link</>
+                }
               </button>
             </form>
+
+            {/* Tips box */}
+            <div className="fp-tips-box">
+              <p className="fp-tips-label">What happens next?</p>
+              <div className="fp-tips-list">
+                <div className="fp-tip-item">
+                  <div className="fp-tip-dot">1</div>
+                  <span>We send a secure link to your inbox</span>
+                </div>
+                <div className="fp-tip-item">
+                  <div className="fp-tip-dot">2</div>
+                  <span>Click the link to set a new password</span>
+                </div>
+                <div className="fp-tip-item">
+                  <div className="fp-tip-dot">3</div>
+                  <span>Sign in with your new credentials</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="auth-card-footer">
+              <p>Remember your password? <Link to="/login" className="auth-link">Sign In</Link></p>
+            </div>
           </div>
+
         ) : (
-          <div className="animate-scale-in" style={{ textAlign: 'center' }}>
-            <div style={{
-              width: 72, height: 72, borderRadius: '50%',
-              background: 'var(--success-bg)', display: 'flex',
-              alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 16px', color: 'var(--success)',
-            }}>
-              <CheckCircle size={36} />
+          /* ── Success / Sent state ── */
+          <div className="animate-slide-up">
+            <div className="fp-sent-hero">
+
+              {/* Animated envelope icon */}
+              <div className="fp-sent-icon-wrap">
+                <div className="fp-sent-ring" aria-hidden="true" />
+                <div className="fp-sent-icon">
+                  <Inbox size={32} />
+                </div>
+              </div>
+
+              <h2 className="fp-title">Check Your Inbox</h2>
+              <p className="fp-subtitle">
+                We've sent a reset link to{' '}
+                <strong className="fp-email-highlight">{email}</strong>
+                . Check your spam folder if you don't see it.
+              </p>
             </div>
-            <h2 style={{ fontSize: '1.375rem', fontWeight: 800, marginBottom: 8 }}>Email Sent!</h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: 24 }}>
-              Check your inbox at <strong style={{ color: 'var(--text)' }}>{email}</strong> for the password reset link.
-            </p>
 
-            {/* Resend button with countdown */}
-            <button
-              onClick={handleResend}
-              className="btn btn-outline"
-              disabled={countdown > 0 || loading}
-              style={{ marginBottom: 16 }}
-            >
-              {loading ? <Loader size={16} className="animate-spin" /> : null}
-              {countdown > 0 ? `Resend in ${countdown}s` : 'Resend Email'}
-            </button>
+            {error && (
+              <div className="auth-error-banner" role="alert">
+                <AlertTriangle size={15} />
+                <span>{error}</span>
+              </div>
+            )}
 
-            <div>
-              <Link to="/login" className="btn btn-primary btn-lg btn-block">
-                <ArrowLeft size={16} /> Back to Sign In
-              </Link>
+            {/* Resend row */}
+            <div className="fp-resend-row">
+              <span className="fp-resend-label">Didn't receive it?</span>
+              <button
+                onClick={handleResend}
+                className="fp-resend-btn"
+                disabled={countdown > 0 || loading}
+                aria-live="polite"
+              >
+                {loading
+                  ? <><Loader size={13} className="animate-spin" /> Sending…</>
+                  : countdown > 0
+                    ? <><RefreshCw size={13} /> Resend in {countdown}s</>
+                    : <><RefreshCw size={13} /> Resend Email</>
+                }
+              </button>
+            </div>
+
+            {/* Countdown progress bar */}
+            {countdown > 0 && (
+              <div className="fp-countdown-bar" aria-hidden="true">
+                <div
+                  className="fp-countdown-fill"
+                  style={{ width: `${ringProgress}%` }}
+                />
+              </div>
+            )}
+
+            <Link to="/login" className="auth-submit-btn" style={{ textDecoration: 'none', marginTop: 20 }}>
+              <ArrowLeft size={16} /> Back to Sign In
+            </Link>
+
+            <div className="auth-card-footer">
+              <p>Wrong email? <button
+                className="auth-link"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, font: 'inherit' }}
+                onClick={() => { setSent(false); setError(''); setCountdown(0); if (timerRef.current) clearInterval(timerRef.current); }}
+              >Try again</button></p>
             </div>
           </div>
-        )}
-
-        {!sent && (
-          <p style={{ textAlign: 'center', marginTop: 20, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-            Remember your password? <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600 }}>Sign In</Link>
-          </p>
         )}
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ToastProvider } from './hooks/useToast';
 import { Container } from 'lucide-react';
 import { lazy, Suspense } from 'react';
 
@@ -118,8 +119,9 @@ const RootRedirect = () => {
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <Suspense fallback={<LoadingScreen />}>
+      <ToastProvider>
+        <AuthProvider>
+          <Suspense fallback={<LoadingScreen />}>
           <Routes>
             {/* Root */}
             <Route path="/" element={<RootRedirect />} />
@@ -169,7 +171,8 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
-      </AuthProvider>
+        </AuthProvider>
+      </ToastProvider>
     </BrowserRouter>
   );
 }

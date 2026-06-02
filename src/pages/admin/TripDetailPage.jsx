@@ -6,13 +6,15 @@ import ConfirmModal from '../../components/ui/ConfirmModal';
 import { SkeletonText } from '../../components/ui/SkeletonLoader';
 import { ArrowLeft, Play, Flag, CheckCircle, XCircle, Loader } from 'lucide-react';
 import CapacityTracker from '../../components/ui/CapacityTracker';
+import { useToast } from '../../hooks/useToast';
 
 const TripDetailPage = () => {
   const { id } = useParams(); const navigate = useNavigate();
   const [data, setData] = useState(null); const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [saving, setSaving] = useState(false); const [msg, setMsg] = useState({ text: '', type: 'success' });
-  const [confirmAction, setConfirmAction] = useState(null); // { status, title, message, variant }
+  const [saving, setSaving] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const toast = useToast();
 
   useEffect(() => {
     let isMounted = true;
@@ -21,13 +23,11 @@ const TripDetailPage = () => {
   }, [id]);
 
   const load = async (isMounted = true) => {
-    setError(null);
-    setLoading(true);
+    setError(null); setLoading(true);
     try {
       const result = await getTripById(id);
       if (isMounted) setData(result);
     } catch(e) {
-      setError(e.message || 'Failed to load trip details.');
       if (isMounted) setError(e.message || 'Failed to load trip.');
     } finally {
       if (isMounted) setLoading(false);
@@ -35,9 +35,16 @@ const TripDetailPage = () => {
   };
 
   const handleStatus = async (status) => {
-    setSaving(true); setMsg({ text: '', type: 'success' });
-    try { await updateTrip(id, { status }); await load(); setMsg({ text: `Trip updated to ${status}`, type: 'success' }); setTimeout(() => setMsg({ text: '', type: '' }), 4000); }
-    catch(e) { setMsg({ text: e.message, type: 'error' }); } finally { setSaving(false); setConfirmAction(null); }
+    setSaving(true);
+    try {
+      await updateTrip(id, { status });
+      await load();
+      toast.success(`Trip updated to "${status}"`);
+    } catch(e) {
+      toast.error(e.message || 'Failed to update trip');
+    } finally {
+      setSaving(false); setConfirmAction(null);
+    }
   };
 
   const openConfirm = (status, title, message, variant = 'warning') => {
@@ -64,7 +71,6 @@ const TripDetailPage = () => {
   );
   if (!data) return <div className="empty-state"><h3>Trip not found</h3></div>;
   const { trip, orders, current_weight } = data;
-  const capPct = trip.capacity > 0 ? Math.min(100, (current_weight / trip.capacity) * 100) : 0;
 
   return (
     <div className="page-transition">
@@ -73,13 +79,6 @@ const TripDetailPage = () => {
         <div><h1 style={{fontWeight:800}}>{trip.trip_number}</h1><p className="text-sm text-secondary">{trip.origin} → {trip.destination}</p></div>
         <StatusBadge status={trip.status}/>
       </div>
-
-      {/* Message Banner */}
-      {msg.text && (
-        <div className={`alert-banner ${msg.type === 'error' ? 'alert-banner-error' : 'alert-banner-success'}`}>
-          {msg.text}
-        </div>
-      )}
 
       {/* Actions */}
       <div className="card stagger-item" style={{marginBottom:16, animationDelay: '60ms'}}><div className="card-body" style={{display:'flex',gap:8,flexWrap:'wrap'}}>
@@ -93,11 +92,7 @@ const TripDetailPage = () => {
       {/* Capacity */}
       <div className="card stagger-item" style={{marginBottom:16, animationDelay: '120ms'}}>
         <div className="card-body">
-          <CapacityTracker 
-            currentWeight={current_weight} 
-            maxCapacity={trip.capacity} 
-            tripNumber={trip.trip_number} 
-          />
+          <CapacityTracker currentWeight={current_weight} maxCapacity={trip.capacity} tripNumber={trip.trip_number} />
         </div>
       </div>
 

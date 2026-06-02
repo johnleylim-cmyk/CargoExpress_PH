@@ -5,16 +5,15 @@ import { supabase } from '../../lib/supabase';
 import { updateProfile, withTimeout } from '../../lib/database';
 import {
   ArrowLeft, Loader, Save, CheckCircle, AlertCircle,
-  User, Phone, Globe, MapPin, ExternalLink,
+  User, Phone, Globe, MapPin, ExternalLink, Link2,
+  Smartphone, Building,
 } from 'lucide-react';
+import { useToast } from '../../hooks/useToast';
 
-// ── Helpers ────────────────────────────────────────────────────────────────
-
-const toTitleCase = (str) =>
-  str.replace(/\b\w/g, c => c.toUpperCase());
+const toTitleCase = (str) => str.replace(/\b\w/g, c => c.toUpperCase());
 
 const validatePhone = (v) => {
-  if (!v) return null; // optional
+  if (!v) return null;
   const d = v.trim();
   if (!d) return null;
   if (!/^\d+$/.test(d)) return 'Must contain numbers only.';
@@ -24,7 +23,7 @@ const validatePhone = (v) => {
 };
 
 const validateFB = (v) => {
-  if (!v) return null; // optional
+  if (!v) return null;
   const u = v.trim();
   if (!u) return null;
   if (!u.startsWith('https://www.facebook.com/') && !u.startsWith('https://facebook.com/') && !u.startsWith('http://')) {
@@ -33,11 +32,10 @@ const validateFB = (v) => {
   return null;
 };
 
-// ── Component ──────────────────────────────────────────────────────────────
-
 const AdminPersonalInfoPage = () => {
   const { user, userProfile, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const [form, setForm] = useState({
     name:            userProfile?.name            || '',
@@ -50,7 +48,7 @@ const AdminPersonalInfoPage = () => {
   });
 
   const [loading,     setLoading]     = useState(false);
-  const [saveStatus,  setSaveStatus]  = useState(null);  // null | 'success' | 'error'
+  const [saveStatus,  setSaveStatus]  = useState(null);
   const [saveMessage, setSaveMessage] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
 
@@ -59,8 +57,7 @@ const AdminPersonalInfoPage = () => {
   const handlePhone = (key) => (e) => {
     const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
     setField(key, digits);
-    const err = validatePhone(digits);
-    setFieldErrors(p => ({ ...p, [key]: err }));
+    setFieldErrors(p => ({ ...p, [key]: validatePhone(digits) }));
   };
 
   const handleTitleCase = (key) => (e) => {
@@ -70,11 +67,8 @@ const AdminPersonalInfoPage = () => {
 
   const handleFB = (e) => {
     setField('facebook_link', e.target.value);
-    const err = validateFB(e.target.value);
-    setFieldErrors(p => ({ ...p, facebook_link: err }));
+    setFieldErrors(p => ({ ...p, facebook_link: validateFB(e.target.value) }));
   };
-
-  // ── Validate ─────────────────────────────────────────────────────────────
 
   const validate = () => {
     const errors = {};
@@ -89,14 +83,10 @@ const AdminPersonalInfoPage = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // ── Save ─────────────────────────────────────────────────────────────────
-
   const handleSave = async () => {
-    setSaveStatus(null);
-    setSaveMessage('');
+    setSaveStatus(null); setSaveMessage('');
     if (!validate()) return;
     if (!user?.id) { setSaveStatus('error'); setSaveMessage('Not logged in.'); return; }
-
     setLoading(true);
     try {
       const payload = {
@@ -109,48 +99,24 @@ const AdminPersonalInfoPage = () => {
         bohol_address:  form.bohol_address  || null,
         updated_at:     new Date().toISOString(),
       };
-
       const { error: updateError } = await withTimeout(
-        supabase
-          .from('profiles')
-          .update(payload)
-          .eq('id', user.id)
-          .select()
-          .single()
+        supabase.from('profiles').update(payload).eq('id', user.id).select().single()
       );
-
       if (updateError) throw updateError;
-      
       await refreshProfile();
-
-      setSaveStatus('success');
-      setSaveMessage('Profile updated successfully!');
-      setTimeout(() => setSaveStatus(null), 4000);
+      toast.success('Profile updated successfully!');
+      setTimeout(() => navigate(-1), 1200);
     } catch (err) {
-      setSaveStatus('error');
-      setSaveMessage(err?.message || 'Failed to save. Please try again.');
+      toast.error(err?.message || 'Failed to save. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  // ── Render ────────────────────────────────────────────────────────────────
-
   return (
     <div className="animate-fade-in">
-      {/* Banners */}
-      {saveStatus === 'success' && (
-        <div className="alert-banner alert-banner-success animate-scale-in">
-          <CheckCircle size={18} /> {saveMessage}
-        </div>
-      )}
-      {saveStatus === 'error' && (
-        <div className="alert-banner alert-banner-error animate-scale-in">
-          <AlertCircle size={18} /> {saveMessage}
-        </div>
-      )}
 
-      {/* ── Basic Info ───────────────────────────────────────────── */}
+      {/* ── Basic Info ─────────────────────────────────────────────── */}
       <div className="card" style={{ marginBottom: 16 }}>
         <div className="card-body">
           <h3 style={{ fontWeight: 700, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -159,26 +125,30 @@ const AdminPersonalInfoPage = () => {
 
           <div className="form-group">
             <label className="form-label">Full Name *</label>
-            <input
-              className="form-input"
-              placeholder="Admin Name"
-              value={form.name}
-              onChange={handleTitleCase('name')}
-              style={fieldErrors.name ? { borderColor: 'var(--error)' } : {}}
-            />
+            <div className="form-input-wrapper">
+              <User size={15} className="form-input-icon" />
+              <input
+                className={`form-input form-input-icon-left ${fieldErrors.name ? 'error' : ''}`}
+                placeholder="Admin Name"
+                value={form.name}
+                onChange={handleTitleCase('name')}
+              />
+            </div>
             {fieldErrors.name && <p className="form-error">{fieldErrors.name}</p>}
           </div>
 
           <div className="form-group">
             <label className="form-label">Primary Mobile Number</label>
-            <input
-              className="form-input"
-              placeholder="09xxxxxxxxx"
-              value={form.phone}
-              onChange={handlePhone('phone')}
-              inputMode="numeric" maxLength={11}
-              style={fieldErrors.phone ? { borderColor: 'var(--error)' } : {}}
-            />
+            <div className="form-input-wrapper">
+              <Phone size={15} className="form-input-icon" />
+              <input
+                className={`form-input form-input-icon-left ${fieldErrors.phone ? 'error' : ''}`}
+                placeholder="09xxxxxxxxx"
+                value={form.phone}
+                onChange={handlePhone('phone')}
+                inputMode="numeric" maxLength={11}
+              />
+            </div>
             {fieldErrors.phone
               ? <p className="form-error">{fieldErrors.phone}</p>
               : <p className="form-helper">Must start with 09, exactly 11 digits</p>
@@ -187,7 +157,7 @@ const AdminPersonalInfoPage = () => {
         </div>
       </div>
 
-      {/* ── Business Contact ─────────────────────────────────────── */}
+      {/* ── Business Contact ───────────────────────────────────────── */}
       <div className="card" style={{ marginBottom: 16 }}>
         <div className="card-body">
           <h3 style={{ fontWeight: 700, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -200,33 +170,37 @@ const AdminPersonalInfoPage = () => {
           <div className="grid grid-2" style={{ gap: 16 }}>
             <div className="form-group">
               <label className="form-label">Smart / TNT Number</label>
-              <input
-                className="form-input"
-                placeholder="09xxxxxxxxx"
-                value={form.smart_phone}
-                onChange={handlePhone('smart_phone')}
-                inputMode="numeric" maxLength={11}
-                style={fieldErrors.smart_phone ? { borderColor: 'var(--error)' } : {}}
-              />
+              <div className="form-input-wrapper">
+                <Smartphone size={15} className="form-input-icon" />
+                <input
+                  className={`form-input form-input-icon-left ${fieldErrors.smart_phone ? 'error' : ''}`}
+                  placeholder="09xxxxxxxxx"
+                  value={form.smart_phone}
+                  onChange={handlePhone('smart_phone')}
+                  inputMode="numeric" maxLength={11}
+                />
+              </div>
               {fieldErrors.smart_phone && <p className="form-error">{fieldErrors.smart_phone}</p>}
             </div>
             <div className="form-group">
               <label className="form-label">Globe / TM Number</label>
-              <input
-                className="form-input"
-                placeholder="09xxxxxxxxx"
-                value={form.globe_phone}
-                onChange={handlePhone('globe_phone')}
-                inputMode="numeric" maxLength={11}
-                style={fieldErrors.globe_phone ? { borderColor: 'var(--error)' } : {}}
-              />
+              <div className="form-input-wrapper">
+                <Globe size={15} className="form-input-icon" />
+                <input
+                  className={`form-input form-input-icon-left ${fieldErrors.globe_phone ? 'error' : ''}`}
+                  placeholder="09xxxxxxxxx"
+                  value={form.globe_phone}
+                  onChange={handlePhone('globe_phone')}
+                  inputMode="numeric" maxLength={11}
+                />
+              </div>
               {fieldErrors.globe_phone && <p className="form-error">{fieldErrors.globe_phone}</p>}
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── Social Media ─────────────────────────────────────────── */}
+      {/* ── Social Media ───────────────────────────────────────────── */}
       <div className="card" style={{ marginBottom: 16 }}>
         <div className="card-body">
           <h3 style={{ fontWeight: 700, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -238,20 +212,19 @@ const AdminPersonalInfoPage = () => {
 
           <div className="form-group">
             <label className="form-label">Facebook Page Link</label>
-            <input
-              className="form-input"
-              placeholder="https://www.facebook.com/your-page"
-              value={form.facebook_link}
-              onChange={handleFB}
-              style={fieldErrors.facebook_link ? { borderColor: 'var(--error)' } : {}}
-            />
+            <div className="form-input-wrapper">
+              <Link2 size={15} className="form-input-icon" />
+              <input
+                className={`form-input form-input-icon-left ${fieldErrors.facebook_link ? 'error' : ''}`}
+                placeholder="https://www.facebook.com/your-page"
+                value={form.facebook_link}
+                onChange={handleFB}
+              />
+            </div>
             {fieldErrors.facebook_link
               ? <p className="form-error">{fieldErrors.facebook_link}</p>
               : form.facebook_link && !fieldErrors.facebook_link && (
-                <a
-                  href={form.facebook_link} target="_blank" rel="noopener noreferrer"
-                  className="admin-external-link"
-                >
+                <a href={form.facebook_link} target="_blank" rel="noopener noreferrer" className="admin-external-link">
                   <ExternalLink size={12} /> Open page
                 </a>
               )
@@ -260,7 +233,7 @@ const AdminPersonalInfoPage = () => {
         </div>
       </div>
 
-      {/* ── Business Addresses ───────────────────────────────────── */}
+      {/* ── Business Addresses ─────────────────────────────────────── */}
       <div className="card" style={{ marginBottom: 24 }}>
         <div className="card-body">
           <h3 style={{ fontWeight: 700, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -272,24 +245,30 @@ const AdminPersonalInfoPage = () => {
 
           <div className="form-group">
             <label className="form-label">Manila Address</label>
-            <textarea
-              className="form-textarea"
-              placeholder="Complete Manila office/depot address"
-              value={form.manila_address}
-              onChange={e => setField('manila_address', toTitleCase(e.target.value))}
-              rows={2}
-            />
+            <div className="form-input-wrapper" style={{ alignItems: 'flex-start' }}>
+              <Building size={15} className="form-input-icon" style={{ marginTop: 14 }} />
+              <textarea
+                className="form-textarea form-input-icon-left"
+                placeholder="Complete Manila office/depot address"
+                value={form.manila_address}
+                onChange={e => setField('manila_address', toTitleCase(e.target.value))}
+                rows={2}
+              />
+            </div>
           </div>
 
           <div className="form-group">
             <label className="form-label">Bohol Address</label>
-            <textarea
-              className="form-textarea"
-              placeholder="Complete Bohol office/depot address"
-              value={form.bohol_address}
-              onChange={e => setField('bohol_address', toTitleCase(e.target.value))}
-              rows={2}
-            />
+            <div className="form-input-wrapper" style={{ alignItems: 'flex-start' }}>
+              <MapPin size={15} className="form-input-icon" style={{ marginTop: 14 }} />
+              <textarea
+                className="form-textarea form-input-icon-left"
+                placeholder="Complete Bohol office/depot address"
+                value={form.bohol_address}
+                onChange={e => setField('bohol_address', toTitleCase(e.target.value))}
+                rows={2}
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -3,44 +3,45 @@ import { getAnnouncements, createAnnouncement, deleteAnnouncement, withTimeout }
 import ConfirmModal from '../../components/ui/ConfirmModal';
 import EmptyState from '../../components/ui/EmptyState';
 import { SkeletonCard } from '../../components/ui/SkeletonLoader';
-import { Plus, Trash2, Megaphone, Loader, AlertTriangle } from 'lucide-react';
+import { Plus, Trash2, Megaphone, Loader } from 'lucide-react';
+import { useToast } from '../../hooks/useToast';
 
 const AnnouncementsPage = () => {
-  const [items, setItems] = useState([]); 
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showForm, setShowForm] = useState(false); 
+  const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ title: '', content: '' });
-  const [deleteTarget, setDeleteTarget] = useState(null); // id to delete
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
-  const [createError, setCreateError] = useState('');
+  const toast = useToast();
 
   useEffect(() => { load(); }, []);
-  const load = async () => { 
-    setLoading(true);
-    setError(null);
-    try { 
+
+  const load = async () => {
+    setLoading(true); setError(null);
+    try {
       const data = await withTimeout(getAnnouncements());
-      setItems(data || []); 
+      setItems(data || []);
     } catch(e) {
       setError(e.message || 'Failed to load announcements.');
     } finally {
       setLoading(false);
-    } 
+    }
   };
 
   const handleCreate = async () => {
-    if (!form.title || !form.content) return;
+    if (!form.title || !form.content) { toast.warning('Please fill in both title and content.'); return; }
     setSaving(true);
-    setCreateError('');
-    try { 
-      await withTimeout(createAnnouncement(form)); 
-      setForm({title:'',content:''}); 
-      setShowForm(false); 
-      await load(); 
+    try {
+      await withTimeout(createAnnouncement(form));
+      setForm({ title: '', content: '' });
+      setShowForm(false);
+      await load();
+      toast.success('Announcement published!');
     } catch(e) {
-      setCreateError(e.message || 'Failed to create announcement.');
+      toast.error(e.message || 'Failed to create announcement.');
     } finally {
       setSaving(false);
     }
@@ -49,7 +50,16 @@ const AnnouncementsPage = () => {
   const handleDelete = async () => {
     if (!deleteTarget) return;
     setDeleting(true);
-    try { await deleteAnnouncement(deleteTarget); setDeleteTarget(null); await load(); } catch(e){ setError(e.message || 'Failed to delete.'); } finally { setDeleting(false); }
+    try {
+      await deleteAnnouncement(deleteTarget);
+      setDeleteTarget(null);
+      await load();
+      toast.success('Announcement deleted.');
+    } catch(e) {
+      toast.error(e.message || 'Failed to delete announcement.');
+    } finally {
+      setDeleting(false);
+    }
   };
 
   return (
@@ -58,39 +68,29 @@ const AnnouncementsPage = () => {
         <h1 style={{fontWeight:800,fontSize:'1.5rem'}}>Announcements</h1>
         <button className="btn btn-primary" onClick={()=>setShowForm(!showForm)}><Plus size={16}/> New</button>
       </div>
+
       {showForm && (
         <div className="card animate-scale-in" style={{marginBottom:16}}><div className="card-body">
           <div className="form-group"><label className="form-label">Title</label><input className="form-input" value={form.title} onChange={e=>setForm(p=>({...p,title:e.target.value}))}/></div>
           <div className="form-group"><label className="form-label">Content</label><textarea className="form-textarea" value={form.content} onChange={e=>setForm(p=>({...p,content:e.target.value}))}/></div>
-          {createError && (
-            <div className="alert-banner alert-banner-error" style={{ marginBottom: 12 }}>
-              <AlertTriangle size={16} /> {createError}
-            </div>
-          )}
           <div className="admin-form-actions">
             <button className="btn btn-primary" onClick={handleCreate} disabled={saving}>{saving?<Loader size={16} className="animate-spin"/>:'Publish'}</button>
-            <button className="btn btn-ghost" onClick={()=>{setShowForm(false);setCreateError('');}}>Cancel</button>
+            <button className="btn btn-ghost" onClick={()=>setShowForm(false)}>Cancel</button>
           </div>
         </div></div>
       )}
+
       {loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {Array.from({ length: 3 }, (_, i) => <SkeletonCard key={i} />)}
         </div>
       ) : error ? (
         <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
-          <h3>Error</h3>
-          <p>{error}</p>
+          <h3>Error</h3><p>{error}</p>
           <button className="btn btn-primary mt-md" onClick={load}>Retry</button>
         </div>
       ) : items.length === 0 ? (
-        <EmptyState
-          icon={Megaphone}
-          title="No announcements yet"
-          description="Create your first announcement to keep customers informed."
-          actionLabel="Create Announcement"
-          onAction={() => setShowForm(true)}
-        />
+        <EmptyState icon={Megaphone} title="No announcements yet" description="Create your first announcement to keep customers informed." actionLabel="Create Announcement" onAction={() => setShowForm(true)} />
       ) : (
         items.map((a, i) => (
           <div key={a.id} className="card stagger-item" style={{marginBottom:12, animationDelay: `${i * 60}ms`}}>
@@ -106,7 +106,6 @@ const AnnouncementsPage = () => {
         ))
       )}
 
-      {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}

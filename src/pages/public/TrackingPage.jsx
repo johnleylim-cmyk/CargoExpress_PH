@@ -1,42 +1,62 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Container, Search, Loader, Package, MapPin, ArrowRight, CheckCircle, XCircle, Clock, Weight, User, DollarSign } from 'lucide-react';
+import {
+  Container, Search, Loader, Package, MapPin, ArrowRight,
+  CheckCircle2, XCircle, Clock, Weight, User, DollarSign,
+  RefreshCw, AlertTriangle, Truck, Calendar,
+} from 'lucide-react';
 import { STATUS_TIMELINE, STATUS_COLORS } from '../../constants/status';
 import TrackingTimeline from '../../components/ui/TrackingTimeline';
 
+/* ── Status display helpers ────────────────────────────────────────── */
+const getStatusIcon = (status) => {
+  if (status === 'Delivered')  return CheckCircle2;
+  if (status === 'Cancelled')  return XCircle;
+  if (status === 'In Transit') return Truck;
+  return Package;
+};
+
+const formatDate = (iso, withTime = false) => {
+  if (!iso) return '—';
+  const opts = { year: 'numeric', month: 'short', day: 'numeric' };
+  if (withTime) { opts.hour = '2-digit'; opts.minute = '2-digit'; }
+  return new Date(iso).toLocaleDateString('en-PH', opts);
+};
+
+/* ══════════════════════════════════════════════════════════════════════
+   TrackingPage
+══════════════════════════════════════════════════════════════════════ */
 const TrackingPage = () => {
   const [searchParams] = useSearchParams();
   const [trackingNumber, setTrackingNumber] = useState(searchParams.get('q') || '');
-  const [order, setOrder] = useState(null);
+  const [order,   setOrder]   = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error,   setError]   = useState('');
   const [searched, setSearched] = useState(false);
+  const inputRef = useRef(null);
 
-  // Auto-search if query param provided
   useEffect(() => {
     const q = searchParams.get('q');
-    if (q && q.trim()) {
-      setTrackingNumber(q.trim().toUpperCase());
-      doSearch(q.trim().toUpperCase());
+    if (q?.trim()) {
+      const tn = q.trim().toUpperCase();
+      setTrackingNumber(tn);
+      doSearch(tn);
     }
   }, []);
 
   const doSearch = async (tn) => {
-    setLoading(true);
-    setError('');
-    setOrder(null);
-    setSearched(true);
+    setLoading(true); setError(''); setOrder(null); setSearched(true);
     try {
       const { data, error: fetchError } = await supabase
         .rpc('track_order_public', { p_tracking_number: tn })
         .maybeSingle();
       if (fetchError || !data) {
-        setError('No shipment found with this tracking number. Please check and try again.');
+        setError('No shipment found with this tracking number. Please double-check and try again.');
       } else {
         setOrder(data);
       }
-    } catch (err) {
+    } catch {
       setError('Something went wrong. Please try again later.');
     } finally {
       setLoading(false);
@@ -49,127 +69,270 @@ const TrackingPage = () => {
     doSearch(trackingNumber.trim().toUpperCase());
   };
 
-  const StatusIcon = order?.status === 'Delivered'
-    ? CheckCircle
-    : order?.status === 'Cancelled'
-      ? XCircle
-      : Package;
+  const handleReset = () => {
+    setTrackingNumber('');
+    setOrder(null);
+    setError('');
+    setSearched(false);
+    inputRef.current?.focus();
+  };
+
+  const StatusIcon = getStatusIcon(order?.status);
+  const statusColor = order ? STATUS_COLORS[order.status] : null;
+  const completedSteps = order ? STATUS_TIMELINE.indexOf(order.status) : -1;
+  const progressPct = order?.status === 'Cancelled' ? 0
+    : order ? Math.round(((completedSteps) / (STATUS_TIMELINE.length - 1)) * 100)
+    : 0;
 
   return (
-    <div className="tracking-page">
-      {/* Header */}
-      <div className="tracking-header animate-fade-in">
-        <Link to="/login" className="tracking-brand">
-          <Container size={32} color="var(--primary)" />
-          <h1>CARGO<span>EXPRESS PH</span></h1>
-        </Link>
-        <p className="tracking-subtitle">Track your shipment in real-time</p>
-      </div>
+    <div className="trk-page">
 
-      {/* Search */}
-      <form className="tracking-search-form" onSubmit={handleSearch}>
-        <div className="tracking-search-wrapper">
-          <Search size={20} className="tracking-search-icon" />
+      {/* ── Decorative orbs ── */}
+      <div className="trk-orb trk-orb-1" aria-hidden="true" />
+      <div className="trk-orb trk-orb-2" aria-hidden="true" />
+      <div className="trk-orb trk-orb-3" aria-hidden="true" />
+
+      {/* ══════════ HEADER ══════════ */}
+      <header className="trk-header animate-fade-in">
+        <Link to="/login" className="trk-brand" aria-label="CargoExpress PH Home">
+          <div className="trk-brand-icon">
+            <Container size={20} color="white" />
+          </div>
+          <span className="trk-brand-name">
+            <span className="trk-brand-cargo">CARGO</span>
+            <span className="trk-brand-express">EXPRESS PH</span>
+          </span>
+        </Link>
+        <h1 className="trk-headline">Track Your Shipment</h1>
+        <p className="trk-subheadline">Real-time updates — know exactly where your package is</p>
+      </header>
+
+      {/* ══════════ SEARCH ══════════ */}
+      <form className="trk-search-form" onSubmit={handleSearch} role="search">
+        <div className={`trk-search-box ${loading ? 'trk-search-box--loading' : ''}`}>
+          <Search size={18} className="trk-search-icon" aria-hidden="true" />
           <input
+            ref={inputRef}
             id="tracking-input"
             type="text"
-            className="tracking-search-input"
-            placeholder="Enter tracking number"
+            className="trk-search-input"
+            placeholder="Enter tracking number (e.g. CE-20240101-001)"
             value={trackingNumber}
-            onChange={(e) => setTrackingNumber(e.target.value.toUpperCase())}
+            onChange={e => setTrackingNumber(e.target.value.toUpperCase())}
             aria-label="Tracking number"
             autoFocus
+            autoComplete="off"
+            spellCheck="false"
           />
+          {trackingNumber && !loading && (
+            <button
+              type="button"
+              className="trk-clear-btn"
+              onClick={handleReset}
+              aria-label="Clear search"
+            >
+              ×
+            </button>
+          )}
           <button
             type="submit"
-            className="tracking-search-btn"
+            className="trk-search-btn"
             disabled={loading || !trackingNumber.trim()}
             aria-label="Track shipment"
+            aria-busy={loading}
           >
-            {loading ? <Loader size={18} className="animate-spin" /> : 'Track'}
+            {loading
+              ? <Loader size={16} className="animate-spin" />
+              : <><Search size={15} /> Track</>
+            }
           </button>
         </div>
       </form>
 
-      {/* Error */}
-      {error && (
-        <div className="tracking-error animate-slide-up">
-          <Package size={48} style={{ opacity: 0.3 }} />
-          <p>{error}</p>
+      {/* ══════════ ERROR STATE ══════════ */}
+      {error && !loading && (
+        <div className="trk-not-found animate-slide-up" role="alert">
+          <div className="trk-not-found-icon">
+            <AlertTriangle size={28} />
+          </div>
+          <h3 className="trk-not-found-title">Shipment Not Found</h3>
+          <p className="trk-not-found-msg">{error}</p>
+          <button className="trk-retry-btn" onClick={handleReset}>
+            <RefreshCw size={14} /> Try Another
+          </button>
         </div>
       )}
 
-      {/* Result */}
-      {order && (
-        <div className="tracking-result">
-          {/* Status Header */}
-          <div className="tracking-status-header" style={{
-            background: STATUS_COLORS[order.status]?.bg || 'var(--bg)',
-            borderColor: STATUS_COLORS[order.status]?.border || 'var(--border)',
-          }}>
-            <div className="tracking-status-label" style={{ color: STATUS_COLORS[order.status]?.text }}>
-              <StatusIcon size={22} /> {order.status}
-            </div>
-            <div className="tracking-number-display">{order.tracking_number}</div>
-          </div>
+      {/* ══════════ RESULT CARD ══════════ */}
+      {order && !loading && (
+        <div className="trk-card animate-slide-up" role="main">
 
-          {/* Timeline - use the premium TrackingTimeline component */}
-          <div style={{ padding: '16px 24px' }}>
-            <TrackingTimeline currentStatus={order.status} />
-          </div>
-
-          {/* Shipment Info */}
-          <div className="tracking-info-grid">
-            <div className="tracking-info-card">
-              <h4><MapPin size={14} /> Route</h4>
-              <p>{order.origin || '—'} <ArrowRight size={14} style={{ verticalAlign: 'middle' }} /> {order.destination || '—'}</p>
+          {/* ── Status Banner ── */}
+          <div
+            className="trk-status-banner"
+            style={{
+              background: statusColor?.bg || '#F8FAFC',
+              borderColor: statusColor?.border || '#E2E8F0',
+            }}
+          >
+            <div className="trk-status-left">
+              <div
+                className="trk-status-icon-wrap"
+                style={{ background: statusColor?.text ? `${statusColor.text}18` : '#F1F5F9' }}
+              >
+                <StatusIcon size={22} style={{ color: statusColor?.text }} />
+              </div>
+              <div>
+                <p className="trk-status-label">Current Status</p>
+                <p className="trk-status-value" style={{ color: statusColor?.text }}>
+                  {order.status}
+                </p>
+              </div>
             </div>
-            <div className="tracking-info-card">
-              <h4><Package size={14} /> Package</h4>
-              <p>{order.package_description || 'No description'}</p>
-              <span className="tracking-info-meta">
-                <Weight size={12} style={{ verticalAlign: 'middle' }} /> {order.actual_weight || order.package_weight || '—'} kg
-              </span>
-            </div>
-            <div className="tracking-info-card">
-              <h4><User size={14} /> Sender</h4>
-              <p>{order.sender_name}</p>
-            </div>
-            <div className="tracking-info-card">
-              <h4><User size={14} /> Receiver</h4>
-              <p>{order.receiver_name}</p>
+            <div className="trk-tracking-num">
+              <p className="trk-tracking-num-label">Tracking No.</p>
+              <p className="trk-tracking-num-value">{order.tracking_number}</p>
             </div>
           </div>
 
-          {/* Shipping Cost */}
-          {order.shipping_cost && (
-            <div style={{ padding: '0 24px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <DollarSign size={14} color="var(--text-tertiary)" />
-              <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Shipping Cost:</span>
-              <span style={{ fontWeight: 700, color: 'var(--text)' }}>₱{parseFloat(order.shipping_cost).toFixed(2)}</span>
+          {/* ── Progress bar ── */}
+          {order.status !== 'Cancelled' && (
+            <div className="trk-progress-wrap">
+              <div className="trk-progress-bar">
+                <div
+                  className="trk-progress-fill"
+                  style={{ width: `${progressPct}%` }}
+                />
+              </div>
+              <span className="trk-progress-pct">{progressPct}% Complete</span>
             </div>
           )}
 
-          {/* Timestamps */}
-          <div className="tracking-timestamps">
-            <span><Clock size={12} style={{ verticalAlign: 'middle' }} /> Booked: {new Date(order.created_at).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
-            <span>Last Updated: {new Date(order.updated_at).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+          {/* ── Timeline ── */}
+          <div className="trk-timeline-wrap">
+            <p className="trk-section-label">Shipment Journey</p>
+            <TrackingTimeline currentStatus={order.status} />
+          </div>
+
+          {/* ── Info grid ── */}
+          <div className="trk-info-section">
+            <p className="trk-section-label">Shipment Details</p>
+            <div className="trk-info-grid">
+
+              {/* Route */}
+              <div className="trk-info-tile">
+                <div className="trk-info-tile-icon">
+                  <MapPin size={14} />
+                </div>
+                <div>
+                  <p className="trk-info-tile-label">Route</p>
+                  <p className="trk-info-tile-value">
+                    {order.origin || '—'}
+                    <ArrowRight size={13} className="trk-route-arrow" />
+                    {order.destination || '—'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Package */}
+              <div className="trk-info-tile">
+                <div className="trk-info-tile-icon">
+                  <Package size={14} />
+                </div>
+                <div>
+                  <p className="trk-info-tile-label">Package</p>
+                  <p className="trk-info-tile-value">{order.package_description || 'No description'}</p>
+                  <p className="trk-info-tile-meta">
+                    <Weight size={11} /> {order.actual_weight || order.package_weight || '—'} kg
+                  </p>
+                </div>
+              </div>
+
+              {/* Sender */}
+              <div className="trk-info-tile">
+                <div className="trk-info-tile-icon">
+                  <User size={14} />
+                </div>
+                <div>
+                  <p className="trk-info-tile-label">Sender</p>
+                  <p className="trk-info-tile-value">{order.sender_name || '—'}</p>
+                </div>
+              </div>
+
+              {/* Receiver */}
+              <div className="trk-info-tile">
+                <div className="trk-info-tile-icon">
+                  <User size={14} />
+                </div>
+                <div>
+                  <p className="trk-info-tile-label">Receiver</p>
+                  <p className="trk-info-tile-value">{order.receiver_name || '—'}</p>
+                </div>
+              </div>
+
+              {/* Shipping cost */}
+              {order.shipping_cost && (
+                <div className="trk-info-tile">
+                  <div className="trk-info-tile-icon">
+                    <DollarSign size={14} />
+                  </div>
+                  <div>
+                    <p className="trk-info-tile-label">Shipping Cost</p>
+                    <p className="trk-info-tile-value trk-cost">
+                      ₱{parseFloat(order.shipping_cost).toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Booked date */}
+              <div className="trk-info-tile">
+                <div className="trk-info-tile-icon">
+                  <Calendar size={14} />
+                </div>
+                <div>
+                  <p className="trk-info-tile-label">Booked</p>
+                  <p className="trk-info-tile-value">{formatDate(order.created_at)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Footer timestamps ── */}
+          <div className="trk-card-footer">
+            <span className="trk-timestamp">
+              <Clock size={11} />
+              Booked {formatDate(order.created_at)}
+            </span>
+            <span className="trk-timestamp">
+              Last updated {formatDate(order.updated_at, true)}
+            </span>
           </div>
         </div>
       )}
 
-      {/* Empty state when no search */}
-      {!searched && !order && (
-        <div className="tracking-empty animate-float">
-          <Package size={64} style={{ opacity: 0.15, color: 'var(--primary)' }} />
-          <p>Enter your tracking number above to check your shipment status</p>
+      {/* ══════════ EMPTY STATE ══════════ */}
+      {!searched && !order && !loading && (
+        <div className="trk-empty">
+          <div className="trk-empty-icon">
+            <Package size={36} />
+          </div>
+          <h3 className="trk-empty-title">Enter Your Tracking Number</h3>
+          <p className="trk-empty-sub">
+            Paste or type your CargoExpress PH tracking number above to get live shipment updates.
+          </p>
+          <div className="trk-empty-tips">
+            <div className="trk-empty-tip"><span>💡</span> Tracking numbers follow the format <strong>CE-YYYYMMDD-XXXX</strong></div>
+            <div className="trk-empty-tip"><span>📦</span> Contact CargoExpress PH staff if you need help locating it</div>
+          </div>
         </div>
       )}
 
-      {/* Footer */}
-      <div className="tracking-footer">
-        <p>Have an account? <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600 }}>Sign In</Link></p>
-      </div>
+      {/* ══════════ PAGE FOOTER ══════════ */}
+      <footer className="trk-footer">
+        <p>Have an account? <Link to="/login" className="trk-footer-link">Sign In</Link></p>
+        <p className="trk-footer-copy">© {new Date().getFullYear()} CargoExpress PH</p>
+      </footer>
     </div>
   );
 };

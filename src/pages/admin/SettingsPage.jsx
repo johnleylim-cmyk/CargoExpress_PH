@@ -3,24 +3,24 @@ import { getSettings, updateSettings, withTimeout } from '../../lib/database';
 import { SkeletonText } from '../../components/ui/SkeletonLoader';
 import { Settings, Loader, Save, User, DollarSign, CheckCircle, AlertTriangle } from 'lucide-react';
 import AdminPersonalInfoPage from './PersonalInfoPage';
+import { useToast } from '../../hooks/useToast';
 
 const SettingsPage = () => {
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab,    setActiveTab]    = useState('profile');
   const [pricePerKilo, setPricePerKilo] = useState('70');
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(null);
-  const [saving, setSaving] = useState(false); 
-  const [saved, setSaved] = useState(false);
-  const [saveError, setSaveError] = useState('');
+  const [loading,      setLoading]      = useState(true);
+  const [error,        setError]        = useState(null);
+  const [saving,       setSaving]       = useState(false);
+  const toast = useToast();
 
   useEffect(() => { load(); }, []);
+
   const load = async () => {
-    setLoading(true);
-    setError(null);
+    setLoading(true); setError(null);
     try {
       const s = await withTimeout(getSettings());
-      if(s?.price_per_kilo) setPricePerKilo(s.price_per_kilo);
-    } catch(e) {
+      if (s?.price_per_kilo) setPricePerKilo(s.price_per_kilo);
+    } catch (e) {
       setError(e.message || 'Failed to load settings.');
     } finally {
       setLoading(false);
@@ -29,13 +29,11 @@ const SettingsPage = () => {
 
   const handleSave = async () => {
     setSaving(true);
-    setSaveError('');
-    try { 
-      await withTimeout(updateSettings('price_per_kilo', pricePerKilo)); 
-      setSaved(true); 
-      setTimeout(()=>setSaved(false), 2000); 
-    } catch(e) {
-      setSaveError(e.message || 'Failed to save settings.');
+    try {
+      await withTimeout(updateSettings('price_per_kilo', pricePerKilo));
+      toast.success('Pricing saved successfully!');
+    } catch (e) {
+      toast.error(e.message || 'Failed to save settings.');
     } finally {
       setSaving(false);
     }
@@ -48,7 +46,7 @@ const SettingsPage = () => {
 
   return (
     <div className="page-transition">
-      <h1 style={{fontWeight:800,fontSize:'1.5rem',marginBottom:24}}>Settings</h1>
+      <h1 style={{ fontWeight: 800, fontSize: '1.5rem', marginBottom: 24 }}>Settings</h1>
 
       {/* Tabs */}
       <div className="tabs" style={{ marginBottom: 24 }}>
@@ -69,9 +67,7 @@ const SettingsPage = () => {
         <>
           {loading ? (
             <div className="card animate-fade-in">
-              <div className="card-body">
-                <SkeletonText lines={3} />
-              </div>
+              <div className="card-body"><SkeletonText lines={3} /></div>
             </div>
           ) : error ? (
             <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
@@ -82,32 +78,44 @@ const SettingsPage = () => {
           ) : (
             <div className="card animate-fade-in">
               <div className="card-header">
-                <h3><Settings size={16} style={{display:'inline',marginRight:8}}/>Pricing</h3>
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Settings size={16} /> Pricing
+                </h3>
               </div>
               <div className="card-body">
+
                 <div className="form-group">
                   <label className="form-label">Price per Kilogram (₱)</label>
-                  <input type="number" className="form-input admin-compact-input" value={pricePerKilo} onChange={e=>setPricePerKilo(e.target.value)} style={{maxWidth:200}}/>
-                  <p className="text-xs text-secondary" style={{marginTop:4}}>Used to calculate shipping costs for all orders.</p>
+                  <div className="form-input-wrapper" style={{ maxWidth: 220 }}>
+                    <DollarSign size={15} className="form-input-icon" />
+                    <input
+                      type="number"
+                      className="form-input form-input-icon-left"
+                      value={pricePerKilo}
+                      onChange={e => setPricePerKilo(e.target.value)}
+                      min="0"
+                      step="0.01"
+                      placeholder="70.00"
+                    />
+                  </div>
+                  <p className="form-helper" style={{ marginTop: 6 }}>
+                    Used to calculate shipping costs for all orders.
+                  </p>
                 </div>
-
-                {saved && (
-                  <div className="alert-banner alert-banner-success" style={{ marginBottom: 16 }}>
-                    <CheckCircle size={16} /> Settings saved successfully!
-                  </div>
-                )}
-
-                {saveError && (
-                  <div className="alert-banner alert-banner-error" style={{ marginBottom: 16 }}>
-                    <AlertTriangle size={16} /> {saveError}
-                  </div>
-                )}
 
                 <div className="admin-form-actions">
-                  <button className="btn btn-primary admin-form-submit" onClick={handleSave} disabled={saving}>
-                    {saving ? <Loader size={16} className="animate-spin"/> : <><Save size={16}/> Save Settings</>}
+                  <button
+                    className="btn btn-primary admin-form-submit"
+                    onClick={handleSave}
+                    disabled={saving}
+                  >
+                    {saving
+                      ? <><Loader size={16} className="animate-spin" /> Saving...</>
+                      : <><Save size={16} /> Save Settings</>
+                    }
                   </button>
                 </div>
+
               </div>
             </div>
           )}
@@ -116,4 +124,5 @@ const SettingsPage = () => {
     </div>
   );
 };
+
 export default SettingsPage;

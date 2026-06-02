@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createContactInquiry, getAdminProfile } from '../../lib/database';
 import {
-  Container, ArrowLeft, Phone, MapPin, Globe, Loader, CheckCircle, AlertCircle, Send, User,
+  Container, ArrowLeft, Phone, MapPin, Globe, Loader, AlertCircle, Send, User,
   Package, Truck, Shield, Clock, ExternalLink
 } from 'lucide-react';
+import { useToast } from '../../hooks/useToast';
 
 const FEATURES = [
   { icon: Package, title: 'Door-to-Door', desc: 'Complete pickup and delivery service' },
@@ -14,10 +15,9 @@ const FEATURES = [
 ];
 
 const AboutPage = () => {
+  const toast = useToast();
   const [form, setForm] = useState({ name: '', phone: '', message: '' });
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState(null);
-  const [statusMsg, setStatusMsg] = useState('');
   const [adminProfile, setAdminProfile] = useState(null);
   const [fetchingAdmin, setFetchingAdmin] = useState(true);
 
@@ -43,27 +43,19 @@ const AboutPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus(null);
-    setStatusMsg('');
-    if (!form.name.trim()) { setStatus('error'); setStatusMsg('Name is required.'); return; }
+    if (!form.name.trim()) { toast.error('Name is required.'); return; }
     if (!form.phone || !form.phone.startsWith('09') || form.phone.length !== 11) {
-      setStatus('error'); setStatusMsg('Phone must be exactly 11 digits and start with 09.'); return;
+      toast.error('Phone must be exactly 11 digits and start with 09.'); return;
     }
-    if (!form.message.trim()) { setStatus('error'); setStatusMsg('Message is required.'); return; }
+    if (!form.message.trim()) { toast.error('Message is required.'); return; }
 
     setLoading(true);
     try {
-      await createContactInquiry({
-        name: form.name.trim(),
-        phone: form.phone,
-        message: form.message.trim(),
-      });
-      setStatus('success');
-      setStatusMsg('Your message has been sent successfully. We will contact you soon.');
+      await createContactInquiry({ name: form.name.trim(), phone: form.phone, message: form.message.trim() });
+      toast.success('Message sent! We will contact you soon.');
       setForm({ name: '', phone: '', message: '' });
     } catch (err) {
-      setStatus('error');
-      setStatusMsg(err.message || 'Failed to send message. Please try again.');
+      toast.error(err.message || 'Failed to send message. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -88,13 +80,8 @@ const AboutPage = () => {
 
       {/* Hero */}
       <div className="public-about-hero animate-fade-in">
-        <h1>
-          About CargoExpress PH
-        </h1>
-        <p>
-          Fast & Reliable Cargo Delivery connecting Bohol and Manila<br />
-          with safe, affordable sea cargo shipping.
-        </p>
+        <h1>About CargoExpress PH</h1>
+        <p>Fast & Reliable Cargo Delivery connecting Bohol and Manila<br />with safe, affordable sea cargo shipping.</p>
       </div>
 
       {/* Feature Cards */}
@@ -102,12 +89,7 @@ const AboutPage = () => {
         <div className="public-about-feature-grid">
           {FEATURES.map((f, i) => (
             <div key={i} className="card card-body stagger-item" style={{ animationDelay: `${i * 80}ms`, textAlign: 'center', padding: 20 }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: 'var(--radius-md)',
-                background: 'var(--primary-bg)', display: 'flex',
-                alignItems: 'center', justifyContent: 'center',
-                color: 'var(--primary)', margin: '0 auto 10px',
-              }}>
+              <div style={{ width: 44, height: 44, borderRadius: 'var(--radius-md)', background: 'var(--primary-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', margin: '0 auto 10px' }}>
                 <f.icon size={22} />
               </div>
               <h4 style={{ fontWeight: 700, fontSize: '0.875rem', marginBottom: 4 }}>{f.title}</h4>
@@ -136,7 +118,6 @@ const AboutPage = () => {
           <div className="card animate-slide-up" style={{ animationDelay: '100ms' }}>
             <div className="card-body">
               <h3 style={{ fontWeight: 800, marginBottom: 16, color: 'var(--text)' }}>Business Information</h3>
-
               {fetchingAdmin ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-tertiary)', padding: '20px 0' }}>
                   <Loader size={16} className="animate-spin" /> Loading details...
@@ -149,27 +130,21 @@ const AboutPage = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                   {adminProfile.name && (
                     <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                      <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: 'var(--primary-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <User size={18} color="var(--primary)" />
-                      </div>
+                      <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: 'var(--primary-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><User size={18} color="var(--primary)" /></div>
                       <div>
                         <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: 2 }}>Business Owner</div>
                         <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text)' }}>{adminProfile.name}</div>
                       </div>
                     </div>
                   )}
-
                   {(adminProfile.facebook_link || adminProfile.name) && (
                     <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                      <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: 'var(--info-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <Globe size={18} color="var(--info)" />
-                      </div>
+                      <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: 'var(--info-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Globe size={18} color="var(--info)" /></div>
                       <div>
                         <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: 2 }}>Facebook Page</div>
                         {adminProfile.facebook_link ? (
                           <a href={adminProfile.facebook_link} target="_blank" rel="noopener noreferrer" className="public-about-contact-link">
-                            Visit Facebook page
-                            <ExternalLink size={14} aria-hidden="true" />
+                            Visit Facebook page <ExternalLink size={14} aria-hidden="true" />
                           </a>
                         ) : (
                           <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>See Facebook for updated link.</div>
@@ -177,11 +152,8 @@ const AboutPage = () => {
                       </div>
                     </div>
                   )}
-
                   <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: 'var(--success-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <Phone size={18} color="var(--success)" />
-                    </div>
+                    <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: 'var(--success-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Phone size={18} color="var(--success)" /></div>
                     <div>
                       <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: 2 }}>Contact Numbers</div>
                       <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -191,20 +163,13 @@ const AboutPage = () => {
                       </div>
                     </div>
                   </div>
-
                   <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: 'var(--error-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <MapPin size={18} color="var(--error)" />
-                    </div>
+                    <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-sm)', background: 'var(--error-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><MapPin size={18} color="var(--error)" /></div>
                     <div>
                       <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: 2 }}>Service Locations</div>
                       <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        {adminProfile.manila_address && (
-                          <div><strong style={{ color: 'var(--text)' }}>Manila Hub:</strong><br /><span style={{ textTransform: 'capitalize' }}>{adminProfile.manila_address}</span></div>
-                        )}
-                        {adminProfile.bohol_address && (
-                          <div><strong style={{ color: 'var(--text)' }}>Bohol Hub:</strong><br /><span style={{ textTransform: 'capitalize' }}>{adminProfile.bohol_address}</span></div>
-                        )}
+                        {adminProfile.manila_address && <div><strong style={{ color: 'var(--text)' }}>Manila Hub:</strong><br /><span style={{ textTransform: 'capitalize' }}>{adminProfile.manila_address}</span></div>}
+                        {adminProfile.bohol_address && <div><strong style={{ color: 'var(--text)' }}>Bohol Hub:</strong><br /><span style={{ textTransform: 'capitalize' }}>{adminProfile.bohol_address}</span></div>}
                         {!adminProfile.manila_address && !adminProfile.bohol_address && 'Metro Manila and Bohol'}
                       </div>
                     </div>
@@ -223,48 +188,18 @@ const AboutPage = () => {
               <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: 24 }}>
                 Have a question or want to request a pickup? Send us a message.
               </p>
-
-              {status === 'success' && (
-                <div className="alert-banner alert-banner-success animate-scale-in">
-                  <CheckCircle size={18} /> {statusMsg}
-                </div>
-              )}
-              {status === 'error' && (
-                <div className="alert-banner alert-banner-error animate-scale-in">
-                  <AlertCircle size={18} /> {statusMsg}
-                </div>
-              )}
-
               <form onSubmit={handleSubmit}>
                 <div className="form-group">
                   <label className="form-label">Name <span className="required">*</span></label>
-                  <input
-                    className="form-input"
-                    placeholder="Your full name"
-                    value={form.name}
-                    onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-                  />
+                  <input className="form-input" placeholder="Your full name" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Mobile Number <span className="required">*</span></label>
-                  <input
-                    className="form-input"
-                    placeholder="09xxxxxxxxx"
-                    inputMode="numeric"
-                    maxLength={11}
-                    value={form.phone}
-                    onChange={handlePhone}
-                  />
+                  <input className="form-input" placeholder="09xxxxxxxxx" inputMode="numeric" maxLength={11} value={form.phone} onChange={handlePhone} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Message <span className="required">*</span></label>
-                  <textarea
-                    className="form-textarea"
-                    rows={4}
-                    placeholder="How can we help you?"
-                    value={form.message}
-                    onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
-                  />
+                  <textarea className="form-textarea" rows={4} placeholder="How can we help you?" value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} />
                 </div>
                 <button type="submit" className="btn btn-primary btn-lg btn-block" disabled={loading}>
                   {loading ? <Loader size={18} className="animate-spin" /> : <><Send size={16} /> Send Message</>}

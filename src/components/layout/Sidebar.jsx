@@ -4,7 +4,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import {
   LayoutDashboard, Package, Truck, Users, BarChart3,
-  Megaphone, MessageSquare, Settings, LogOut, Container, FileText, Mail
+  Megaphone, MessageSquare, Settings, LogOut, Container, FileText, Mail,
+  ChevronsLeft, ArrowLeft
 } from 'lucide-react';
 
 const mainNav = [
@@ -26,7 +27,7 @@ const systemNav = [
   { to: '/admin/settings', icon: Settings, label: 'Settings' },
 ];
 
-const Sidebar = ({ isOpen, onClose }) => {
+const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
   const { logout, userProfile } = useAuth();
   const navigate = useNavigate();
   const [badges, setBadges] = useState({ inbox: 0, inquiries: 0 });
@@ -95,6 +96,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         end={item.end}
         className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
         onClick={onClose}
+        data-tooltip={item.label}
       >
         <item.icon size={18} />
         <span className="sidebar-link-label">{item.label}</span>
@@ -110,10 +112,33 @@ const Sidebar = ({ isOpen, onClose }) => {
   return (
     <>
       {isOpen && <div className="sidebar-backdrop" onClick={onClose} aria-hidden="true" />}
-      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+      <aside
+        id="admin-sidebar"
+        className={`sidebar ${isOpen ? 'open' : ''} ${isCollapsed ? 'collapsed' : ''}`}
+        aria-label="Admin navigation"
+      >
+        {/* Collapse toggle (desktop only) */}
+        <button
+          className="sidebar-collapse-btn"
+          type="button"
+          onClick={onToggleCollapse}
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          <ChevronsLeft size={16} />
+        </button>
+
         <div className="sidebar-brand">
           <Container size={28} color="var(--primary)" />
           <h1>CARGO<span>EXPRESS</span></h1>
+          <button
+            className="sidebar-drawer-close-btn"
+            type="button"
+            onClick={onClose}
+            aria-label="Close admin navigation"
+          >
+            <ArrowLeft size={18} />
+          </button>
         </div>
 
         <nav className="sidebar-nav">
@@ -137,9 +162,9 @@ const Sidebar = ({ isOpen, onClose }) => {
               <div className="sidebar-user-role">Administrator</div>
             </div>
           </div>
-          <button className="sidebar-link" onClick={handleLogout}>
+          <button className="sidebar-link" type="button" onClick={handleLogout} data-tooltip="Sign Out">
             <LogOut size={18} />
-            <span>Sign Out</span>
+            <span className="sidebar-link-label">Sign Out</span>
           </button>
         </div>
       </aside>

@@ -169,6 +169,44 @@ serve(async (req) => {
 
     const fcmResult = await fcmResponse.json()
 
+    // Detect stale/invalid tokens and clean them up
+    const fcmError = fcmResult?.error
+    if (fcmError) {
+      const errorCode = fcmError.details?.[0]?.errorCode || ''
+      const isStaleToken =
+        errorCode === 'UNREGISTERED' ||
+        fcmError.status === 'NOT_FOUND' ||
+        errorCode === 'INVALID_ARGUMENT'
+
+      if (isStaleToken) {
+        // Clear the dead token so we stop sending to it.
+        // Next customer login will register a fresh one automatically.
+        await supabase
+          .from('profiles')
+          .update({ fcm_token: null })
+          .eq('id', user_id)
+
+        return new Response(JSON.stringify({
+          success: false,
+          staleToken: true,
+          error: fcmError.message || 'Device token is no longer valid',
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        })
+      }
+
+      // Other FCM errors (quota, server error, etc.)
+      return new Response(JSON.stringify({
+        success: false,
+        error: fcmError.message || 'FCM delivery failed',
+        fcm: fcmResult,
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      })
+    }
+
     return new Response(JSON.stringify({ success: true, fcm: fcmResult }), {
       status: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },

@@ -392,8 +392,8 @@ const ReportsPage = () => {
                             </td>
                             <td data-label="Payment">
                               <span className="badge text-capitalize" style={{
-                                background: order.payment_method === 'cash' ? '#ECFDF5' : order.payment_method === 'gcash' ? '#EFF6FF' : '#FFFBEB',
-                                color: order.payment_method === 'cash' ? '#059669' : order.payment_method === 'gcash' ? '#2563EB' : '#D97706',
+                                background: order.payment_method === 'cash' ? 'var(--success-bg)' : order.payment_method === 'gcash' ? 'var(--info-bg)' : 'var(--warning-bg)',
+                                color: order.payment_method === 'cash' ? 'var(--success-dark)' : order.payment_method === 'gcash' ? 'var(--info-dark)' : 'var(--warning-dark)',
                                 fontSize: '0.7rem'
                               }}>
                                 {order.payment_method || '—'}

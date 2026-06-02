@@ -280,8 +280,8 @@ const AdminOrderDetailPage = () => {
             </div>
           </div>
           {order.trip_id && order.trips && (
-            <div className="mt-12 px-12 py-8" style={{ background: '#EFF6FF', borderRadius: 6, fontSize: '0.8125rem' }}>
-              <Truck size={14} className="inline mr-6" style={{ color: '#1D4ED8' }} />
+            <div className="trip-info-box mt-12 px-12 py-8">
+              <Truck size={14} className="inline mr-6" />
               Trip: <strong>{order.trips.trip_number}</strong> ({order.trips.origin} → {order.trips.destination})
             </div>
           )}

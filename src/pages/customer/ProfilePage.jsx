@@ -51,22 +51,22 @@ const ProfilePage = () => {
       {/* Quick Stats */}
       <div className="profile-quick-stats stagger-item" style={{ animationDelay: '60ms' }}>
         <div className="profile-stat-item">
-          <div className="flex items-center justify-center mb-8" style={{ width: 36, height: 36, borderRadius: 10, background: '#EFF6FF' }}>
-            <Package size={18} color="#3B82F6" />
+          <div className="flex items-center justify-center mb-8" style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--info-bg)' }}>
+            <Package size={18} color="var(--info)" />
           </div>
           <div className="text-xl fw-800 text-accent">{loading ? '—' : orderStats.total}</div>
           <div className="text-xs text-tertiary">Total Orders</div>
         </div>
         <div className="profile-stat-item">
-          <div className="flex items-center justify-center mb-8" style={{ width: 36, height: 36, borderRadius: 10, background: '#FFF7F0' }}>
+          <div className="flex items-center justify-center mb-8" style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--primary-bg)' }}>
             <Truck size={18} color="var(--primary)" />
           </div>
           <div className="text-xl fw-800 text-accent">{loading ? '—' : orderStats.active}</div>
           <div className="text-xs text-tertiary">Active</div>
         </div>
         <div className="profile-stat-item">
-          <div className="flex items-center justify-center mb-8" style={{ width: 36, height: 36, borderRadius: 10, background: '#ECFDF5' }}>
-            <Package size={18} color="#10B981" />
+          <div className="flex items-center justify-center mb-8" style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--success-bg)' }}>
+            <Package size={18} color="var(--success)" />
           </div>
           <div className="text-xl fw-800 text-accent">{loading ? '—' : orderStats.delivered}</div>
           <div className="text-xs text-tertiary">Delivered</div>

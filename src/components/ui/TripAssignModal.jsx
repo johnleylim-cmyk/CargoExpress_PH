@@ -98,8 +98,8 @@ const TripAssignModal = ({ order, onClose, onAssign }) => {
                       <span style={{
                         fontSize: '0.6875rem', fontWeight: 600, padding: '2px 8px',
                         borderRadius: 4,
-                        background: trip.status === 'scheduled' ? '#EFF6FF' : '#FFF7ED',
-                        color: trip.status === 'scheduled' ? '#1D4ED8' : '#C2410C',
+                        background: trip.status === 'scheduled' ? 'var(--info-bg)' : 'var(--primary-bg)',
+                        color: trip.status === 'scheduled' ? 'var(--info)' : 'var(--primary)',
                       }}>
                         {trip.status}
                       </span>

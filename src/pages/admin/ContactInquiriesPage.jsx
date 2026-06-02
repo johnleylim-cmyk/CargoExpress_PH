@@ -71,7 +71,7 @@ const ContactInquiriesPage = () => {
           <AlertCircle size={32} style={{ marginBottom: 8 }} />
           <h3>Error</h3>
           <p>{error}</p>
-          <button className="btn btn-primary mt-md" onClick={loadInquiries}>Retry</button>
+          <button type="button" className="btn btn-primary mt-md" onClick={loadInquiries}>Retry</button>
         </div>
       </div>
     );
@@ -93,16 +93,19 @@ const ContactInquiriesPage = () => {
           </h1>
           <p className="text-secondary text-sm">Messages from the public contact form</p>
         </div>
-        <button className="btn btn-outline btn-sm" onClick={loadInquiries} disabled={loading}>
+        <button type="button" className="btn btn-outline btn-sm" onClick={loadInquiries} disabled={loading}>
           {loading ? <Loader size={14} className="animate-spin" /> : 'Refresh'}
         </button>
       </div>
 
       {/* Filters */}
-      <div className="admin-filter-row">
+      <div className="admin-filter-row" role="tablist" aria-label="Inquiry status filters">
         {['all', 'new', 'read', 'resolved'].map(f => (
           <button
             key={f}
+            type="button"
+            role="tab"
+            aria-selected={filter === f}
             className={`btn btn-sm ${filter === f ? 'btn-primary' : 'btn-outline'}`}
             onClick={() => setFilter(f)}
             style={{ textTransform: 'capitalize' }}
@@ -190,6 +193,7 @@ const ContactInquiriesPage = () => {
                         <div style={{ display: 'flex', gap: 4 }} onClick={e => e.stopPropagation()}>
                           <button
                             className="btn-icon btn-ghost"
+                            type="button"
                             title="View"
                             aria-label={`View inquiry from ${inq.name}`}
                             onClick={() => handleView(inq)}
@@ -199,6 +203,7 @@ const ContactInquiriesPage = () => {
                           {inq.status !== 'resolved' && (
                             <button
                               className="btn-icon btn-ghost"
+                              type="button"
                               title="Mark as Resolved"
                               aria-label={`Mark inquiry from ${inq.name} as resolved`}
                               disabled={updating === inq.id}
@@ -229,7 +234,7 @@ const ContactInquiriesPage = () => {
                 <MessageSquare size={18} />
                 Inquiry Details
               </h3>
-              <button className="btn-icon btn-ghost" onClick={() => setSelectedInquiry(null)} aria-label="Close inquiry details">
+              <button type="button" className="btn-icon btn-ghost" onClick={() => setSelectedInquiry(null)} aria-label="Close inquiry details">
                 <X size={18} />
               </button>
             </div>
@@ -279,6 +284,7 @@ const ContactInquiriesPage = () => {
             <div className="modal-footer">
               {selectedInquiry.status !== 'resolved' ? (
                 <button
+                  type="button"
                   className="btn btn-primary"
                   onClick={() => { handleStatusChange(selectedInquiry.id, 'resolved'); }}
                   disabled={updating === selectedInquiry.id}
@@ -293,7 +299,7 @@ const ContactInquiriesPage = () => {
                   <CheckCircle size={14} color="#10B981" /> Resolved
                 </span>
               )}
-              <button className="btn btn-outline" onClick={() => setSelectedInquiry(null)}>
+              <button type="button" className="btn btn-outline" onClick={() => setSelectedInquiry(null)}>
                 Close
               </button>
             </div>

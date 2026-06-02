@@ -39,7 +39,7 @@ const DashboardPage = () => {
       <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
         <h3>Error</h3>
         <p>{error}</p>
-        <button className="btn btn-primary mt-md" onClick={loadData}>Retry</button>
+        <button type="button" className="btn btn-primary mt-md" onClick={loadData}>Retry</button>
       </div>
     </PageTransition>
   );
@@ -55,10 +55,10 @@ const DashboardPage = () => {
 
   return (
     <PageTransition>
-      <div className="flex items-center justify-between" style={{ marginBottom: 24 }}>
+      <div className="admin-page-header">
         <div>
-          <h1 style={{ fontWeight: 800, fontSize: '1.5rem' }}>Dashboard</h1>
-          <p className="text-secondary text-sm">Welcome back, Admin</p>
+          <h1 className="admin-page-title">Dashboard</h1>
+          <p className="admin-page-subtitle">Live operations, trip capacity, and recent order movement.</p>
         </div>
       </div>
 
@@ -85,7 +85,7 @@ const DashboardPage = () => {
 
       <div className="grid grid-2" style={{ marginBottom: 24 }}>
         {/* Van Capacity */}
-        <StaggerItem className="card" delay={240}>
+        <StaggerItem className="card admin-section-card" delay={240}>
           <div className="card-header"><h3><Gauge size={16} style={{ display: 'inline', marginRight: 8 }} />Van Capacity</h3></div>
           <div className="card-body">
             {loading ? (
@@ -112,7 +112,7 @@ const DashboardPage = () => {
         </StaggerItem>
 
         {/* Quick Stats */}
-        <StaggerItem className="card" delay={300}>
+        <StaggerItem className="card admin-section-card" delay={300}>
           <div className="card-header"><h3><TrendingUp size={16} style={{ display: 'inline', marginRight: 8 }} />Quick Stats</h3></div>
           <div className="card-body">
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #F1F5F9' }}>
@@ -132,7 +132,7 @@ const DashboardPage = () => {
       </div>
 
       {/* Recent Orders */}
-      <StaggerItem className="card" delay={360}>
+      <StaggerItem className="card admin-section-card admin-table-card" delay={360}>
         <div className="card-header">
           <h3>Recent Orders</h3>
           <Link to="/admin/orders" className="btn btn-ghost btn-sm">View All <ArrowRight size={14} /></Link>

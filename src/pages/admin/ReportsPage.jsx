@@ -71,11 +71,11 @@ const ReportsPage = () => {
       {/* ── Screen-only controls ── */}
       <div className="report-controls no-print">
         <div>
-          <h1 style={{ fontWeight: 800, fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <h1 className="admin-page-title">
             <FileText size={24} style={{ color: 'var(--primary)' }} />
             Reports & Analytics
           </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: 4 }}>
+          <p className="admin-page-subtitle">
             Generate, view, and print detailed business reports
           </p>
         </div>

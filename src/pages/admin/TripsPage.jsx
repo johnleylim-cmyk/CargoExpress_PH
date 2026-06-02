@@ -33,9 +33,16 @@ const AdminTripsPage = () => {
 
   return (
     <div className="page-transition">
-      <div className="flex items-center justify-between" style={{ marginBottom: 24 }}>
-        <h1 style={{ fontWeight: 800, fontSize: '1.5rem' }}>Trips</h1>
-        <button type="button" className="btn btn-primary" onClick={() => navigate('/admin/trips/create')}><Plus size={16} /> Create Trip</button>
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Trips</h1>
+          <p className="admin-page-subtitle">Plan cargo runs, capacity, and trip status across routes.</p>
+        </div>
+        <div className="admin-page-meta">
+          <span className="badge badge-info">{filtered.length} shown</span>
+          <span className="badge">{trips.length} total</span>
+          <button type="button" className="btn btn-primary" onClick={() => navigate('/admin/trips/create')}><Plus size={16} /> Create Trip</button>
+        </div>
       </div>
       <div className="tabs admin-mobile-tabs" role="tablist" aria-label="Trip status filters" style={{ marginBottom: 16 }}>
         {tabs.map((t, i) => (
@@ -57,7 +64,7 @@ const AdminTripsPage = () => {
           {Array.from({ length: 3 }, (_, i) => <SkeletonCard key={i} />)}
         </div>
       ) : error ? (
-        <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
+        <div className="card admin-error-card">
           <h3>Error</h3>
           <p>{error}</p>
           <button type="button" className="btn btn-primary mt-md" onClick={loadTrips}>Retry</button>
@@ -75,10 +82,10 @@ const AdminTripsPage = () => {
           <Link
             key={trip.id}
             to={`/admin/trips/${trip.id}`}
-            className="card card-interactive stagger-item"
-            style={{ marginBottom: 12, display: 'block', textDecoration: 'none', color: 'inherit', animationDelay: `${i * 60}ms` }}
+            className="card card-interactive admin-list-card stagger-item"
+            style={{ animationDelay: `${i * 60}ms` }}
           >
-            <div className="card-body" style={{ padding: 16 }}>
+            <div className="card-body">
               <div className="flex items-center justify-between" style={{ marginBottom: 8 }}>
                 <span style={{ fontWeight: 700, color: 'var(--accent)' }}>{trip.trip_number}</span>
                 <StatusBadge status={trip.status} size="sm" />

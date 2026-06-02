@@ -6,7 +6,7 @@ import { SkeletonTableRow } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
 import PageTransition from '../../components/ui/PageTransition';
 import { motion } from 'framer-motion';
-import { Search, Package, Filter } from 'lucide-react';
+import { Search, Package } from 'lucide-react';
 
 const tabs = ['All', 'Pending', 'Assigned', 'Picked Up', 'In Transit', 'Arrived at Hub', 'Out for Delivery', 'Delivered', 'Cancelled'];
 
@@ -42,18 +42,26 @@ const AdminOrdersPage = () => {
 
   return (
     <PageTransition>
-      <div className="flex items-center justify-between" style={{ marginBottom: 24 }}>
-        <h1 style={{ fontWeight: 800, fontSize: '1.5rem' }}>Orders</h1>
-        <span className="badge badge-info">{orders.length} total</span>
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Orders</h1>
+          <p className="admin-page-subtitle">Search, review, and advance every cargo order.</p>
+        </div>
+        <div className="admin-page-meta">
+          <span className="badge badge-info">{filtered.length} shown</span>
+          <span className="badge">{orders.length} total</span>
+        </div>
       </div>
-      <div className="search-box" style={{ marginBottom: 16 }}>
-        <Search size={16} className="search-icon" />
-        <input
-          aria-label="Search orders"
-          placeholder="Search tracking, sender, or receiver..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
+      <div className="admin-toolbar">
+        <div className="search-box">
+          <Search size={16} className="search-icon" />
+          <input
+            aria-label="Search orders"
+            placeholder="Search tracking, sender, or receiver..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
       </div>
       <div className="tabs admin-mobile-tabs" role="tablist" aria-label="Order status filters" style={{ marginBottom: 16 }}>
         {tabs.map((t, i) => (
@@ -81,13 +89,13 @@ const AdminOrdersPage = () => {
           </div>
         </div>
       ) : error ? (
-        <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
+        <div className="card admin-error-card">
           <h3>Error</h3>
           <p>{error}</p>
           <button type="button" className="btn btn-primary mt-md" onClick={loadOrders}>Retry</button>
         </div>
       ) : (
-        <div className="card animate-fade-in">
+        <div className="card admin-section-card admin-table-card animate-fade-in">
           <div className="table-container">
             <table className="data-table">
               <thead><tr><th>Tracking</th><th>Customer</th><th>Route</th><th>Weight</th><th>Cost</th><th>Status</th><th>Date</th></tr></thead>

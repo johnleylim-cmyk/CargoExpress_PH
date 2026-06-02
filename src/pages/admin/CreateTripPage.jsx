@@ -54,10 +54,15 @@ const CreateTripPage = () => {
 
   return (
     <div className="page-transition">
-      <button onClick={() => navigate(-1)} className="btn btn-ghost" style={{ marginBottom: 16 }}>
+      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost" style={{ marginBottom: 16 }}>
         <ArrowLeft size={18} /> Back
       </button>
-      <h1 style={{ fontWeight: 800, fontSize: '1.5rem', marginBottom: 24 }}>Create New Trip</h1>
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Create New Trip</h1>
+          <p className="admin-page-subtitle">Define route, schedule, capacity, and pricing for a cargo run.</p>
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit}>
 
@@ -72,6 +77,7 @@ const CreateTripPage = () => {
                 <button
                   type="button" key={r.label}
                   onClick={() => handleRouteSelect(r)}
+                  aria-pressed={form.origin === r.origin}
                   className="card-interactive admin-route-option"
                   style={{
                     flex: 1, padding: 20, borderRadius: 12,
@@ -99,12 +105,12 @@ const CreateTripPage = () => {
             </h3>
             <div className="grid grid-2" style={{ gap: 16 }}>
               <div className="form-group">
-                <label className="form-label">Departure Date & Time *</label>
-                <input type="datetime-local" className="form-input" value={form.departure_date} onChange={e => u('departure_date', e.target.value)} required />
+                <label className="form-label" htmlFor="trip-departure-date">Departure Date & Time *</label>
+                <input id="trip-departure-date" type="datetime-local" className="form-input" value={form.departure_date} onChange={e => u('departure_date', e.target.value)} required />
               </div>
               <div className="form-group">
-                <label className="form-label">Estimated Arrival Date & Time</label>
-                <input type="datetime-local" className="form-input" value={form.arrival_date} onChange={e => u('arrival_date', e.target.value)} />
+                <label className="form-label" htmlFor="trip-arrival-date">Estimated Arrival Date & Time</label>
+                <input id="trip-arrival-date" type="datetime-local" className="form-input" value={form.arrival_date} onChange={e => u('arrival_date', e.target.value)} />
               </div>
             </div>
           </div>
@@ -118,17 +124,17 @@ const CreateTripPage = () => {
             </h3>
             <div className="grid grid-2" style={{ gap: 16 }}>
               <div className="form-group">
-                <label className="form-label">Capacity (kg) *</label>
-                <input type="number" className="form-input" value={form.capacity} onChange={e => u('capacity', e.target.value)} placeholder="e.g. 1000" min="1" step="1" required />
-                <p style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: 4 }}>Maximum total cargo weight for this trip.</p>
+                <label className="form-label" htmlFor="trip-capacity">Capacity (kg) *</label>
+                <input id="trip-capacity" type="number" className="form-input" value={form.capacity} onChange={e => u('capacity', e.target.value)} placeholder="e.g. 1000" min="1" step="1" required aria-describedby="trip-capacity-helper" />
+                <p id="trip-capacity-helper" style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: 4 }}>Maximum total cargo weight for this trip.</p>
               </div>
               <div className="form-group">
-                <label className="form-label">Amount per Kilo (₱) *</label>
+                <label className="form-label" htmlFor="trip-price-per-kg">Amount per Kilo (₱) *</label>
                 <div style={{ position: 'relative' }}>
                   <DollarSign size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', pointerEvents: 'none' }} />
-                  <input type="number" className="form-input" value={form.price_per_kg} onChange={e => u('price_per_kg', e.target.value)} placeholder="e.g. 70" min="0.01" step="0.01" style={{ paddingLeft: 34 }} required />
+                  <input id="trip-price-per-kg" type="number" className="form-input" value={form.price_per_kg} onChange={e => u('price_per_kg', e.target.value)} placeholder="e.g. 70" min="0.01" step="0.01" style={{ paddingLeft: 34 }} required aria-describedby="trip-price-helper" />
                 </div>
-                <p style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: 4 }}>Cost per kilogram for bookings on this trip.</p>
+                <p id="trip-price-helper" style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: 4 }}>Cost per kilogram for bookings on this trip.</p>
               </div>
             </div>
 
@@ -148,7 +154,8 @@ const CreateTripPage = () => {
             <h3 style={{ fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
               <FileText size={18} color="#94A3B8" /> Notes <span style={{ fontWeight: 400, color: '#94A3B8', fontSize: '0.8125rem' }}>(Optional)</span>
             </h3>
-            <textarea className="form-textarea" value={form.notes} onChange={e => u('notes', e.target.value)} placeholder="Any special instructions, remarks, or conditions for this trip..." rows={3} />
+            <label className="sr-only" htmlFor="trip-notes">Trip notes</label>
+            <textarea id="trip-notes" className="form-textarea" value={form.notes} onChange={e => u('notes', e.target.value)} placeholder="Any special instructions, remarks, or conditions for this trip..." rows={3} />
           </div>
         </div>
 

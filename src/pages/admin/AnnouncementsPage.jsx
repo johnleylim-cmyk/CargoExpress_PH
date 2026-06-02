@@ -65,17 +65,20 @@ const AnnouncementsPage = () => {
   return (
     <div className="page-transition">
       <div className="admin-page-header">
-        <h1 style={{fontWeight:800,fontSize:'1.5rem'}}>Announcements</h1>
-        <button className="btn btn-primary" onClick={()=>setShowForm(!showForm)}><Plus size={16}/> New</button>
+        <div>
+          <h1 className="admin-page-title">Announcements</h1>
+          <p className="admin-page-subtitle">Publish operational updates customers can see in their dashboard.</p>
+        </div>
+        <button type="button" className="btn btn-primary" onClick={()=>setShowForm(!showForm)}><Plus size={16}/> New</button>
       </div>
 
       {showForm && (
         <div className="card animate-scale-in" style={{marginBottom:16}}><div className="card-body">
-          <div className="form-group"><label className="form-label">Title</label><input className="form-input" value={form.title} onChange={e=>setForm(p=>({...p,title:e.target.value}))}/></div>
-          <div className="form-group"><label className="form-label">Content</label><textarea className="form-textarea" value={form.content} onChange={e=>setForm(p=>({...p,content:e.target.value}))}/></div>
+          <div className="form-group"><label className="form-label" htmlFor="announcement-title">Title</label><input id="announcement-title" className="form-input" value={form.title} onChange={e=>setForm(p=>({...p,title:e.target.value}))}/></div>
+          <div className="form-group"><label className="form-label" htmlFor="announcement-content">Content</label><textarea id="announcement-content" className="form-textarea" value={form.content} onChange={e=>setForm(p=>({...p,content:e.target.value}))}/></div>
           <div className="admin-form-actions">
-            <button className="btn btn-primary" onClick={handleCreate} disabled={saving}>{saving?<Loader size={16} className="animate-spin"/>:'Publish'}</button>
-            <button className="btn btn-ghost" onClick={()=>setShowForm(false)}>Cancel</button>
+            <button type="button" className="btn btn-primary" onClick={handleCreate} disabled={saving}>{saving?<Loader size={16} className="animate-spin"/>:'Publish'}</button>
+            <button type="button" className="btn btn-ghost" onClick={()=>setShowForm(false)}>Cancel</button>
           </div>
         </div></div>
       )}
@@ -87,7 +90,7 @@ const AnnouncementsPage = () => {
       ) : error ? (
         <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
           <h3>Error</h3><p>{error}</p>
-          <button className="btn btn-primary mt-md" onClick={load}>Retry</button>
+          <button type="button" className="btn btn-primary mt-md" onClick={load}>Retry</button>
         </div>
       ) : items.length === 0 ? (
         <EmptyState icon={Megaphone} title="No announcements yet" description="Create your first announcement to keep customers informed." actionLabel="Create Announcement" onAction={() => setShowForm(true)} />
@@ -97,7 +100,7 @@ const AnnouncementsPage = () => {
             <div className="card-body" style={{padding:16}}>
               <div className="admin-announcement-header">
                 <h3 className="admin-announcement-title" style={{fontWeight:700}}>{a.title}</h3>
-                <button className="btn btn-ghost btn-icon admin-card-action" onClick={()=>setDeleteTarget(a.id)} aria-label={`Delete ${a.title}`}><Trash2 size={16}/></button>
+                <button type="button" className="btn btn-ghost btn-icon admin-card-action" onClick={()=>setDeleteTarget(a.id)} aria-label={`Delete ${a.title}`}><Trash2 size={16}/></button>
               </div>
               <p className="text-sm text-secondary">{a.content}</p>
               <div className="text-xs text-tertiary" style={{marginTop:8}}>by {a.profiles?.name||'Admin'} • {new Date(a.created_at).toLocaleDateString()}</div>

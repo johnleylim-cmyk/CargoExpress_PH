@@ -46,7 +46,12 @@ const SettingsPage = () => {
 
   return (
     <div className="page-transition">
-      <h1 style={{ fontWeight: 800, fontSize: '1.5rem', marginBottom: 24 }}>Settings</h1>
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Settings</h1>
+          <p className="admin-page-subtitle">Manage business profile details and shipment pricing.</p>
+        </div>
+      </div>
 
       {/* Tabs */}
       <div className="tabs" role="tablist" aria-label="Settings sections" style={{ marginBottom: 24 }}>

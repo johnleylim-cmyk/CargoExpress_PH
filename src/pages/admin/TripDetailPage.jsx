@@ -65,7 +65,7 @@ const TripDetailPage = () => {
       <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
         <h3>Error Loading Trip</h3>
         <p style={{ margin: '8px 0 20px' }}>{error}</p>
-        <button className="btn btn-primary" onClick={() => load()}>Retry</button>
+        <button type="button" className="btn btn-primary" onClick={() => load()}>Retry</button>
       </div>
     </div>
   );
@@ -74,30 +74,31 @@ const TripDetailPage = () => {
 
   return (
     <div className="page-transition">
-      <button onClick={() => navigate(-1)} className="btn btn-ghost" style={{marginBottom:16}}><ArrowLeft size={18}/> Back</button>
+      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost" style={{marginBottom:16}}><ArrowLeft size={18}/> Back</button>
       <div className="flex items-center justify-between" style={{marginBottom:20}}>
         <div><h1 style={{fontWeight:800}}>{trip.trip_number}</h1><p className="text-sm text-secondary">{trip.origin} → {trip.destination}</p></div>
         <StatusBadge status={trip.status}/>
       </div>
 
       {/* Actions */}
-      <div className="card stagger-item" style={{marginBottom:16, animationDelay: '60ms'}}><div className="card-body" style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-        {trip.status==='scheduled' && <button className="btn btn-primary" onClick={()=>openConfirm('in_progress', 'Start Trip', `Start trip ${trip.trip_number}? This will mark it as in progress.`, 'info')} disabled={saving}><Play size={16}/> Start Trip</button>}
-        {trip.status==='in_progress' && <button className="btn btn-success" onClick={()=>openConfirm('arrived', 'Mark Arrived', `Mark trip ${trip.trip_number} as arrived at destination?`, 'success')} disabled={saving}><Flag size={16}/> Mark Arrived</button>}
-        {trip.status==='arrived' && <button className="btn btn-primary" onClick={()=>openConfirm('completed', 'Complete Trip', `Complete trip ${trip.trip_number}? All orders should be delivered.`, 'success')} disabled={saving}><CheckCircle size={16}/> Complete</button>}
-        {!['completed','cancelled'].includes(trip.status) && <button className="btn btn-danger btn-sm" onClick={()=>openConfirm('cancelled', 'Cancel Trip', `Cancel trip ${trip.trip_number}? This action cannot be undone.`, 'danger')} disabled={saving}><XCircle size={16}/> Cancel</button>}
+      <div className="card admin-section-card admin-action-card stagger-item" style={{marginBottom:16, animationDelay: '60ms'}}><div className="card-body"><div className="admin-action-group">
+        {trip.status==='scheduled' && <button type="button" className="btn btn-primary" onClick={()=>openConfirm('in_progress', 'Start Trip', `Start trip ${trip.trip_number}? This will mark it as in progress.`, 'info')} disabled={saving}><Play size={16}/> Start Trip</button>}
+        {trip.status==='in_progress' && <button type="button" className="btn btn-success" onClick={()=>openConfirm('arrived', 'Mark Arrived', `Mark trip ${trip.trip_number} as arrived at destination?`, 'success')} disabled={saving}><Flag size={16}/> Mark Arrived</button>}
+        {trip.status==='arrived' && <button type="button" className="btn btn-primary" onClick={()=>openConfirm('completed', 'Complete Trip', `Complete trip ${trip.trip_number}? All orders should be delivered.`, 'success')} disabled={saving}><CheckCircle size={16}/> Complete</button>}
+        {!['completed','cancelled'].includes(trip.status) && <button type="button" className="btn btn-danger btn-sm" onClick={()=>openConfirm('cancelled', 'Cancel Trip', `Cancel trip ${trip.trip_number}? This action cannot be undone.`, 'danger')} disabled={saving}><XCircle size={16}/> Cancel</button>}
+        </div>
         {saving && <Loader size={18} className="animate-spin"/>}
       </div></div>
 
       {/* Capacity */}
-      <div className="card stagger-item" style={{marginBottom:16, animationDelay: '120ms'}}>
+      <div className="card admin-section-card stagger-item" style={{marginBottom:16, animationDelay: '120ms'}}>
         <div className="card-body">
           <CapacityTracker currentWeight={current_weight} maxCapacity={trip.capacity} tripNumber={trip.trip_number} />
         </div>
       </div>
 
       {/* Orders */}
-      <div className="card stagger-item" style={{ animationDelay: '180ms' }}>
+      <div className="card admin-section-card admin-table-card stagger-item" style={{ animationDelay: '180ms' }}>
         <div className="card-header"><h3>Assigned Orders ({orders.length})</h3></div>
         <div className="table-container">
           <table className="data-table">

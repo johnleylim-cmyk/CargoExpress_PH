@@ -28,13 +28,21 @@ const CustomersPage = () => {
 
   return (
     <div className="page-transition">
-      <div className="flex items-center justify-between" style={{ marginBottom: 24 }}>
-        <h1 style={{ fontWeight: 800, fontSize: '1.5rem' }}>Customers</h1>
-        <span className="badge badge-info">{customers.length} total</span>
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Customers</h1>
+          <p className="admin-page-subtitle">Customer accounts, contact details, and booking history.</p>
+        </div>
+        <div className="admin-page-meta">
+          <span className="badge badge-info">{filtered.length} shown</span>
+          <span className="badge">{customers.length} total</span>
+        </div>
       </div>
-      <div className="search-box" style={{ marginBottom: 16 }}>
-        <Search size={16} className="search-icon" />
-        <input aria-label="Search customers" placeholder="Search customers..." value={search} onChange={e => setSearch(e.target.value)} />
+      <div className="admin-toolbar">
+        <div className="search-box">
+          <Search size={16} className="search-icon" />
+          <input aria-label="Search customers" placeholder="Search customers..." value={search} onChange={e => setSearch(e.target.value)} />
+        </div>
       </div>
       {loading ? (
         <div className="card animate-fade-in">
@@ -48,13 +56,13 @@ const CustomersPage = () => {
           </div>
         </div>
       ) : error ? (
-        <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
+        <div className="card admin-error-card">
           <h3>Error</h3>
           <p>{error}</p>
           <button type="button" className="btn btn-primary mt-md" onClick={loadCustomers}>Retry</button>
         </div>
       ) : (
-        <div className="card animate-fade-in">
+        <div className="card admin-section-card admin-table-card animate-fade-in">
           <div className="table-container">
             <table className="data-table">
               <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Province</th><th>Joined</th></tr></thead>

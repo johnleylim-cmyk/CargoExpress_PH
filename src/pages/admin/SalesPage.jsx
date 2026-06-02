@@ -28,7 +28,7 @@ const SalesPage = () => {
       <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
         <h3>Error</h3>
         <p>{error}</p>
-        <button className="btn btn-primary mt-md" onClick={loadSales}>Retry</button>
+        <button type="button" className="btn btn-primary mt-md" onClick={loadSales}>Retry</button>
       </div>
     </div>
   );
@@ -49,7 +49,12 @@ const SalesPage = () => {
 
   return (
     <div className="page-transition">
-      <h1 style={{fontWeight:800,fontSize:'1.5rem',marginBottom:24}}>Sales & Revenue</h1>
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-page-title">Sales & Revenue</h1>
+          <p className="admin-page-subtitle">Revenue, collection health, and payment method performance.</p>
+        </div>
+      </div>
 
       {/* Stat Cards */}
       <div className="grid grid-4" style={{marginBottom:24}}>
@@ -74,7 +79,7 @@ const SalesPage = () => {
 
       <div className="grid grid-2" style={{marginBottom:24}}>
         {/* Payment Methods */}
-        <div className="card stagger-item" style={{ animationDelay: '240ms' }}>
+        <div className="card admin-section-card stagger-item" style={{ animationDelay: '240ms' }}>
           <div className="card-header"><h3>Payment Methods</h3></div>
           <div className="card-body">
             {loading ? <SkeletonText lines={3} /> : (
@@ -113,7 +118,7 @@ const SalesPage = () => {
         </div>
 
         {/* Monthly Revenue */}
-        <div className="card stagger-item" style={{ animationDelay: '300ms' }}>
+        <div className="card admin-section-card stagger-item" style={{ animationDelay: '300ms' }}>
           <div className="card-header"><h3>Monthly Revenue</h3></div>
           <div className="card-body">
             {loading ? <SkeletonText lines={4} /> : (

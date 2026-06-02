@@ -24,7 +24,6 @@ const CustomerDetailPage = () => {
       const result = await getCustomerById(id);
       if (isMounted) setData(result);
     } catch(e) {
-      setError(e.message || 'Failed to load customer data.');
       if (isMounted) setError(e.message || 'Failed to load customer.');
     } finally {
       if (isMounted) setLoading(false);
@@ -45,7 +44,7 @@ const CustomerDetailPage = () => {
       <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
         <h3>Error Loading Customer</h3>
         <p style={{ margin: '8px 0 20px' }}>{error}</p>
-        <button className="btn btn-primary" onClick={() => load()}>Retry</button>
+        <button type="button" className="btn btn-primary" onClick={() => load()}>Retry</button>
       </div>
     </div>
   );
@@ -54,7 +53,7 @@ const CustomerDetailPage = () => {
 
   return (
     <div className="page-transition">
-      <button onClick={() => navigate(-1)} className="btn btn-ghost" style={{marginBottom:16}}><ArrowLeft size={18}/> Back</button>
+      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost" style={{marginBottom:16}}><ArrowLeft size={18}/> Back</button>
       <div className="card stagger-item" style={{marginBottom:16,overflow:'visible', animationDelay: '0ms'}}>
         <div style={{background:'linear-gradient(135deg, var(--accent), var(--primary))',height:60,borderRadius:'12px 12px 0 0'}}/>
         <div style={{padding:'0 24px 24px',marginTop:-30}}>
@@ -79,7 +78,7 @@ const CustomerDetailPage = () => {
           </div>
         ))}
       </div>
-      <div className="card stagger-item" style={{ animationDelay: '360ms' }}>
+      <div className="card admin-section-card admin-table-card stagger-item" style={{ animationDelay: '360ms' }}>
         <div className="card-header"><h3>Order History</h3></div>
         <div className="table-container">
           <table className="data-table">

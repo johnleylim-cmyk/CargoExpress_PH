@@ -164,7 +164,7 @@ const AdminOrderDetailPage = () => {
       <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
         <h3>Error Loading Order</h3>
         <p style={{ margin: '8px 0 20px' }}>{error}</p>
-        <button className="btn btn-primary" onClick={() => loadOrder()}>Retry</button>
+        <button type="button" className="btn btn-primary" onClick={() => loadOrder()}>Retry</button>
       </div>
     </div>
   );
@@ -192,7 +192,7 @@ const AdminOrderDetailPage = () => {
 
   return (
     <div className="page-transition">
-      <button onClick={() => navigate(-1)} className="btn btn-ghost" style={{ marginBottom: 16 }}>
+      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost" style={{ marginBottom: 16 }}>
         <ArrowLeft size={18} /> Back
       </button>
 
@@ -207,22 +207,24 @@ const AdminOrderDetailPage = () => {
 
       {/* Status Action Bar */}
       {!isTerminal && (
-        <div className="card stagger-item" style={{ marginBottom: 16, animationDelay: '60ms' }}>
-          <div className="card-body" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+        <div className="card admin-section-card admin-action-card stagger-item" style={{ marginBottom: 16, animationDelay: '60ms' }}>
+          <div className="card-body">
+            <div className="admin-action-group">
             {needsTrip && (
-              <button className="btn btn-secondary" onClick={() => setShowTripModal(true)}>
+              <button type="button" className="btn btn-secondary" onClick={() => setShowTripModal(true)}>
                 <Truck size={16} /> Assign to Trip
               </button>
             )}
             {nextStatus && (
-              <button className="btn btn-primary" onClick={handleStatusAdvance} disabled={saving}>
+              <button type="button" className="btn btn-primary" onClick={handleStatusAdvance} disabled={saving}>
                 {saving ? <Loader size={16} className="animate-spin" /> : <Check size={16} />}
                 {nextStatus === 'Picked Up' ? 'Process Pickup' : `Advance to "${nextStatus}"`}
               </button>
             )}
-            <button className="btn btn-danger btn-sm" onClick={() => setShowCancelConfirm(true)} disabled={saving}>
+            <button type="button" className="btn btn-danger btn-sm" onClick={() => setShowCancelConfirm(true)} disabled={saving}>
               Cancel Order
             </button>
+            </div>
           </div>
         </div>
       )}
@@ -238,7 +240,7 @@ const AdminOrderDetailPage = () => {
       )}
 
       {/* Timeline */}
-      <div className="card stagger-item" style={{ marginBottom: 16, animationDelay: '120ms' }}>
+      <div className="card admin-section-card stagger-item" style={{ marginBottom: 16, animationDelay: '120ms' }}>
         <div className="card-header"><h3>Status Timeline</h3></div>
         <div className="card-body"><TrackingTimeline currentStatus={order.status} compact /></div>
       </div>
@@ -307,7 +309,7 @@ const AdminOrderDetailPage = () => {
       )}
 
       {/* Payment & Weight Management */}
-      <div className="card stagger-item" style={{ animationDelay: '420ms' }}>
+      <div className="card admin-section-card stagger-item" style={{ animationDelay: '420ms' }}>
         <div className="card-header"><h3><CreditCard size={16} style={{ display: 'inline', marginRight: 8 }} />Payment & Details</h3></div>
         <div className="card-body">
           <div className="admin-payment-summary">
@@ -336,35 +338,35 @@ const AdminOrderDetailPage = () => {
 
           <div className="grid grid-2" style={{ gap: 16 }}>
             <div className="form-group">
-              <label className="form-label">Actual Weight (kg)</label>
-              <input type="number" min="0" step="0.1" className="form-input" value={payForm.actual_weight}
+              <label className="form-label" htmlFor="admin-order-actual-weight">Actual Weight (kg)</label>
+              <input id="admin-order-actual-weight" type="number" min="0" step="0.1" className="form-input" value={payForm.actual_weight}
                 onChange={e => { const val = e.target.value; if (val === '' || (Number(val) >= 0 && !isNaN(val))) setPayForm(p => ({ ...p, actual_weight: val })); }} />
             </div>
             <div className="form-group">
-              <label className="form-label">Payment Method</label>
-              <select className="form-select" value={payForm.payment_method} onChange={e => setPayForm(p => ({ ...p, payment_method: e.target.value }))}>
+              <label className="form-label" htmlFor="admin-order-payment-method">Payment Method</label>
+              <select id="admin-order-payment-method" className="form-select" value={payForm.payment_method} onChange={e => setPayForm(p => ({ ...p, payment_method: e.target.value }))}>
                 <option value="">Select</option>
                 {PAYMENT_METHODS.map(m => <option key={m} value={m}>{m === 'gcash' ? 'GCash' : m === 'paylater' ? 'Pay Later' : 'Cash'}</option>)}
               </select>
             </div>
             <div className="form-group">
-              <label className="form-label">Payment Status</label>
-              <select className="form-select" value={payForm.payment_status} onChange={e => setPayForm(p => ({ ...p, payment_status: e.target.value }))}>
+              <label className="form-label" htmlFor="admin-order-payment-status">Payment Status</label>
+              <select id="admin-order-payment-status" className="form-select" value={payForm.payment_status} onChange={e => setPayForm(p => ({ ...p, payment_status: e.target.value }))}>
                 <option value="">Select</option>
                 {PAYMENT_STATUSES.map(s => <option key={s} value={s} style={{ textTransform: 'capitalize' }}>{s}</option>)}
               </select>
             </div>
             <div className="form-group">
-              <label className="form-label">Amount Paid (₱)</label>
-              <input type="number" min="0" step="0.01" className="form-input" value={payForm.amount_paid}
+              <label className="form-label" htmlFor="admin-order-amount-paid">Amount Paid (₱)</label>
+              <input id="admin-order-amount-paid" type="number" min="0" step="0.01" className="form-input" value={payForm.amount_paid}
                 onChange={e => { const val = e.target.value; if (val === '' || (Number(val) >= 0 && !isNaN(val))) setPayForm(p => ({ ...p, amount_paid: val })); }} />
             </div>
           </div>
           <div className="form-group">
-            <label className="form-label">Notes</label>
-            <textarea className="form-textarea" value={payForm.notes} onChange={e => setPayForm(p => ({ ...p, notes: e.target.value }))} rows={3} />
+            <label className="form-label" htmlFor="admin-order-notes">Notes</label>
+            <textarea id="admin-order-notes" className="form-textarea" value={payForm.notes} onChange={e => setPayForm(p => ({ ...p, notes: e.target.value }))} rows={3} />
           </div>
-          <button className="btn btn-primary" onClick={handleSaveDetails} disabled={saving}>
+          <button type="button" className="btn btn-primary" onClick={handleSaveDetails} disabled={saving}>
             {saving ? <Loader size={16} className="animate-spin" /> : <Save size={16} />} Save Details
           </button>
         </div>

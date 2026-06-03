@@ -8,7 +8,11 @@ const CapacityTracker = ({ currentWeight = 0, maxCapacity = 1000, tripNumber = '
 
   let status, statusColor, barColor;
   
-  if (percent >= 91) {
+  if (percent > 100) {
+    status = 'OVER CAPACITY';
+    statusColor = 'var(--capacity-critical-text)';
+    barColor = 'var(--capacity-critical-bar)';
+  } else if (percent >= 91) {
     status = 'CRITICAL'; 
     statusColor = 'var(--capacity-critical-text)';
     barColor = 'var(--capacity-critical-bar)';
@@ -56,7 +60,7 @@ const CapacityTracker = ({ currentWeight = 0, maxCapacity = 1000, tripNumber = '
 
       <div className="capacity-bar overflow-hidden" style={{ height: 14, borderRadius: 7, background: 'var(--bg-secondary)' }}>
         <div
-          className="capacity-fill"
+          className={`capacity-fill ${percent > 100 ? 'danger' : ''}`}
           style={{ width: `${barPercent}%`, height: '100%', background: barColor, transition: 'width 0.5s ease-out, background-color 0.5s ease-out' }}
         />
       </div>
@@ -71,6 +75,11 @@ const CapacityTracker = ({ currentWeight = 0, maxCapacity = 1000, tripNumber = '
           <span>{remaining.toFixed(1)} kg remaining</span>
         </div>
       </div>
+      {percent > 100 && (
+        <div className="capacity-note">
+          Review assigned cargo. This trip is above planned van capacity.
+        </div>
+      )}
     </div>
   );
 };

@@ -55,8 +55,8 @@ const AdminOrdersPage = () => {
           <p className="admin-page-subtitle">Search, review, and advance every cargo order.</p>
         </div>
         <div className="admin-page-meta">
-          <span className="badge badge-info">{filtered.length} shown</span>
-          <span className="badge">{orders.length} total</span>
+          <span className="badge badge-info">{loading ? 'Loading' : `${filtered.length} shown`}</span>
+          <span className="badge">{loading ? 'Checking orders' : `${orders.length} total`}</span>
         </div>
       </div>
       <div className="admin-toolbar">
@@ -82,7 +82,7 @@ const AdminOrdersPage = () => {
       {loading ? (
         <div className="card animate-fade-in">
           <div className="table-container">
-            <table className="data-table">
+            <table className="data-table" aria-busy="true">
               <thead><tr><th>Tracking</th><th>Customer</th><th>Route</th><th>Weight</th><th>Cost</th><th>Status</th><th>Date</th></tr></thead>
               <tbody>
                 {Array.from({ length: 6 }, (_, i) => <SkeletonTableRow key={i} cols={7} />)}

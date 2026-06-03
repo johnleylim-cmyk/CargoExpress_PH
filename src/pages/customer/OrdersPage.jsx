@@ -47,9 +47,15 @@ const OrdersPage = () => {
   });
 
   return (
-    <PageTransition>
-      <h2 className="fw-800 mb-20">My Orders</h2>
-      <StaggerItem className="search-box mb-16" delay={0}>
+    <PageTransition className="customer-orders-page">
+      <div className="customer-page-heading">
+        <div>
+          <h2 className="fw-800 mb-4">My Orders</h2>
+          <p className="text-sm text-secondary">Search, filter, and follow every shipment.</p>
+        </div>
+        {!loading && <span className="badge badge-info">{filtered.length} shown</span>}
+      </div>
+      <StaggerItem className="search-box customer-orders-search mb-16" delay={0}>
         <Search size={16} className="search-icon" />
         <input
           aria-label="Search tracking number"
@@ -98,7 +104,7 @@ const OrdersPage = () => {
       ) : (
         filtered.map((order, index) => (
           <StaggerItem key={order.id} delay={(index + 2) * 60} className="mb-12">
-            <Link to={`/customer/orders/${order.id}`} className="card card-interactive block text-no-underline" style={{ color: 'inherit' }}>
+            <Link to={`/customer/orders/${order.id}`} className="customer-order-list-card card card-interactive block text-no-underline" style={{ color: 'inherit' }}>
               <div className="card-body p-16">
                 <div className="flex items-center justify-between mb-6">
                   <span className="fw-700 text-accent">{order.tracking_number}</span>

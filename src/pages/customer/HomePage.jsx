@@ -49,6 +49,12 @@ const HomePage = () => {
   };
 
   const activeOrders = orders.filter(o => !['Delivered', 'Cancelled'].includes(o.status));
+  const visibleAnnouncements = announcements.filter(a => {
+    const title = (a.title || '').trim().toLowerCase();
+    const content = (a.content || '').trim().toLowerCase();
+    return !['hey', 'test', 'mic', 'mic check'].includes(title)
+      && !['hey', 'test', 'mic', 'mic check'].includes(content);
+  });
 
   const greeting = () => {
     const h = new Date().getHours();
@@ -82,14 +88,14 @@ const HomePage = () => {
     : 0;
 
   return (
-    <PageTransition>
+    <PageTransition className="customer-home-page">
 
       {/* ── Hero ─────────────────────────────────────────────────── */}
-      <div className="hero animate-slide-up mb-lg">
+      <div className="hero customer-home-hero animate-slide-up mb-lg">
         <p className="text-sm mb-4">{greeting()},</p>
         <h2>{userProfile?.name || (user?.email?.split('@')[0]) || 'Welcome'}</h2>
         <p className="mt-8">Track and manage your shipments with ease.</p>
-        <form onSubmit={handleTrack} className="flex gap-10 mt-20 relative">
+        <form onSubmit={handleTrack} className="customer-track-form flex gap-10 mt-20 relative">
           <div className="search-box flex-1">
             <Search size={16} className="search-icon" />
             <input
@@ -128,10 +134,10 @@ const HomePage = () => {
       {/* ── Nearest Active / Scheduled Trip Card ────────────────── */}
       {!loading && activeTrip && (
         <StaggerItem delay={0} className="mb-lg">
-          <h3 className="fw-700 mb-12 flex items-center gap-8">
+          <h3 className="customer-section-title fw-700 mb-12 flex items-center gap-8">
             <Truck size={18} color="var(--primary)" /> Next Available Trip
           </h3>
-          <div className="rounded-lg p-20 text-inverse" style={{
+          <div className="customer-trip-card rounded-lg p-20 text-inverse" style={{
             background: 'linear-gradient(135deg, var(--accent), #2D5A8A)',
             boxShadow: '0 8px 24px rgba(27,58,92,0.25)',
           }}>
@@ -167,21 +173,21 @@ const HomePage = () => {
 
             {/* Dates + Capacity row */}
             <div className="mb-20" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-              <div className="rounded-md" style={{ background: 'rgba(255,255,255,0.08)', padding: '10px 12px' }}>
+              <div className="customer-trip-metric rounded-md" style={{ background: 'rgba(255,255,255,0.08)', padding: '10px 12px' }}>
                 <div className="flex items-center gap-6 mb-4">
                   <Calendar size={13} opacity={0.7} />
                   <span className="fw-600 text-uppercase" style={{ fontSize: '0.65rem', opacity: 0.65 }}>Departure</span>
                 </div>
                 <div className="fw-700" style={{ fontSize: '0.8125rem' }}>{fmtDate(activeTrip.departure_date)}</div>
               </div>
-              <div className="rounded-md" style={{ background: 'rgba(255,255,255,0.08)', padding: '10px 12px' }}>
+              <div className="customer-trip-metric rounded-md" style={{ background: 'rgba(255,255,255,0.08)', padding: '10px 12px' }}>
                 <div className="flex items-center gap-6 mb-4">
                   <Calendar size={13} opacity={0.7} />
                   <span className="fw-600 text-uppercase" style={{ fontSize: '0.65rem', opacity: 0.65 }}>ETA</span>
                 </div>
                 <div className="fw-700" style={{ fontSize: '0.8125rem' }}>{fmtDate(activeTrip.arrival_date)}</div>
               </div>
-              <div className="rounded-md" style={{ background: 'rgba(255,255,255,0.08)', padding: '10px 12px' }}>
+              <div className="customer-trip-metric rounded-md" style={{ background: 'rgba(255,255,255,0.08)', padding: '10px 12px' }}>
                 <div className="flex items-center gap-6 mb-4">
                   <Weight size={13} opacity={0.7} />
                   <span className="fw-600 text-uppercase" style={{ fontSize: '0.65rem', opacity: 0.65 }}>Avail.</span>
@@ -205,7 +211,7 @@ const HomePage = () => {
             <button
               type="button"
               onClick={() => handleBookFromTrip(activeTrip)}
-              className="w-full border-none fw-700 cursor-pointer flex items-center justify-center gap-8 rounded-md"
+              className="customer-trip-cta w-full border-none fw-700 cursor-pointer flex items-center justify-center gap-8 rounded-md"
               style={{
                 padding: '13px',
                 background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
@@ -224,14 +230,14 @@ const HomePage = () => {
       {!loading && activeOrders.length > 0 && (
         <StaggerItem delay={60} className="mb-lg">
           <div className="flex items-center justify-between mb-md">
-            <h3 className="fw-700">Active Shipments</h3>
+            <h3 className="customer-section-title fw-700">Active Shipments</h3>
             <Link to="/customer/orders" className="customer-inline-action text-sm text-primary font-medium">
               View All <ArrowRight size={14} />
             </Link>
           </div>
           {activeOrders.slice(0, 3).map((order, index) => (
             <StaggerItem key={order.id} delay={(index + 2) * 60} className="mb-12">
-              <Link to={`/customer/orders/${order.id}`} className="card card-interactive block text-no-underline" style={{ color: 'inherit' }}>
+              <Link to={`/customer/orders/${order.id}`} className="customer-shipment-card card card-interactive block text-no-underline" style={{ color: 'inherit' }}>
                 <div className="card-body p-16">
                   <div className="flex items-center justify-between mb-8">
                     <span className="fw-700 text-accent" style={{ fontSize: '0.9375rem' }}>{order.tracking_number}</span>
@@ -251,14 +257,14 @@ const HomePage = () => {
       )}
 
       {/* ── Announcements ────────────────────────────────────────── */}
-      {!loading && announcements.length > 0 && (
+      {!loading && visibleAnnouncements.length > 0 && (
         <StaggerItem delay={120}>
           <h3 className="fw-700 mb-12 flex items-center gap-8">
             <Megaphone size={18} className="text-primary" />
             Announcements
           </h3>
-          {announcements.slice(0, 3).map((a, index) => (
-            <StaggerItem key={a.id} className="card mb-12" delay={(index + 4) * 60}>
+          {visibleAnnouncements.slice(0, 3).map((a, index) => (
+            <StaggerItem key={a.id} className="customer-announcement-card card mb-12" delay={(index + 4) * 60}>
               <div className="card-body p-16">
                 <div className="fw-600 mb-4">{a.title}</div>
                 <div className="text-sm text-secondary">{a.content}</div>

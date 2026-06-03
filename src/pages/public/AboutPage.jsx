@@ -190,16 +190,16 @@ const AboutPage = () => {
               </p>
               <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                  <label className="form-label">Name <span className="required">*</span></label>
-                  <input className="form-input" placeholder="Your full name" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} />
+                  <label className="form-label" htmlFor="contact-name">Name <span className="required">*</span></label>
+                  <input id="contact-name" className="form-input" placeholder="Your full name" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} autoComplete="name" required />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Mobile Number <span className="required">*</span></label>
-                  <input className="form-input" placeholder="09xxxxxxxxx" inputMode="numeric" maxLength={11} value={form.phone} onChange={handlePhone} />
+                  <label className="form-label" htmlFor="contact-phone">Mobile Number <span className="required">*</span></label>
+                  <input id="contact-phone" className="form-input" placeholder="09xxxxxxxxx" inputMode="numeric" maxLength={11} value={form.phone} onChange={handlePhone} autoComplete="tel" required />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Message <span className="required">*</span></label>
-                  <textarea className="form-textarea" rows={4} placeholder="How can we help you?" value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} />
+                  <label className="form-label" htmlFor="contact-message">Message <span className="required">*</span></label>
+                  <textarea id="contact-message" className="form-textarea" rows={4} placeholder="How can we help you?" value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} required />
                 </div>
                 <button type="submit" className="btn btn-primary btn-lg btn-block" disabled={loading}>
                   {loading ? <Loader size={18} className="animate-spin" /> : <><Send size={16} /> Send Message</>}

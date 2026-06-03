@@ -32,3 +32,6 @@
 
 /* ── 7. Responsive Overrides ── */
 @import './responsive.css';
+
+/* ── 8. Premium Product Refresh ── */
+@import './premium-refresh.css';

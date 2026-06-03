@@ -25,6 +25,13 @@ const buildFullAddress = ({ lotBlock, street, barangay, city, province, landmark
   return addr;
 };
 
+const formatBookingTripDate = (value) => {
+  if (!value) return 'Date not set';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Date not set';
+  return date.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
 const BookShipmentPage = () => {
   const { user, userProfile } = useAuth();
   const navigate = useNavigate();
@@ -195,8 +202,8 @@ const BookShipmentPage = () => {
     const id = (field) => `${prefix}-${field}`;
     return (
       <div className="grid grid-2 gap-16">
-        <div className="form-group" style={{ gridColumn: '1 / -1' }}><label className="form-label" htmlFor={id('name')}>Full Name *</label><input id={id('name')} className="form-input" value={form[`${prefix}_name`]} onChange={handleTextChange(`${prefix}_name`)} required /></div>
-        <div className="form-group"><label className="form-label" htmlFor={id('phone')}>Mobile Number *</label><input id={id('phone')} className="form-input" value={form[`${prefix}_phone`]} onChange={handlePhoneChange(`${prefix}_phone`)} inputMode="numeric" maxLength={11} placeholder="09xxxxxxxxx" required /></div>
+        <div className="form-group" style={{ gridColumn: '1 / -1' }}><label className="form-label" htmlFor={id('name')}>Full Name *</label><input id={id('name')} className="form-input" value={form[`${prefix}_name`]} onChange={handleTextChange(`${prefix}_name`)} autoComplete={isSender ? 'name' : 'shipping name'} required /></div>
+        <div className="form-group"><label className="form-label" htmlFor={id('phone')}>Mobile Number *</label><input id={id('phone')} className="form-input" value={form[`${prefix}_phone`]} onChange={handlePhoneChange(`${prefix}_phone`)} inputMode="numeric" maxLength={11} placeholder="09xxxxxxxxx" autoComplete="tel" required /></div>
         <div className="form-group"><label className="form-label" htmlFor={id('facebook')}>Facebook Name *</label><input id={id('facebook')} className="form-input" value={form[`${prefix}_facebook`]} onChange={handleTextChange(`${prefix}_facebook`)} placeholder="Your name on Facebook" required /></div>
         <div className="form-group"><label className="form-label" htmlFor={id('province')}>Province *</label>
           <select id={id('province')} className="form-select" value={form[`${prefix}_province`]} onChange={e => { u(`${prefix}_province`, e.target.value); u(`${prefix}_city`, ''); }}>
@@ -210,16 +217,16 @@ const BookShipmentPage = () => {
             {cities.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
-        <div className="form-group"><label className="form-label" htmlFor={id('barangay')}>Barangay *</label><input id={id('barangay')} className="form-input" value={form[`${prefix}_barangay`]} onChange={handleTextChange(`${prefix}_barangay`)} required /></div>
-        <div className="form-group"><label className="form-label" htmlFor={id('street')}>Street *</label><input id={id('street')} className="form-input" value={form[`${prefix}_street`]} onChange={handleTextChange(`${prefix}_street`)} required /></div>
-        <div className="form-group"><label className="form-label" htmlFor={id('lot-block')}>Lot / Block / Purok</label><input id={id('lot-block')} className="form-input" value={form[`${prefix}_lot_block`]} onChange={handleTextChange(`${prefix}_lot_block`)} /></div>
+        <div className="form-group"><label className="form-label" htmlFor={id('barangay')}>Barangay *</label><input id={id('barangay')} className="form-input" value={form[`${prefix}_barangay`]} onChange={handleTextChange(`${prefix}_barangay`)} autoComplete="address-level3" required /></div>
+        <div className="form-group"><label className="form-label" htmlFor={id('street')}>Street *</label><input id={id('street')} className="form-input" value={form[`${prefix}_street`]} onChange={handleTextChange(`${prefix}_street`)} autoComplete="address-line1" required /></div>
+        <div className="form-group"><label className="form-label" htmlFor={id('lot-block')}>Lot / Block / Purok</label><input id={id('lot-block')} className="form-input" value={form[`${prefix}_lot_block`]} onChange={handleTextChange(`${prefix}_lot_block`)} autoComplete="address-line2" /></div>
         <div className="form-group"><label className="form-label" htmlFor={id('landmark')}>Landmark</label><input id={id('landmark')} className="form-input" value={form[`${prefix}_landmark`]} onChange={handleTextChange(`${prefix}_landmark`)} placeholder="Near what building/place?" /></div>
       </div>
     );
   };
 
   if (success) return (
-    <div className="page-transition" style={{ padding: '40px 20px' }}>
+    <div className="page-transition booking-page booking-success-page" style={{ padding: '40px 20px' }}>
       <div className="animate-scale-in text-center">
         <div className="w-88 rounded-full flex items-center justify-center mb-24" style={{ height: 88, background: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)', margin: '0 auto', boxShadow: '0 8px 32px rgba(16,185,129,0.2)' }}>
           <CheckCircle size={44} color="#10B981" strokeWidth={2} />
@@ -252,7 +259,7 @@ const BookShipmentPage = () => {
   const steps = ['Route', 'Sender', 'Receiver', 'Package', 'Review'];
 
   return (
-    <div className="page-transition">
+    <div className="page-transition booking-page">
       <button type="button" onClick={() => step > 1 ? setStep(step - 1) : navigate(-1)} className="btn btn-ghost mb-16">
         <ArrowLeft size={18} /> {step > 1 ? 'Back' : 'Cancel'}
       </button>
@@ -270,6 +277,7 @@ const BookShipmentPage = () => {
           </div>
         ))}
       </div>
+      <div className="booking-current-step" aria-live="polite">Step {step} of {steps.length}: {steps[step - 1]}</div>
 
       {/* Step 1: Route */}
       {step === 1 && (
@@ -303,7 +311,7 @@ const BookShipmentPage = () => {
               <label className="form-label" htmlFor="booking-trip">Select Trip (Optional)</label>
               <select id="booking-trip" className="form-select" value={form.trip_id} onChange={e => u('trip_id', e.target.value)}>
                 <option value="">No specific trip</option>
-                {filteredTrips.map(t => <option key={t.id} value={t.id}>{t.trip_number} - {new Date(t.departure_date).toLocaleDateString()} - PHP {parseFloat(t.price_per_kg || pricePerKilo).toFixed(2)}/kg</option>)}
+                {filteredTrips.map(t => <option key={t.id} value={t.id}>{t.trip_number} - {formatBookingTripDate(t.departure_date)} - PHP {parseFloat(t.price_per_kg || pricePerKilo).toFixed(2)}/kg</option>)}
               </select>
             </div>
           )}
@@ -367,7 +375,7 @@ const BookShipmentPage = () => {
             </select>
           </div>
           {form.package_weight && (
-            <div className="rounded-md p-16 mb-16 text-center" style={{ background: 'var(--primary-bg)', border: '1px solid rgba(240,127,46,0.25)' }}>
+            <div className="booking-cost-card mb-16 text-center">
               <div className="text-sm text-secondary">Estimated Cost</div>
               <div className="text-2xl fw-800 text-primary">₱{cost.toFixed(2)}</div>
               <div className="text-xs text-tertiary">{form.package_weight} kg x PHP {effectivePricePerKilo}/kg</div>
@@ -385,25 +393,25 @@ const BookShipmentPage = () => {
       {step === 5 && (
         <div className="card animate-fade-in"><div className="card-body">
           <h3 className="fw-700 mb-16">Review & Confirm</h3>
-          <div className="rounded-md p-16 mb-16" style={{ background: 'var(--bg-secondary)' }}>
-            <div className="text-xs text-tertiary font-bold mb-8">ROUTE</div>
-            <div className="font-bold">{form.route}</div>
+          <div className="booking-summary-card mb-16">
+            <div className="booking-summary-label">Route</div>
+            <div className="booking-summary-value">{form.route}</div>
           </div>
           <div className="grid grid-2 gap-12 mb-16">
-            <div className="rounded-md p-16" style={{ background: 'var(--bg-secondary)' }}>
-              <div className="text-xs text-tertiary font-bold mb-8">SENDER</div>
+            <div className="booking-summary-card">
+              <div className="booking-summary-label">Sender</div>
               <div className="text-sm font-bold">{form.sender_name}</div>
               <div className="text-xs text-secondary">{form.sender_phone}</div>
               <div className="text-xs text-secondary mt-4">{form.sender_street}, {form.sender_barangay}, {form.sender_city}, {form.sender_province}</div>
             </div>
-            <div className="rounded-md p-16" style={{ background: 'var(--bg-secondary)' }}>
-              <div className="text-xs text-tertiary font-bold mb-8">RECEIVER</div>
+            <div className="booking-summary-card">
+              <div className="booking-summary-label">Receiver</div>
               <div className="text-sm font-bold">{form.receiver_name}</div>
               <div className="text-xs text-secondary">{form.receiver_phone}</div>
               <div className="text-xs text-secondary mt-4">{form.receiver_street}, {form.receiver_barangay}, {form.receiver_city}, {form.receiver_province}</div>
             </div>
           </div>
-          <div className="rounded-md p-20 text-center mb-16" style={{ background: 'var(--primary-bg)', border: '1px solid rgba(240,127,46,0.25)' }}>
+          <div className="booking-cost-card text-center mb-16">
             <div className="text-sm text-secondary">Estimated Cost</div>
             <div className="fw-800 text-primary" style={{ fontSize: '2rem' }}>₱{cost.toFixed(2)}</div>
           </div>

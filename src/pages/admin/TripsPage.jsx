@@ -9,6 +9,23 @@ import { Plus, Truck, Calendar, MapPin } from 'lucide-react';
 
 const tabs = ['All', 'scheduled', 'in_progress', 'arrived', 'completed', 'cancelled'];
 
+const formatTripDate = (value) => {
+  if (!value) return 'Date not set';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Date not set';
+  return date.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
+const getCapacityState = (current = 0, max = 0) => {
+  const percent = max > 0 ? (current / max) * 100 : 0;
+  return {
+    percent,
+    barPercent: Math.min(100, percent),
+    isOver: percent > 100,
+    isWarning: percent > 80,
+  };
+};
+
 const AdminTripsPage = () => {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,8 +62,8 @@ const AdminTripsPage = () => {
           <p className="admin-page-subtitle">Plan cargo runs, capacity, and trip status across routes.</p>
         </div>
         <div className="admin-page-meta">
-          <span className="badge badge-info">{filtered.length} shown</span>
-          <span className="badge">{trips.length} total</span>
+          <span className="badge badge-info">{loading ? 'Loading' : `${filtered.length} shown`}</span>
+          <span className="badge">{loading ? 'Checking trips' : `${trips.length} total`}</span>
           <button type="button" className="btn btn-primary" onClick={() => navigate('/admin/trips/create')}><Plus size={16} /> Create Trip</button>
         </div>
       </div>
@@ -92,13 +109,30 @@ const AdminTripsPage = () => {
               </div>
               <div className="flex items-center gap-sm text-sm"><MapPin size={14} className="text-primary" />{trip.origin} → {trip.destination}</div>
               <div className="flex items-center gap-sm text-xs text-secondary mt-4">
-                <Calendar size={14} />{new Date(trip.departure_date).toLocaleDateString()}
+                <Calendar size={14} />{formatTripDate(trip.departure_date)}
                 {trip.vehicle_info && <> • {trip.vehicle_info}</>}
               </div>
               {trip.capacity > 0 && (
                 <div className="mt-8">
-                  <div className="capacity-bar"><div className={`capacity-fill ${(trip.current_weight || 0) / trip.capacity > 0.8 ? 'warning' : ''}`} style={{ width: `${Math.min(100, ((trip.current_weight || 0) / trip.capacity) * 100)}%` }} /></div>
-                  <div className="text-xs text-tertiary mt-4">{(trip.current_weight || 0).toFixed(1)} / {trip.capacity} kg</div>
+                  {(() => {
+                    const current = trip.current_weight || 0;
+                    const capacity = getCapacityState(current, trip.capacity);
+                    return (
+                      <>
+                        <div className="capacity-bar">
+                          <div
+                            className={`capacity-fill ${capacity.isOver ? 'danger' : capacity.isWarning ? 'warning' : ''}`}
+                            style={{ width: `${capacity.barPercent}%` }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-xs text-tertiary mt-4">
+                          <span>{current.toFixed(1)} / {trip.capacity} kg</span>
+                          <span>{capacity.percent.toFixed(0)}%</span>
+                        </div>
+                        {capacity.isOver && <div className="capacity-note">Over planned capacity</div>}
+                      </>
+                    );
+                  })()}
                 </div>
               )}
             </div>

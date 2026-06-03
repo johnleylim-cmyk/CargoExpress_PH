@@ -82,7 +82,7 @@ const OrderDetailPage = () => {
   };
 
   if (loading) return (
-    <div className="page-transition">
+    <div className="page-transition customer-order-detail-page">
       <div className="stagger-item mb-16" style={{ animationDelay: '0ms' }}>
         <div className="skeleton skeleton-text" style={{ width: '30%', height: 20 }} />
       </div>
@@ -145,7 +145,7 @@ const OrderDetailPage = () => {
 
       {/* Tracking Timeline */}
       {!isCancelled && (
-        <div className="card stagger-item mb-16" style={{ animationDelay: '0ms' }}>
+        <div className="customer-detail-card customer-detail-timeline-card card stagger-item mb-16" style={{ animationDelay: '0ms' }}>
           <div className="card-body">
             <h4 className="fw-700 mb-16">Tracking Timeline</h4>
             <TrackingTimeline currentStatus={order.status} compact />
@@ -166,7 +166,7 @@ const OrderDetailPage = () => {
 
       {/* Trip Info */}
       {order.trip_id && order.trips && (
-        <div className="card stagger-item mb-16" style={{ animationDelay: '60ms' }}>
+        <div className="customer-detail-card customer-detail-trip-card card stagger-item mb-16" style={{ animationDelay: '60ms' }}>
           <div className="card-body flex items-center gap-12" style={{ padding: 14 }}>
             <div className="w-40 h-40 flex items-center justify-center flex-shrink-0" style={{ borderRadius: 10, background: 'linear-gradient(135deg, var(--accent), #2D5A8A)', color: 'white' }}>
               <Truck size={20} />
@@ -181,13 +181,13 @@ const OrderDetailPage = () => {
 
       {/* Sender & Receiver */}
       <div className="customer-contact-grid stagger-item mb-16" style={{ animationDelay: '120ms' }}>
-        <div className="card"><div className="card-body p-16">
+        <div className="customer-detail-card customer-contact-card card"><div className="card-body p-16">
           <div className="text-xs text-tertiary font-bold text-uppercase flex items-center gap-4 mb-8"><User size={12} /> Sender</div>
           <div className="text-sm font-bold" style={{ marginBottom: 2 }}>{order.sender_name}</div>
           <div className="text-sm text-secondary flex items-center gap-4" style={{ marginBottom: 2 }}><Phone size={12} /> {order.sender_phone}</div>
           <div className="text-xs text-secondary"><MapPin size={12} className="inline mr-4" />{order.sender_address}</div>
         </div></div>
-        <div className="card"><div className="card-body p-16">
+        <div className="customer-detail-card customer-contact-card card"><div className="card-body p-16">
           <div className="text-xs text-tertiary font-bold text-uppercase flex items-center gap-4 mb-8"><User size={12} /> Receiver</div>
           <div className="text-sm font-bold" style={{ marginBottom: 2 }}>{order.receiver_name}</div>
           <div className="text-sm text-secondary flex items-center gap-4" style={{ marginBottom: 2 }}><Phone size={12} /> {order.receiver_phone}</div>
@@ -196,7 +196,7 @@ const OrderDetailPage = () => {
       </div>
 
       {/* Package Details */}
-      <div className="card stagger-item mb-16" style={{ animationDelay: '180ms' }}>
+      <div className="customer-detail-card customer-package-card card stagger-item mb-16" style={{ animationDelay: '180ms' }}>
         <div className="card-body p-16">
           <h4 className="fw-700 mb-12"><Package size={16} className="inline mr-8" />Package Details</h4>
           <div className="grid grid-2 gap-12">
@@ -210,7 +210,7 @@ const OrderDetailPage = () => {
 
       {/* Pickup Proof Photos */}
       {hasPhotos && (
-        <div className="card stagger-item mb-16" style={{ animationDelay: '240ms' }}>
+        <div className="customer-detail-card customer-proof-card card stagger-item mb-16" style={{ animationDelay: '240ms' }}>
           <div className="card-body p-16">
             <h4 className="fw-700 mb-12"><Camera size={16} className="inline mr-8" />Pickup Proof</h4>
             <div className="flex gap-10 flex-wrap">
@@ -234,7 +234,7 @@ const OrderDetailPage = () => {
       )}
 
       {/* Payment */}
-      <div className="card stagger-item" style={{ animationDelay: '300ms' }}>
+      <div className="customer-detail-card customer-payment-card card stagger-item" style={{ animationDelay: '300ms' }}>
         <div className="card-body p-16">
           <h4 className="fw-700 mb-12"><CreditCard size={16} className="inline mr-8" />Payment</h4>
           <div className="customer-payment-summary">
@@ -279,7 +279,7 @@ const OrderDetailPage = () => {
       </div>
 
       {/* Timestamps */}
-      <div className="flex justify-between mt-16 text-xs text-tertiary">
+      <div className="customer-detail-timestamps flex justify-between mt-16 text-xs text-tertiary">
         <span>Booked: {new Date(order.created_at).toLocaleDateString()}</span>
         <span>Updated: {new Date(order.updated_at).toLocaleString()}</span>
       </div>

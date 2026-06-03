@@ -33,7 +33,7 @@ const ProfilePage = () => {
   ];
 
   return (
-    <div className="page-transition">
+    <div className="page-transition profile-page">
       {/* Profile Card */}
       <div className="profile-card-premium animate-slide-up">
         <div className="profile-card-banner" />
@@ -74,7 +74,7 @@ const ProfilePage = () => {
       </div>
 
       {/* Menu Items */}
-      <div className="card stagger-item mb-16" style={{ animationDelay: '120ms' }}>
+      <div className="card stagger-item mb-16 profile-menu-card" style={{ animationDelay: '120ms' }}>
         {menuItems.map((item, index) => {
           const Icon = item.icon;
           return (
@@ -102,7 +102,7 @@ const ProfilePage = () => {
 
       {/* Sign Out */}
       <button
-        className="btn btn-outline w-full stagger-item justify-center"
+        className="btn btn-outline w-full stagger-item justify-center profile-signout"
         onClick={handleLogout}
         style={{ color: '#EF4444', borderColor: '#FCA5A5', animationDelay: '180ms' }}
       >

@@ -46,10 +46,10 @@ const DashboardPage = () => {
   );
 
   const statCards = [
-    { label: 'Total Orders', value: stats?.totalOrders || 0, icon: Package, gradient: 'linear-gradient(135deg, var(--primary), var(--primary-light))' },
-    { label: 'Pending', value: stats?.pendingOrders || 0, icon: Clock, gradient: 'linear-gradient(135deg, #F59E0B, #FBBF24)' },
-    { label: 'Active Trips', value: stats?.activeTrips || 0, icon: Truck, gradient: 'linear-gradient(135deg, #3B82F6, #60A5FA)' },
-    { label: 'Customers', value: stats?.totalCustomers || 0, icon: Users, gradient: 'linear-gradient(135deg, #10B981, #34D399)' },
+    { label: 'Total Orders', value: stats?.totalOrders || 0, icon: Package, tone: 'primary' },
+    { label: 'Pending', value: stats?.pendingOrders || 0, icon: Clock, tone: 'warning' },
+    { label: 'Active Trips', value: stats?.activeTrips || 0, icon: Truck, tone: 'info' },
+    { label: 'Customers', value: stats?.totalCustomers || 0, icon: Users, tone: 'success' },
   ];
 
 
@@ -74,7 +74,7 @@ const DashboardPage = () => {
             </>
           ) : (
             statCards.map((s, i) => (
-              <StaggerItem key={i} className="stat-card" style={{ background: s.gradient }} delay={i * 60}>
+              <StaggerItem key={i} className={`stat-card stat-card-${s.tone}`} delay={i * 60}>
                 <div className="stat-icon"><s.icon size={40} /></div>
                 <div className="stat-value">
                   <AnimatedCounter value={s.value} duration={1200} />

@@ -33,7 +33,7 @@ const OFFLINE_FALLBACK_HTML = `
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #0F172A 0%, #1B3A5C 50%, #0F172A 100%);
       color: #F1F5F9;
       min-height: 100vh;

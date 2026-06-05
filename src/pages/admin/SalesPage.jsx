@@ -25,7 +25,7 @@ const SalesPage = () => {
 
   if (error) return (
     <div className="page-transition">
-      <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
+      <div className="card text-center" style={{ padding: 40, color: 'var(--error)' }}>
         <h3>Error</h3>
         <p>{error}</p>
         <button type="button" className="btn btn-primary mt-md" onClick={loadSales}>Retry</button>
@@ -37,9 +37,9 @@ const SalesPage = () => {
 
   // Compute max for payment method bar chart
   const paymentMethods = [
-    {l:'Cash', v:s.cashTotal || 0, c:'#10B981'},
-    {l:'GCash', v:s.gcashTotal || 0, c:'#3B82F6'},
-    {l:'Pay Later', v:s.paylaterTotal || 0, c:'#F59E0B'}
+    {l:'Cash', v:s.cashTotal || 0, c:'var(--success)'},
+    {l:'GCash', v:s.gcashTotal || 0, c:'var(--info)'},
+    {l:'Pay Later', v:s.paylaterTotal || 0, c:'var(--warning)'}
   ];
   const maxPayment = Math.max(...paymentMethods.map(m => m.v), 1);
 
@@ -63,11 +63,11 @@ const SalesPage = () => {
         ) : (
           [
             {l:'Total Revenue', v:s.totalRevenue||0, g:'linear-gradient(135deg,var(--primary),var(--primary-light))', prefix:'₱'},
-            {l:'Collected', v:s.paidTotal||0, g:'linear-gradient(135deg,#10B981,#34D399)', prefix:'₱'},
-            {l:'Outstanding', v:s.unpaidTotal||0, g:'linear-gradient(135deg,#EF4444,#F87171)', prefix:'₱'},
-            {l:'Unpaid Orders', v:s.unpaidCount||0, g:'linear-gradient(135deg,#F59E0B,#FBBF24)', prefix:''}
+            {l:'Collected', v:s.paidTotal||0, g:'linear-gradient(135deg,var(--success),var(--success-dark, #059669))', prefix:'₱'},
+            {l:'Outstanding', v:s.unpaidTotal||0, g:'linear-gradient(135deg,var(--error),var(--error-dark, #dc2626))', prefix:'₱'},
+            {l:'Unpaid Orders', v:s.unpaidCount||0, g:'linear-gradient(135deg,var(--warning),var(--warning-dark, #d97706))', prefix:''}
           ].map((c,i)=>(
-            <div key={i} className="stat-card stagger-item" style={{background:c.g, animationDelay: `${i * 60}ms`}}>
+            <div key={i} className="stat-card stagger-item text-white" style={{background:c.g, color: 'white', animationDelay: `${i * 60}ms`}}>
               <div className="stat-value">
                 <AnimatedCounter value={c.v} prefix={c.prefix} decimals={0} duration={1200} />
               </div>
@@ -96,7 +96,7 @@ const SalesPage = () => {
                       </span>
                     </div>
                     <div className="w-full h-8 overflow-hidden" style={{
-                      background: '#F1F5F9',
+                      background: 'var(--bg-secondary)',
                       borderRadius: 4,
                     }}>
                       <div className="h-full" style={{
@@ -136,7 +136,7 @@ const SalesPage = () => {
                     </div>
                     <div className="w-full overflow-hidden" style={{
                       height: 6,
-                      background: '#F1F5F9',
+                      background: 'var(--bg-secondary)',
                       borderRadius: 3,
                     }}>
                       <div className="h-full" style={{
@@ -148,7 +148,7 @@ const SalesPage = () => {
                     </div>
                   </div>
                 ))}
-                {monthlySales.length===0&&<div className="text-center text-secondary p-20">No sales data</div>}
+                {monthlySales.length === 0 && <div className="text-center text-secondary p-20">No sales data</div>}
               </div>
             )}
           </div>

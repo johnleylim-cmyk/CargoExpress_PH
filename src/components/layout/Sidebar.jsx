@@ -162,7 +162,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
               <div className="sidebar-user-role">Administrator</div>
             </div>
           </div>
-          <button className="sidebar-link" type="button" onClick={handleLogout} data-tooltip="Sign Out">
+          <button className="sidebar-link danger" type="button" onClick={handleLogout} data-tooltip="Sign Out">
             <LogOut size={18} />
             <span className="sidebar-link-label">Sign Out</span>
           </button>

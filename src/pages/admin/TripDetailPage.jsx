@@ -62,7 +62,7 @@ const TripDetailPage = () => {
   );
   if (error) return (
     <div className="page-transition">
-      <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
+      <div className="card text-center" style={{ padding: 40, color: 'var(--error)' }}>
         <h3>Error Loading Trip</h3>
         <p className="mt-8 mb-20">{error}</p>
         <button type="button" className="btn btn-primary" onClick={() => load()}>Retry</button>

@@ -94,10 +94,10 @@ const OrderDetailPage = () => {
 
   if (error) return (
     <div className="card animate-scale-in text-center" style={{ padding: 40 }}>
-      <div className="flex items-center justify-center mx-auto mb-16" style={{ width: 56, height: 56, borderRadius: '50%', background: '#FEF2F2' }}>
-        <AlertTriangle size={28} color="#EF4444" />
+      <div className="flex items-center justify-center mx-auto mb-16" style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--error-bg)' }}>
+        <AlertTriangle size={28} color="var(--error)" />
       </div>
-      <h3 className="mb-8" style={{ color: '#DC2626' }}>Error Loading Order</h3>
+      <h3 className="mb-8" style={{ color: 'var(--error-dark)' }}>Error Loading Order</h3>
       <p className="text-secondary text-sm mb-20">{error}</p>
       <button className="btn btn-primary" onClick={() => loadOrder()}>Retry</button>
     </div>
@@ -168,7 +168,7 @@ const OrderDetailPage = () => {
       {order.trip_id && order.trips && (
         <div className="customer-detail-card customer-detail-trip-card card stagger-item mb-16" style={{ animationDelay: '60ms' }}>
           <div className="card-body flex items-center gap-12" style={{ padding: 14 }}>
-            <div className="w-40 h-40 flex items-center justify-center flex-shrink-0" style={{ borderRadius: 10, background: 'linear-gradient(135deg, var(--accent), #2D5A8A)', color: 'white' }}>
+            <div className="w-40 h-40 flex items-center justify-center flex-shrink-0" style={{ borderRadius: 10, background: 'linear-gradient(135deg, var(--accent), var(--accent-light))', color: 'white' }}>
               <Truck size={20} />
             </div>
             <div>

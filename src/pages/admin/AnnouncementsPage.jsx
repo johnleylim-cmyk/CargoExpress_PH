@@ -88,7 +88,7 @@ const AnnouncementsPage = () => {
           {Array.from({ length: 3 }, (_, i) => <SkeletonCard key={i} />)}
         </div>
       ) : error ? (
-        <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
+        <div className="card text-center" style={{ padding: 40, color: 'var(--error)' }}>
           <h3>Error</h3><p>{error}</p>
           <button type="button" className="btn btn-primary mt-md" onClick={load}>Retry</button>
         </div>

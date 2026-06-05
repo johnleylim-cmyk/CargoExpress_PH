@@ -55,7 +55,7 @@ const TripAssignModal = ({ order, onClose, onAssign }) => {
 
         <div className="modal-body">
           <div className="text-secondary mb-16" style={{
-            background: '#F8FAFC', borderRadius: 8, padding: 12,
+            background: 'var(--bg)', borderRadius: 8, padding: 12,
             fontSize: '0.8125rem',
           }}>
             <MapPin size={14} className="inline mr-6" />
@@ -88,8 +88,8 @@ const TripAssignModal = ({ order, onClose, onAssign }) => {
                     onClick={() => setSelectedTrip(trip)}
                     style={{
                       padding: 14, borderRadius: 10, cursor: 'pointer',
-                      border: `2px solid ${isSelected ? 'var(--primary)' : '#E2E8F0'}`,
-                      background: isSelected ? 'var(--primary-glow)' : 'white',
+                      border: `2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}`,
+                      background: isSelected ? 'var(--primary-glow)' : 'var(--surface)',
                       transition: 'all 0.2s ease',
                     }}
                   >
@@ -117,7 +117,7 @@ const TripAssignModal = ({ order, onClose, onAssign }) => {
                       {(trip.current_weight || 0).toFixed(1)} / {trip.capacity} kg
                     </div>
                     {exceedsCapacity && (
-                      <div className="flex items-center gap-4 mt-6" style={{ fontSize: '0.6875rem', color: '#B45309' }}>
+                      <div className="flex items-center gap-4 mt-6 text-warning" style={{ fontSize: '0.6875rem' }}>
                         <AlertTriangle size={12} />
                         Exceeds capacity by {overloadWeight.toFixed(1)} kg. Admin override allowed.
                       </div>

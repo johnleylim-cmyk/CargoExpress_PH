@@ -63,7 +63,11 @@ const BookShipmentPage = () => {
   const [useRegisteredSender, setUseRegisteredSender] = useState(false);
   const [useRegisteredReceiver, setUseRegisteredReceiver] = useState(false);
 
-  const u = (k, v) => setForm(p => ({ ...p, [k]: v }));
+  const u = (k, v) => {
+    setForm(p => ({ ...p, [k]: v }));
+    if (k.startsWith('sender_')) setUseRegisteredSender(false);
+    if (k.startsWith('receiver_')) setUseRegisteredReceiver(false);
+  };
   const handleTextChange = (key) => (e) => u(key, toTitleCase(e.target.value));
   const handlePhoneChange = (key) => (e) => u(key, e.target.value.replace(/\D/g, '').slice(0, 11));
 
@@ -111,8 +115,9 @@ const BookShipmentPage = () => {
   const showSenderCheckbox = selectedRoute && userProfileLocation === (selectedRoute.origin === 'Bohol' ? 'bohol' : 'manila');
   const showReceiverCheckbox = selectedRoute && userProfileLocation === (selectedRoute.destination === 'Bohol' ? 'bohol' : 'manila');
 
-  useEffect(() => {
-    if (useRegisteredSender && userProfile) {
+  const handleUseRegisteredSenderChange = (checked) => {
+    setUseRegisteredSender(checked);
+    if (checked && userProfile) {
       setForm(p => ({
         ...p,
         sender_name: userProfile.name || '', sender_phone: userProfile.phone || '', sender_facebook: userProfile.facebook_name || '',
@@ -120,13 +125,19 @@ const BookShipmentPage = () => {
         sender_barangay: userProfile.address_barangay || '', sender_city: userProfile.address_city || '',
         sender_province: userProfile.address_province || '', sender_landmark: userProfile.address_landmark || '',
       }));
-    } else if (!useRegisteredSender && showSenderCheckbox) {
-      setForm(p => ({ ...p, sender_name: '', sender_phone: '', sender_facebook: '', sender_lot_block: '', sender_street: '', sender_barangay: '', sender_city: '', sender_province: '', sender_landmark: '' }));
+    } else {
+      setForm(p => ({
+        ...p,
+        sender_name: '', sender_phone: '', sender_facebook: '',
+        sender_lot_block: '', sender_street: '', sender_barangay: '',
+        sender_city: '', sender_province: '', sender_landmark: '',
+      }));
     }
-  }, [useRegisteredSender, userProfile, showSenderCheckbox]);
+  };
 
-  useEffect(() => {
-    if (useRegisteredReceiver && userProfile) {
+  const handleUseRegisteredReceiverChange = (checked) => {
+    setUseRegisteredReceiver(checked);
+    if (checked && userProfile) {
       setForm(p => ({
         ...p,
         receiver_name: userProfile.name || '', receiver_phone: userProfile.phone || '', receiver_facebook: userProfile.facebook_name || '',
@@ -134,10 +145,15 @@ const BookShipmentPage = () => {
         receiver_barangay: userProfile.address_barangay || '', receiver_city: userProfile.address_city || '',
         receiver_province: userProfile.address_province || '', receiver_landmark: userProfile.address_landmark || '',
       }));
-    } else if (!useRegisteredReceiver && showReceiverCheckbox) {
-      setForm(p => ({ ...p, receiver_name: '', receiver_phone: '', receiver_facebook: '', receiver_lot_block: '', receiver_street: '', receiver_barangay: '', receiver_city: '', receiver_province: '', receiver_landmark: '' }));
+    } else {
+      setForm(p => ({
+        ...p,
+        receiver_name: '', receiver_phone: '', receiver_facebook: '',
+        receiver_lot_block: '', receiver_street: '', receiver_barangay: '',
+        receiver_city: '', receiver_province: '', receiver_landmark: '',
+      }));
     }
-  }, [useRegisteredReceiver, userProfile, showReceiverCheckbox]);
+  };
 
   const validateSender = () => {
     if (!form.sender_name) return 'Sender Full Name is required.';
@@ -228,13 +244,13 @@ const BookShipmentPage = () => {
   if (success) return (
     <div className="page-transition booking-page booking-success-page" style={{ padding: '40px 20px' }}>
       <div className="animate-scale-in text-center">
-        <div className="w-88 rounded-full flex items-center justify-center mb-24" style={{ height: 88, background: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)', margin: '0 auto', boxShadow: '0 8px 32px rgba(16,185,129,0.2)' }}>
-          <CheckCircle size={44} color="#10B981" strokeWidth={2} />
+        <div className="w-88 rounded-full flex items-center justify-center mb-24" style={{ height: 88, background: 'linear-gradient(135deg, var(--success-bg), var(--success-glow))', margin: '0 auto', boxShadow: 'var(--shadow-md)' }}>
+          <CheckCircle size={44} color="var(--success)" strokeWidth={2} />
         </div>
         <h2 className="fw-800 mb-4 text-2xl">Booking Confirmed</h2>
         <p className="text-secondary mb-20">Your shipment has been booked successfully.</p>
         <div className="card mb-20 overflow-hidden">
-          <div className="px-20 py-16 text-inverse" style={{ background: 'linear-gradient(135deg, var(--accent), #2D5A8A)' }}>
+          <div className="px-20 py-16 text-inverse" style={{ background: 'linear-gradient(135deg, var(--accent), var(--accent-light))' }}>
             <div className="text-xs fw-600 mb-4" style={{ opacity: 0.7 }}>TRACKING NUMBER</div>
             <div className="text-2xl fw-800" style={{ letterSpacing: '0.02em' }}>{success.tracking_number}</div>
           </div>
@@ -273,7 +289,7 @@ const BookShipmentPage = () => {
               <div className="step-number" aria-current={step === i + 1 ? 'step' : undefined}>{i + 1}</div>
               <span className="step-label">{s}</span>
             </div>
-            {i < steps.length - 1 && <div className="step-connector" style={{ background: step > i + 1 ? '#10B981' : '#E2E8F0' }} />}
+            {i < steps.length - 1 && <div className="step-connector" style={{ background: step > i + 1 ? 'var(--success)' : 'var(--border)' }} />}
           </div>
         ))}
       </div>
@@ -325,7 +341,7 @@ const BookShipmentPage = () => {
           <h3 className="fw-700 mb-16"><User size={18} className="inline mr-8" />Sender Details</h3>
           {showSenderCheckbox && (
             <div className="mb-20 p-12 flex items-center gap-10 rounded-sm" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-              <input type="checkbox" id="useRegSender" checked={useRegisteredSender} onChange={e => setUseRegisteredSender(e.target.checked)} className="w-18" style={{ height: 18 }} />
+              <input type="checkbox" id="useRegSender" checked={useRegisteredSender} onChange={e => handleUseRegisteredSenderChange(e.target.checked)} className="w-18" style={{ height: 18 }} />
               <label htmlFor="useRegSender" className="text-sm fw-600 cursor-pointer" style={{ color: 'var(--text)' }}>Use my registered address for sender details</label>
             </div>
           )}
@@ -344,7 +360,7 @@ const BookShipmentPage = () => {
           <h3 className="fw-700 mb-16"><User size={18} className="inline mr-8" />Receiver Details</h3>
           {showReceiverCheckbox && (
             <div className="mb-20 p-12 flex items-center gap-10 rounded-sm" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-              <input type="checkbox" id="useRegReceiver" checked={useRegisteredReceiver} onChange={e => setUseRegisteredReceiver(e.target.checked)} className="w-18" style={{ height: 18 }} />
+              <input type="checkbox" id="useRegReceiver" checked={useRegisteredReceiver} onChange={e => handleUseRegisteredReceiverChange(e.target.checked)} className="w-18" style={{ height: 18 }} />
               <label htmlFor="useRegReceiver" className="text-sm fw-600 cursor-pointer" style={{ color: 'var(--text)' }}>Use my registered address for receiver details</label>
             </div>
           )}

@@ -73,7 +73,7 @@ const ContactInquiriesPage = () => {
   if (error && !loading && inquiries.length === 0) {
     return (
       <div className="page-transition">
-        <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
+        <div className="card text-center" style={{ padding: 40, color: 'var(--error)' }}>
           <AlertCircle size={32} className="mb-8" />
           <h3>Error</h3>
           <p>{error}</p>
@@ -151,7 +151,7 @@ const ContactInquiriesPage = () => {
                       key={inq.id}
                       className="cursor-pointer"
                       style={{
-                        background: inq.status === 'new' ? 'rgba(245, 158, 11, 0.04)' : undefined,
+                        background: inq.status === 'new' ? 'var(--warning-bg)' : undefined,
                       }}
                       onClick={() => handleView(inq)}
                     >
@@ -209,7 +209,7 @@ const ContactInquiriesPage = () => {
                             >
                               {updating === inq.id
                                 ? <Loader size={14} className="animate-spin" />
-                                : <CheckCircle size={16} color="#10B981" />}
+                                : <CheckCircle size={16} color="var(--success)" />}
                             </button>
                           )}
                         </div>
@@ -238,7 +238,7 @@ const ContactInquiriesPage = () => {
             </div>
             <div className="modal-body">
               <div style={{
-                background: '#F8FAFC', borderRadius: 10,
+                background: 'var(--bg-secondary)', borderRadius: 10,
               }} className="p-16 mb-16 flex items-center gap-12">
                 <div className="sidebar-user-avatar text-base flex-shrink-0" style={{ width: 44, height: 44 }}>
                   {(selectedInquiry.name || '?')[0].toUpperCase()}
@@ -263,7 +263,7 @@ const ContactInquiriesPage = () => {
                   Message
                 </div>
                 <div className="p-16" style={{
-                  background: 'white', border: '1px solid #E2E8F0', borderRadius: 10,
+                  background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10,
                   fontSize: '0.9375rem', lineHeight: 1.7, whiteSpace: 'pre-wrap',
                 }}>
                   {selectedInquiry.message}
@@ -293,7 +293,7 @@ const ContactInquiriesPage = () => {
                 </button>
               ) : (
                 <span className="text-sm text-secondary flex items-center gap-6">
-                  <CheckCircle size={14} color="#10B981" /> Resolved
+                  <CheckCircle size={14} color="var(--success)" /> Resolved
                 </span>
               )}
               <button type="button" className="btn btn-outline" onClick={() => setSelectedInquiry(null)}>

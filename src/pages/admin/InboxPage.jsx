@@ -33,6 +33,7 @@ const InboxPage = () => {
       // Error handled silently — user sees empty state
       setErrorList(err.message || 'Failed to load conversations.');
     } finally {
+      // Set loading false
       setLoadingList(false);
     }
   };
@@ -155,7 +156,7 @@ const InboxPage = () => {
             {loadingList ? (
               <div className="flex-center p-md"><Loader size={24} className="animate-spin text-secondary" /></div>
             ) : errorList ? (
-              <div className="p-md text-center text-sm" style={{ color: '#EF4444' }}>
+              <div className="p-md text-center text-sm" style={{ color: 'var(--error)' }}>
                 <p><strong>Error loading chats</strong></p>
                 <p className="mt-4">{errorList}</p>
                 <button className="btn btn-ghost btn-sm mt-sm" onClick={loadConvs}>Retry</button>

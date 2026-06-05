@@ -57,24 +57,24 @@ export const TRIP_TO_ORDER_STATUS = {
   [TRIP_STATUS.CANCELLED]: ORDER_STATUS.CANCELLED,
 };
 
-// Status color mapping
+// Status color mapping using theme variables
 export const STATUS_COLORS = {
-  [ORDER_STATUS.PENDING]: { bg: '#FFF7ED', text: '#C2410C', border: '#FDBA74' },
-  [ORDER_STATUS.ASSIGNED]: { bg: '#EFF6FF', text: '#1D4ED8', border: '#93C5FD' },
-  [ORDER_STATUS.PICKED_UP]: { bg: '#F0FDF4', text: '#15803D', border: '#86EFAC' },
-  [ORDER_STATUS.IN_TRANSIT]: { bg: '#EFF6FF', text: '#1E40AF', border: '#93C5FD' },
-  [ORDER_STATUS.ARRIVED_HUB]: { bg: '#ECFDF5', text: '#047857', border: '#6EE7B7' },
-  [ORDER_STATUS.OUT_FOR_DELIVERY]: { bg: '#FDF4FF', text: '#7E22CE', border: '#D8B4FE' },
-  [ORDER_STATUS.DELIVERED]: { bg: '#F0FDF4', text: '#166534', border: '#86EFAC' },
-  [ORDER_STATUS.CANCELLED]: { bg: '#FEF2F2', text: '#DC2626', border: '#FCA5A5' },
+  [ORDER_STATUS.PENDING]: { bg: 'var(--warning-bg)', text: 'var(--warning-dark)', border: 'var(--warning)' },
+  [ORDER_STATUS.ASSIGNED]: { bg: 'var(--info-bg)', text: 'var(--info-dark)', border: 'var(--info)' },
+  [ORDER_STATUS.PICKED_UP]: { bg: 'var(--success-bg)', text: 'var(--success-dark)', border: 'var(--success)' },
+  [ORDER_STATUS.IN_TRANSIT]: { bg: 'var(--info-bg)', text: 'var(--info-dark)', border: 'var(--info)' },
+  [ORDER_STATUS.ARRIVED_HUB]: { bg: 'var(--success-bg)', text: 'var(--success-dark)', border: 'var(--success)' },
+  [ORDER_STATUS.OUT_FOR_DELIVERY]: { bg: 'var(--primary-bg)', text: 'var(--primary)', border: 'var(--primary-light)' },
+  [ORDER_STATUS.DELIVERED]: { bg: 'var(--success-bg)', text: 'var(--success-dark)', border: 'var(--success)' },
+  [ORDER_STATUS.CANCELLED]: { bg: 'var(--error-bg)', text: 'var(--error-dark)', border: 'var(--error)' },
 };
 
 export const TRIP_STATUS_COLORS = {
-  [TRIP_STATUS.SCHEDULED]: { bg: '#EFF6FF', text: '#1D4ED8', border: '#93C5FD' },
-  [TRIP_STATUS.IN_PROGRESS]: { bg: '#FFF7ED', text: '#C2410C', border: '#FDBA74' },
-  [TRIP_STATUS.ARRIVED]: { bg: '#ECFDF5', text: '#047857', border: '#6EE7B7' },
-  [TRIP_STATUS.COMPLETED]: { bg: '#F0FDF4', text: '#166534', border: '#86EFAC' },
-  [TRIP_STATUS.CANCELLED]: { bg: '#FEF2F2', text: '#DC2626', border: '#FCA5A5' },
+  [TRIP_STATUS.SCHEDULED]: { bg: 'var(--info-bg)', text: 'var(--info-dark)', border: 'var(--info)' },
+  [TRIP_STATUS.IN_PROGRESS]: { bg: 'var(--warning-bg)', text: 'var(--warning-dark)', border: 'var(--warning)' },
+  [TRIP_STATUS.ARRIVED]: { bg: 'var(--success-bg)', text: 'var(--success-dark)', border: 'var(--success)' },
+  [TRIP_STATUS.COMPLETED]: { bg: 'var(--success-bg)', text: 'var(--success-dark)', border: 'var(--success)' },
+  [TRIP_STATUS.CANCELLED]: { bg: 'var(--error-bg)', text: 'var(--error-dark)', border: 'var(--error)' },
 };
 
 // Payment methods

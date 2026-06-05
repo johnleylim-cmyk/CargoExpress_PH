@@ -281,7 +281,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
           </div>
           <div className="modal-body" style={{ padding: '30px 20px' }}>
             <h4 className="mb-16">Please ask customer to scan this QR</h4>
-            <div style={{ background: '#F8FAFC', padding: 20, borderRadius: 16, display: 'inline-block', border: '2px solid #E2E8F0' }} className="mb-20">
+            <div style={{ background: 'var(--bg-secondary)', padding: 20, borderRadius: 16, display: 'inline-block', border: '2px solid var(--border)' }} className="mb-20">
               <img src={qrUrl} alt="GCash QR" style={{ width: 250, height: 250 }} />
             </div>
             <div className="text-2xl fw-800 text-success mb-12">
@@ -316,7 +316,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
         <div className="modal-body">
           {/* Order summary */}
           <div className="pickup-summary-card flex justify-between items-center mb-20" style={{
-            background: '#F8FAFC', borderRadius: 8, padding: 14,
+            background: 'var(--bg-secondary)', borderRadius: 8, padding: 14,
           }}>
             <div>
               <div className="fw-700 text-accent">{order.tracking_number}</div>
@@ -331,9 +331,9 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
 
           {error && (
             <div style={{
-              background: '#FEF2F2', color: '#DC2626', padding: '10px 14px',
+              background: 'var(--error-bg)', color: 'var(--error-dark)', padding: '10px 14px',
               borderRadius: 8, fontSize: '0.8125rem', marginBottom: 16,
-              border: '1px solid #FCA5A5',
+              border: '1px solid var(--error)',
             }}>
               {error}
             </div>
@@ -400,8 +400,8 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
 
           {/* Pay Later Options */}
           {isPayLater && (
-            <div className="mb-16" style={{ background: '#FFFBEB', borderRadius: 8, padding: 14, border: '1px solid #FDE68A' }}>
-              <div className="mb-8" style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#92400E' }}>
+            <div className="mb-16" style={{ background: 'var(--warning-bg)', borderRadius: 8, padding: 14, border: '1px solid var(--warning)' }}>
+              <div className="mb-8" style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--warning-dark)' }}>
                 <AlertTriangle size={14} className="inline mr-6" />
                 Pay Later Details
               </div>
@@ -429,7 +429,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
                   min={new Date().toISOString().split('T')[0]}
                 />
               </div>
-              <div className="text-xs mt-8" style={{ color: '#92400E' }}>
+              <div className="text-xs mt-8" style={{ color: 'var(--warning-dark)' }}>
                 Balance: ₱{remainingBalance.toFixed(2)}
               </div>
             </div>
@@ -457,7 +457,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
             </label>
             <div className="flex gap-10 flex-wrap mb-8">
               {photoPreviews.map((preview, i) => (
-                <div key={i} className="relative overflow-hidden" style={{ width: 90, height: 90, borderRadius: 8, border: '2px solid #E2E8F0' }}>
+                <div key={i} className="relative overflow-hidden" style={{ width: 90, height: 90, borderRadius: 8, border: '2px solid var(--border)' }}>
                   <img src={preview} alt={`Photo ${i + 1}`} className="w-full h-full" style={{ objectFit: 'cover' }} />
                   <button
                     type="button"
@@ -473,10 +473,10 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   style={{
-                    width: 90, height: 90, borderRadius: 8, border: '2px dashed #CBD5E1',
-                    background: '#F8FAFC', display: 'flex', flexDirection: 'column',
+                    width: 90, height: 90, borderRadius: 8, border: '2px dashed var(--border)',
+                    background: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column',
                     alignItems: 'center', justifyContent: 'center', gap: 4,
-                    cursor: 'pointer', color: '#94A3B8', fontSize: '0.6875rem',
+                    cursor: 'pointer', color: 'var(--text-tertiary)', fontSize: '0.6875rem',
                     transition: 'all 0.2s ease',
                   }}
                 >

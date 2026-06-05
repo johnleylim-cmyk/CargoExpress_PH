@@ -4,7 +4,7 @@
 .auth-page {
   min-height: 100vh;
   display: flex; align-items: flex-start; justify-content: center;
-  background: linear-gradient(145deg, #0A1628 0%, #112236 30%, #1B3A5C 65%, #2D5A8A 100%);
+  background: var(--bg-gradient, var(--bg));
   padding: 32px 16px 48px;
   position: relative; overflow: hidden;
 }
@@ -15,19 +15,19 @@
 }
 .auth-orb-1 {
   width: 480px; height: 480px;
-  background: radial-gradient(circle, rgba(232,114,42,0.14) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(232,114,42,0.06) 0%, transparent 65%);
   top: -160px; right: -120px;
   animation: float 8s ease-in-out infinite;
 }
 .auth-orb-2 {
   width: 360px; height: 360px;
-  background: radial-gradient(circle, rgba(45,90,138,0.28) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(45,90,138,0.12) 0%, transparent 65%);
   bottom: -120px; left: -80px;
   animation: float 11s ease-in-out infinite reverse;
 }
 .auth-orb-3 {
   width: 200px; height: 200px;
-  background: radial-gradient(circle, rgba(232,114,42,0.08) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(232,114,42,0.04) 0%, transparent 65%);
   top: 50%; left: 10%;
   animation: float 6s ease-in-out infinite 2s;
 }

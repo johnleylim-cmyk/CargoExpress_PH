@@ -39,7 +39,7 @@ const AdminProfilePage = () => {
       </div>
 
       {/* Sign Out */}
-      <button className="btn btn-outline btn-block btn-lg justify-center" onClick={handleLogout} style={{ color: 'var(--error)', borderColor: '#FECACA' }}>
+      <button className="btn btn-outline btn-block btn-lg justify-center" onClick={handleLogout} style={{ color: 'var(--error)', borderColor: 'var(--error-glow)' }}>
         <LogOut size={18} /> Sign Out
       </button>
     </div>

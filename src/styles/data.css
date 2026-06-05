@@ -168,20 +168,23 @@
   margin-bottom: 10px;
   transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
-.status-timeline-step.completed .status-timeline-node,
-.status-timeline-step.active .status-timeline-node {
-  background: var(--timeline-color);
-  border-color: transparent;
+.status-timeline-step.completed .status-timeline-node {
+  background: var(--success);
+  border-color: var(--success);
   color: white;
+  box-shadow: 0 4px 12px var(--success-glow);
 }
 .status-timeline-step.active .status-timeline-node {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
   width: 34px;
   height: 34px;
-  box-shadow: 0 0 0 4px var(--primary-glow);
+  box-shadow: 0 4px 14px var(--primary-glow), 0 0 0 4px var(--primary-glow);
   animation: breathe 2s ease-in-out infinite;
 }
 .status-timeline-step.cancelled.active .status-timeline-node {
-  box-shadow: 0 0 0 4px var(--error-glow);
+  box-shadow: 0 4px 14px var(--error-glow), 0 0 0 4px var(--error-glow);
 }
 .status-timeline-label {
   color: var(--timeline-color);
@@ -203,6 +206,8 @@
 .customer-order-detail-header {
   gap: 12px;
   min-width: 0;
+  display: flex;
+  align-items: center;
 }
 .customer-order-detail-header > div {
   min-width: 0;
@@ -263,13 +268,15 @@
   pointer-events: none;
 }
 .customer-payment-summary {
-  background: #F8FAFC;
+  background: linear-gradient(135deg, var(--bg-secondary), var(--surface));
+  border: 1px solid var(--border-light);
   border-radius: 8px;
   padding: 14px;
   display: flex;
   justify-content: space-around;
   gap: 10px;
   margin-bottom: 12px;
+  transition: var(--transition);
 }
 
 

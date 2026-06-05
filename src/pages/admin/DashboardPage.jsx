@@ -37,7 +37,7 @@ const DashboardPage = () => {
 
   if (error) return (
     <PageTransition>
-      <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
+      <div className="card text-center" style={{ padding: 40, color: 'var(--error)' }}>
         <h3>Error</h3>
         <p>{error}</p>
         <button type="button" className="btn btn-primary mt-md" onClick={loadData}>Retry</button>
@@ -51,8 +51,6 @@ const DashboardPage = () => {
     { label: 'Active Trips', value: stats?.activeTrips || 0, icon: Truck, tone: 'info' },
     { label: 'Customers', value: stats?.totalCustomers || 0, icon: Users, tone: 'success' },
   ];
-
-
 
   return (
     <PageTransition>
@@ -121,11 +119,11 @@ const DashboardPage = () => {
         <StaggerItem className="card admin-section-card" delay={300}>
           <div className="card-header"><h3><TrendingUp size={16} className="inline mr-8" />Quick Stats</h3></div>
           <div className="card-body">
-            <div className="flex justify-between py-12" style={{ borderBottom: '1px solid #F1F5F9' }}>
+            <div className="flex justify-between py-12" style={{ borderBottom: '1px solid var(--border-light)' }}>
               <span className="text-secondary text-sm">In Transit</span>
               <span className="font-bold">{loading ? '—' : stats?.inTransit || 0}</span>
             </div>
-            <div className="flex justify-between py-12" style={{ borderBottom: '1px solid #F1F5F9' }}>
+            <div className="flex justify-between py-12" style={{ borderBottom: '1px solid var(--border-light)' }}>
               <span className="text-secondary text-sm">Awaiting Pickup</span>
               <span className="font-bold">{loading ? '—' : stats?.awaitingPickup || 0}</span>
             </div>

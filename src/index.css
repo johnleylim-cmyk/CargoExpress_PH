@@ -5969,13 +5969,15 @@ input, select, textarea {
 }
 
 .admin-payment-summary {
-  background: linear-gradient(135deg, #0F172A, var(--accent));
+  background: linear-gradient(135deg, var(--bg-secondary), var(--surface));
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 18px;
   margin-bottom: 20px;
   display: flex;
   justify-content: space-around;
   gap: 12px;
+  transition: var(--transition);
 }
 
 .admin-external-link {

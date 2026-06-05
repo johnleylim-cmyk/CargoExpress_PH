@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { getOrders } from '../../lib/database';
-import { User, Mail, MapPin, Edit, Lock, LogOut, ChevronRight, Package, Truck, Bell, MessageCircle } from 'lucide-react';
+import { User, LogOut, ChevronRight, Package, Truck, Bell, MessageCircle } from 'lucide-react';
 
 const ProfilePage = () => {
   const { user, userProfile, logout } = useAuth();
@@ -27,9 +27,9 @@ const ProfilePage = () => {
   const handleLogout = async () => { await logout(); navigate('/login'); };
 
   const menuItems = [
-    { icon: User, color: 'var(--primary)', label: 'Personal Information', desc: 'Edit your profile details', path: '/customer/personal-info' },
-    { icon: Bell, color: '#8B5CF6', label: 'Notifications', desc: 'View your notifications', path: '/customer/notifications' },
-    { icon: MessageCircle, color: '#3B82F6', label: 'Support Chat', desc: 'Get help with your shipments', path: '/customer/support' },
+    { icon: User, color: 'var(--primary)', bg: 'var(--primary-glow)', label: 'Personal Information', desc: 'Edit your profile details', path: '/customer/personal-info' },
+    { icon: Bell, color: 'var(--accent)', bg: 'var(--info-bg)', label: 'Notifications', desc: 'View your notifications', path: '/customer/notifications' },
+    { icon: MessageCircle, color: 'var(--info)', bg: 'var(--info-bg)', label: 'Support Chat', desc: 'Get help with your shipments', path: '/customer/support' },
   ];
 
   return (
@@ -82,11 +82,11 @@ const ProfilePage = () => {
               key={item.path}
               onClick={() => navigate(item.path)}
               className="profile-menu-item"
-              style={{ borderBottom: index < menuItems.length - 1 ? '1px solid #F1F5F9' : 'none' }}
+              style={{ borderBottom: index < menuItems.length - 1 ? '1px solid var(--border-light)' : 'none' }}
             >
               <div className="flex items-center justify-center flex-shrink-0" style={{
                 width: 40, height: 40, borderRadius: 10,
-                background: `${item.color}12`,
+                background: item.bg,
               }}>
                 <Icon size={18} color={item.color} />
               </div>
@@ -94,7 +94,7 @@ const ProfilePage = () => {
                 <div className="text-sm font-bold">{item.label}</div>
                 <div className="text-xs text-secondary">{item.desc}</div>
               </div>
-              <ChevronRight size={16} color="#94A3B8" />
+              <ChevronRight size={16} color="var(--text-tertiary)" />
             </button>
           );
         })}
@@ -104,7 +104,7 @@ const ProfilePage = () => {
       <button
         className="btn btn-outline w-full stagger-item justify-center profile-signout"
         onClick={handleLogout}
-        style={{ color: '#EF4444', borderColor: '#FCA5A5', animationDelay: '180ms' }}
+        style={{ color: 'var(--error)', borderColor: 'var(--error-glow)', animationDelay: '180ms' }}
       >
         <LogOut size={18} /> Sign Out
       </button>

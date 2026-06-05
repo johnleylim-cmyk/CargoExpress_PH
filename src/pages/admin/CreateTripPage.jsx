@@ -130,7 +130,7 @@ const CreateTripPage = () => {
               <div className="form-group">
                 <label className="form-label" htmlFor="trip-price-per-kg">Amount per Kilo (₱) *</label>
                 <div className="relative">
-                  <DollarSign size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', pointerEvents: 'none' }} />
+                  <DollarSign size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', pointerEvents: 'none' }} />
                   <input id="trip-price-per-kg" type="number" className="form-input" value={form.price_per_kg} onChange={e => u('price_per_kg', e.target.value)} placeholder="e.g. 70" min="0.01" step="0.01" style={{ paddingLeft: 34 }} required aria-describedby="trip-price-helper" />
                 </div>
                 <p id="trip-price-helper" className="text-xs text-tertiary mt-4">Cost per kilogram for bookings on this trip.</p>
@@ -151,7 +151,7 @@ const CreateTripPage = () => {
         <div className="card stagger-item mb-24" style={{ animationDelay: '180ms' }}>
           <div className="card-body">
             <h3 className="fw-700 mb-12 flex items-center gap-8">
-              <FileText size={18} color="#94A3B8" /> Notes <span className="fw-400" style={{ color: '#94A3B8', fontSize: '0.8125rem' }}>(Optional)</span>
+              <FileText size={18} color="var(--text-tertiary)" /> Notes <span className="fw-400" style={{ color: 'var(--text-tertiary)', fontSize: '0.8125rem' }}>(Optional)</span>
             </h3>
             <label className="sr-only" htmlFor="trip-notes">Trip notes</label>
             <textarea id="trip-notes" className="form-textarea" value={form.notes} onChange={e => u('notes', e.target.value)} placeholder="Any special instructions, remarks, or conditions for this trip..." rows={3} />

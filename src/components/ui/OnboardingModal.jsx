@@ -8,25 +8,25 @@ const STEPS = [
     icon: Package,
     title: 'Welcome to CargoExpress PH',
     description: 'Your one-stop cargo delivery service between Bohol and Manila. Let us show you around!',
-    color: 'linear-gradient(135deg, #E8722A, #F09D5C)',
+    color: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
   },
   {
     icon: MapPin,
     title: 'Book Shipments Easily',
     description: 'Place orders in seconds — just enter sender & receiver details, select your route, and we handle the rest.',
-    color: 'linear-gradient(135deg, #3B82F6, #60A5FA)',
+    color: 'linear-gradient(135deg, var(--info), var(--info-dark))',
   },
   {
     icon: Truck,
     title: 'Track in Real-Time',
     description: 'Follow your package from pickup to delivery with our live tracking timeline. No guessing!',
-    color: 'linear-gradient(135deg, #10B981, #34D399)',
+    color: 'linear-gradient(135deg, var(--success), var(--success-dark))',
   },
   {
     icon: Bell,
     title: 'Stay Updated',
     description: 'Get instant notifications on pickup schedules, delivery updates, and announcements.',
-    color: 'linear-gradient(135deg, #8B5CF6, #A78BFA)',
+    color: 'linear-gradient(135deg, var(--accent), var(--accent-light))',
   },
 ];
 

@@ -459,7 +459,7 @@
 }
 
 /* ---------------------------------------------------------------------------
-   REPORTS PAGE — Premium Report Styles
+   REPORTS PAGE ï¿½ Premium Report Styles
    --------------------------------------------------------------------------- */
 
 .report-controls {
@@ -609,7 +609,7 @@
 }
 
 /* ---------------------------------------------------------------------------
-   PRINT STYLES — Optimized for paper output
+   PRINT STYLES ï¿½ Optimized for paper output
    --------------------------------------------------------------------------- */
 @media print {
   /* Hide everything except the report */
@@ -973,7 +973,7 @@
     border-top: 1px solid var(--border-light);
   }
 
-  /* Table container — remove horizontal scroll */
+  /* Table container ï¿½ remove horizontal scroll */
   .table-container {
     overflow-x: visible;
     border-radius: 0;
@@ -1008,7 +1008,7 @@
 
 
 /* -----------------------------------------------------------------------
-   ONBOARDING MODAL — First-time user welcome tour
+   ONBOARDING MODAL ï¿½ First-time user welcome tour
    ----------------------------------------------------------------------- */
 
 .onboarding-overlay {
@@ -1149,7 +1149,7 @@
 
 
 /* -----------------------------------------------------------------------
-   IMAGE LIGHTBOX — Full-screen viewer with zoom, pan, rotate
+   IMAGE LIGHTBOX ï¿½ Full-screen viewer with zoom, pan, rotate
    ----------------------------------------------------------------------- */
 
 .lightbox-overlay {
@@ -1251,7 +1251,7 @@
 
 
 /* -----------------------------------------------------------------------
-   REDUCED MOTION — Accessibility (WCAG 2.1 criterion 2.3.3)
+   REDUCED MOTION ï¿½ Accessibility (WCAG 2.1 criterion 2.3.3)
    Respects OS-level "reduce motion" preferences for users with
    vestibular disorders, migraines, or motion sensitivity.
    ----------------------------------------------------------------------- */
@@ -1522,13 +1522,15 @@
 }
 
 .admin-payment-summary {
-  background: linear-gradient(135deg, #0F172A, var(--accent));
+  background: linear-gradient(135deg, var(--bg-secondary), var(--surface));
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 18px;
   margin-bottom: 20px;
   display: flex;
   justify-content: space-around;
   gap: 12px;
+  transition: var(--transition);
 }
 
 .admin-external-link {
@@ -1835,6 +1837,12 @@
     display: block;
     width: 100%;
     min-width: 0;
+    padding: 16px !important;
+    margin-bottom: 12px !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border-light) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-sm) !important;
   }
 
   .data-table td,
@@ -1855,6 +1863,13 @@
   .data-table td > *,
   .report-table td > * {
     min-width: 0;
+  }
+
+  .data-table td .badge,
+  .report-table td .badge {
+    justify-self: end !important;
+    width: fit-content !important;
+    margin-left: auto !important;
   }
 
   .data-table td a,

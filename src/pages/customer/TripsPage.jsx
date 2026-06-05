@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getTrips } from '../../lib/database';
 import StatusBadge from '../../components/ui/StatusBadge';
 import { SkeletonOrderCard } from '../../components/ui/SkeletonLoader';
@@ -6,6 +7,7 @@ import EmptyState from '../../components/ui/EmptyState';
 import { MapPin, Calendar, Truck, AlertCircle } from 'lucide-react';
 
 const TripsPage = () => {
+  const navigate = useNavigate();
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,10 +36,10 @@ const TripsPage = () => {
         </div>
       ) : error ? (
         <div className="card animate-scale-in text-center" style={{ padding: 40 }}>
-          <div className="flex items-center justify-center mx-auto mb-16" style={{ width: 56, height: 56, borderRadius: '50%', background: '#FEF2F2' }}>
-            <AlertCircle size={28} color="#EF4444" />
+          <div className="flex items-center justify-center mx-auto mb-16" style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--error-bg)' }}>
+            <AlertCircle size={28} color="var(--error)" />
           </div>
-          <h3 className="mb-8" style={{ color: '#DC2626' }}>Error Loading Trips</h3>
+          <h3 className="mb-8" style={{ color: 'var(--error-dark)' }}>Error Loading Trips</h3>
           <p className="text-secondary text-sm mb-20">{error}</p>
           <button className="btn btn-primary" onClick={() => { setError(null); setLoading(true); getTrips('active').then(setTrips).catch(err => setError(err.message || 'Failed to load trips.')).finally(() => setLoading(false)); }}>Retry</button>
         </div>
@@ -51,7 +53,8 @@ const TripsPage = () => {
         </div>
       ) : (
         trips.map((trip, index) => (
-          <div key={trip.id} className="card card-interactive stagger-item mb-12" style={{ animationDelay: `${index * 60}ms` }}>
+          <div key={trip.id} className="card card-interactive stagger-item mb-12" style={{ animationDelay: `${index * 60}ms` }}
+            onClick={() => navigate('/customer/book', { state: { preselectedRoute: `${trip.origin} → ${trip.destination}`, preselectedTripId: trip.id } })}>
             <div className="card-body p-16">
               <div className="flex items-center justify-between mb-8">
                 <span className="fw-700 text-accent">{trip.trip_number}</span>

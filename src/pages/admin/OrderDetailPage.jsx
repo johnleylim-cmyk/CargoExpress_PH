@@ -191,6 +191,11 @@ const AdminOrderDetailPage = () => {
   const isOverpaid = computedRemainingBalance < 0;
   const pickupPricePerKilo = ratePerKg;
 
+  const estimatedWeight = parseFloat(order.package_weight) || 0;
+  const actualWeightVal = parseFloat(payForm.actual_weight) || 0;
+  const showsWeightWarning = estimatedWeight > 0 && actualWeightVal > 0 && 
+    (actualWeightVal > estimatedWeight * 2 || actualWeightVal < estimatedWeight * 0.25);
+
   return (
     <div className="page-transition">
       <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost mb-16">
@@ -233,7 +238,7 @@ const AdminOrderDetailPage = () => {
 
       {/* Trip Warning */}
       {needsTrip && (
-        <div className="alert-banner alert-banner-error" style={{ background: '#FFFBEB', color: '#92400E', borderColor: '#FDE68A' }}>
+        <div className="alert-banner alert-banner-error" style={{ background: 'var(--warning-bg)', color: 'var(--warning-dark)', borderColor: 'var(--warning)' }}>
           <span className="flex items-center gap-10">
             <AlertTriangle size={18} />
             This order has not been assigned to a trip yet. Assign it before advancing status.
@@ -348,6 +353,11 @@ const AdminOrderDetailPage = () => {
               <label className="form-label" htmlFor="admin-order-actual-weight">Actual Weight (kg)</label>
               <input id="admin-order-actual-weight" type="number" min="0" step="0.1" className="form-input" value={payForm.actual_weight}
                 onChange={e => { const val = e.target.value; if (val === '' || (Number(val) >= 0 && !isNaN(val))) setPayForm(p => ({ ...p, actual_weight: val })); }} />
+              {showsWeightWarning && (
+                <div className="text-warning text-xs flex items-center gap-4 mt-6" style={{ color: '#D97706', display: 'flex', alignItems: 'center', gap: 4, marginTop: 6, fontWeight: 600 }}>
+                  <AlertTriangle size={14} /> Deviates significantly from estimate ({estimatedWeight} kg)
+                </div>
+              )}
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="admin-order-payment-method">Payment Method</label>

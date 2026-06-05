@@ -118,7 +118,7 @@
   border-color: var(--border);
 }
 
-.card-interactive { cursor: pointer; }
+.card-interactive { cursor: pointer; transition: var(--transition-spring); }
 .card-interactive:hover {
   box-shadow: var(--shadow-lg);
   transform: translateY(-2px);

@@ -68,6 +68,9 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   global: {
     fetch: fetchWithRetry,
   },
+  realtime: {
+    reconnectAfterMs: (tries) => Math.min(tries * 2000 + 1000, 15000),
+  },
 });
 
 export default supabase;

@@ -170,7 +170,7 @@ const ReportsPage = () => {
           <div className="print-report-header">
             <div className="print-brand">
               <div className="print-brand-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#E8722A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
                   <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
                   <line x1="12" y1="22.08" x2="12" y2="12" />
@@ -178,18 +178,18 @@ const ReportsPage = () => {
               </div>
               <div>
                 <h1 className="text-2xl fw-800 m-0">
-                  <span style={{ color: '#1B3A5C' }}>CARGO</span><span style={{ color: '#E8722A' }}>EXPRESS</span>
+                  <span style={{ color: 'var(--accent)' }}>CARGO</span><span style={{ color: 'var(--primary)' }}>EXPRESS</span>
                   <span className="text-tertiary fw-400 text-sm ml-8">PH</span>
                 </h1>
                 <p className="text-xs text-secondary m-0">Cargo Delivery & Logistics</p>
               </div>
             </div>
             <div className="print-report-meta">
-              <h2 className="text-lg fw-700 m-0 mb-4" style={{ color: '#0F172A' }}>
+              <h2 className="text-lg fw-700 m-0 mb-4" style={{ color: 'var(--text)' }}>
                 {period === 'custom' ? 'Custom Period Report' : `${period.charAt(0).toUpperCase() + period.slice(1)} Report`}
               </h2>
               <p className="text-secondary m-0" style={{ fontSize: '0.8rem' }}>{data.periodLabel}</p>
-              <p style={{ fontSize: '0.7rem', color: '#94A3B8', margin: '2px 0 0 0' }}>Generated: {formatDateTime(data.generatedAt)}</p>
+              <p style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', margin: '2px 0 0 0' }}>Generated: {formatDateTime(data.generatedAt)}</p>
             </div>
           </div>
 
@@ -208,9 +208,9 @@ const ReportsPage = () => {
               <div className="grid grid-4 report-summary-cards mb-20 mt-16">
                 {[
                   { label: 'Total Orders', value: s.totalOrders, icon: Package, gradient: 'linear-gradient(135deg, var(--primary), var(--primary-light))', prefix: '', decimals: 0 },
-                  { label: 'Delivered', value: s.deliveredCount, icon: CheckCircle, gradient: 'linear-gradient(135deg, #10B981, #34D399)', prefix: '', decimals: 0 },
+                  { label: 'Delivered', value: s.deliveredCount, icon: CheckCircle, gradient: 'linear-gradient(135deg, var(--success), var(--success-dark))', prefix: '', decimals: 0 },
                   { label: 'Total Revenue', value: s.totalRevenue, icon: DollarSign, gradient: 'linear-gradient(135deg, var(--accent), var(--accent-light))', prefix: '₱', decimals: 0 },
-                  { label: 'Collected', value: s.totalCollected, icon: TrendingUp, gradient: 'linear-gradient(135deg, #8B5CF6, #A78BFA)', prefix: '₱', decimals: 0 },
+                  { label: 'Collected', value: s.totalCollected, icon: TrendingUp, gradient: 'linear-gradient(135deg, var(--info), var(--info-dark))', prefix: '₱', decimals: 0 },
                 ].map((card, i) => (
                   <div key={i} className="stat-card stagger-item" style={{ background: card.gradient, animationDelay: `${i * 60}ms` }}>
                     <div className="stat-value">
@@ -286,9 +286,9 @@ const ReportsPage = () => {
                     <div className="mt-16 mb-16" style={{ borderTop: '1px solid var(--border)', paddingTop: 16 }}>
                       <div className="fw-700 text-secondary mb-12 text-uppercase" style={{ fontSize: '0.8rem', letterSpacing: '0.05em' }}>Payment Methods</div>
                       {[
-                        { label: 'Cash', count: s.cashCount, total: s.cashTotal, color: '#10B981' },
-                        { label: 'GCash', count: s.gcashCount, total: s.gcashTotal, color: '#3B82F6' },
-                        { label: 'Pay Later', count: s.paylaterCount, total: s.paylaterTotal, color: '#F59E0B' },
+                        { label: 'Cash', count: s.cashCount, total: s.cashTotal, color: 'var(--success)' },
+                        { label: 'GCash', count: s.gcashCount, total: s.gcashTotal, color: 'var(--info)' },
+                        { label: 'Pay Later', count: s.paylaterCount, total: s.paylaterTotal, color: 'var(--warning)' },
                       ].map((pm, i) => (
                         <div key={i} className="flex justify-between items-center" style={{ padding: '6px 0', borderBottom: i < 2 ? '1px solid var(--border-light)' : 'none' }}>
                           <div className="flex items-center gap-8">
@@ -412,10 +412,10 @@ const ReportsPage = () => {
 
               {/* ── Print Footer ── */}
               <div className="print-report-footer">
-                <div className="mt-24" style={{ borderTop: '2px solid #E2E8F0', paddingTop: 16 }}>
+                <div className="mt-24" style={{ borderTop: '2px solid var(--border)', paddingTop: 16 }}>
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="text-xs fw-600" style={{ color: '#0F172A', margin: '0 0 2px 0' }}>CargoExpress PH</p>
+                      <p className="text-xs fw-600" style={{ color: 'var(--text)', margin: '0 0 2px 0' }}>CargoExpress PH</p>
                       <p className="text-tertiary m-0" style={{ fontSize: '0.65rem' }}>Cargo Delivery & Logistics Services</p>
                     </div>
                     <div className="text-right">

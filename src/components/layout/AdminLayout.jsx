@@ -152,10 +152,10 @@ const AdminLayout = () => {
 
       <style>{`
         .mobile-menu-toggle { display: none; }
-        .topbar-logo-icon { display: none; }
+        .topbar-title { display: none !important; }
         @media (max-width: 1024px) {
           .mobile-menu-toggle { display: flex !important; }
-          .topbar-logo-icon { display: block !important; }
+          .topbar-title { display: flex !important; }
           .sidebar-collapse-btn { display: none !important; }
         }
       `}</style>

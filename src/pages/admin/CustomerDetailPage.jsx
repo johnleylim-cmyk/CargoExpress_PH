@@ -41,7 +41,7 @@ const CustomerDetailPage = () => {
   );
   if (error) return (
     <div className="page-transition">
-      <div className="card text-center" style={{ padding: 40, color: '#EF4444' }}>
+      <div className="card text-center" style={{ padding: 40, color: 'var(--error)' }}>
         <h3>Error Loading Customer</h3>
         <p className="mt-8 mb-20">{error}</p>
         <button type="button" className="btn btn-primary" onClick={() => load()}>Retry</button>
@@ -65,9 +65,9 @@ const CustomerDetailPage = () => {
       </div>
       <div className="grid grid-4 mb-16">
         {[
-          {l:'Total Orders', v:summary.totalOrders, g:'linear-gradient(135deg,#3B82F6,#60A5FA)', isNum: true},
-          {l:'Completed', v:summary.completedOrders, g:'linear-gradient(135deg,#10B981,#34D399)', isNum: true},
-          {l:'Pending', v:summary.pendingOrders, g:'linear-gradient(135deg,#F59E0B,#FBBF24)', isNum: true},
+          {l:'Total Orders', v:summary.totalOrders, g:'linear-gradient(135deg,var(--info),var(--info-dark))', isNum: true},
+          {l:'Completed', v:summary.completedOrders, g:'linear-gradient(135deg,var(--success),var(--success-dark))', isNum: true},
+          {l:'Pending', v:summary.pendingOrders, g:'linear-gradient(135deg,var(--warning),var(--warning-dark))', isNum: true},
           {l:'Total Spent', v:summary.totalSpent, g:'linear-gradient(135deg,var(--primary),var(--primary-light))', isNum: true, prefix: '₱', decimals: 0}
         ].map((s,i)=>(
           <div key={i} className="stat-card stagger-item" style={{background:s.g, animationDelay: `${(i + 1) * 60}ms`}}>

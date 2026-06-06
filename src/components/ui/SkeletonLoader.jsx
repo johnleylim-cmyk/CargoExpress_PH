@@ -108,6 +108,47 @@ export const SkeletonOrderCard = () => (
   </div>
 );
 
+/**
+ * SkeletonDonut — Renders a donut chart skeleton placeholder.
+ * @param {number} size - Diameter in px (default 170)
+ */
+export const SkeletonDonut = ({ size = 170 }) => (
+  <div className="skeleton-donut-wrap">
+    <div
+      className="skeleton skeleton-donut"
+      style={{ width: size, height: size }}
+    />
+    <div className="skeleton-donut-legend">
+      {Array.from({ length: 3 }, (_, i) => (
+        <div key={i} className="skeleton-donut-legend-item" style={{ animationDelay: `${i * 80}ms` }}>
+          <div className="skeleton" style={{ width: 8, height: 8, borderRadius: '50%' }} />
+          <div className="skeleton skeleton-text" style={{ width: `${50 + i * 15}%` }} />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+/**
+ * SkeletonBarChart — Renders a bar chart skeleton placeholder.
+ * @param {number} height - Chart height in px (default 160)
+ * @param {number} bars - Number of bars (default 6)
+ */
+export const SkeletonBarChart = ({ height = 160, bars = 6 }) => (
+  <div className="skeleton-bar-chart" style={{ height }}>
+    {Array.from({ length: bars }, (_, i) => (
+      <div
+        key={i}
+        className="skeleton skeleton-bar"
+        style={{
+          height: `${30 + Math.sin(i * 1.5) * 25 + 20}%`,
+          animationDelay: `${i * 60}ms`,
+        }}
+      />
+    ))}
+  </div>
+);
+
 const SkeletonLoader = {
   Text: SkeletonText,
   Avatar: SkeletonAvatar,
@@ -115,6 +156,8 @@ const SkeletonLoader = {
   TableRow: SkeletonTableRow,
   StatCard: SkeletonStatCard,
   OrderCard: SkeletonOrderCard,
+  Donut: SkeletonDonut,
+  BarChart: SkeletonBarChart,
 };
 
 export default SkeletonLoader;

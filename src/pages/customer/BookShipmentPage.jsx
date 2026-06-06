@@ -62,9 +62,12 @@ const BookShipmentPage = () => {
 
   const [useRegisteredSender, setUseRegisteredSender] = useState(false);
   const [useRegisteredReceiver, setUseRegisteredReceiver] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const u = (k, v) => {
     setForm(p => ({ ...p, [k]: v }));
+    // Clear field error on edit
+    if (fieldErrors[k]) setFieldErrors(p => { const n = { ...p }; delete n[k]; return n; });
     if (k.startsWith('sender_')) setUseRegisteredSender(false);
     if (k.startsWith('receiver_')) setUseRegisteredReceiver(false);
   };
@@ -156,35 +159,37 @@ const BookShipmentPage = () => {
   };
 
   const validateSender = () => {
-    if (!form.sender_name) return 'Sender Full Name is required.';
-    if (!form.sender_facebook) return 'Sender Facebook Name is required.';
-    if (!form.sender_province) return 'Sender Province is required.';
-    if (!form.sender_city) return 'Sender City is required.';
-    if (!form.sender_barangay) return 'Sender Barangay is required.';
-    if (!form.sender_street) return 'Sender Street is required.';
+    const errs = {};
+    if (!form.sender_name) errs.sender_name = 'Full Name is required.';
+    if (!form.sender_facebook) errs.sender_facebook = 'Facebook Name is required.';
+    if (!form.sender_province) errs.sender_province = 'Province is required.';
+    if (!form.sender_city) errs.sender_city = 'City is required.';
+    if (!form.sender_barangay) errs.sender_barangay = 'Barangay is required.';
+    if (!form.sender_street) errs.sender_street = 'Street is required.';
     const phoneErr = validatePhone(form.sender_phone);
-    if (phoneErr) return 'Sender ' + phoneErr;
-    return null;
+    if (phoneErr) errs.sender_phone = phoneErr;
+    return errs;
   };
 
   const validateReceiver = () => {
-    if (!form.receiver_name) return 'Receiver Full Name is required.';
-    if (!form.receiver_facebook) return 'Receiver Facebook Name is required.';
-    if (!form.receiver_province) return 'Receiver Province is required.';
-    if (!form.receiver_city) return 'Receiver City is required.';
-    if (!form.receiver_barangay) return 'Receiver Barangay is required.';
-    if (!form.receiver_street) return 'Receiver Street is required.';
+    const errs = {};
+    if (!form.receiver_name) errs.receiver_name = 'Full Name is required.';
+    if (!form.receiver_facebook) errs.receiver_facebook = 'Facebook Name is required.';
+    if (!form.receiver_province) errs.receiver_province = 'Province is required.';
+    if (!form.receiver_city) errs.receiver_city = 'City is required.';
+    if (!form.receiver_barangay) errs.receiver_barangay = 'Barangay is required.';
+    if (!form.receiver_street) errs.receiver_street = 'Street is required.';
     const phoneErr = validatePhone(form.receiver_phone);
-    if (phoneErr) return 'Receiver ' + phoneErr;
-    return null;
+    if (phoneErr) errs.receiver_phone = phoneErr;
+    return errs;
   };
 
   const handleSubmit = async () => {
     setLoading(true);
     try {
       if (!selectedRoute) throw new Error('Please select a route.');
-      const sErr = validateSender(); if (sErr) throw new Error(sErr);
-      const rErr = validateReceiver(); if (rErr) throw new Error(rErr);
+      const sErrs = validateSender(); if (Object.keys(sErrs).length) { setFieldErrors(sErrs); throw new Error('Please fix sender details.'); }
+      const rErrs = validateReceiver(); if (Object.keys(rErrs).length) { setFieldErrors(rErrs); throw new Error('Please fix receiver details.'); }
       const validation = validateRouteProvinces(form.sender_province, form.receiver_province, selectedRoute);
       if (!validation.valid) throw new Error(validation.error);
       const packageWeight = parseFloat(form.package_weight);
@@ -216,25 +221,28 @@ const BookShipmentPage = () => {
     const cities = isSender ? senderCities : receiverCities;
     const getProvinces = isSender ? getSenderProvinces : getReceiverProvinces;
     const id = (field) => `${prefix}-${field}`;
+    const fe = (key) => fieldErrors[`${prefix}_${key}`];
+    const fc = (key) => fe(key) ? 'field-invalid' : '';
+    const errEl = (key) => fe(key) ? <div className="field-error-inline"><AlertTriangle size={12} />{fe(key)}</div> : null;
     return (
       <div className="grid grid-2 gap-16">
-        <div className="form-group" style={{ gridColumn: '1 / -1' }}><label className="form-label" htmlFor={id('name')}>Full Name *</label><input id={id('name')} className="form-input" value={form[`${prefix}_name`]} onChange={handleTextChange(`${prefix}_name`)} autoComplete={isSender ? 'name' : 'shipping name'} required /></div>
-        <div className="form-group"><label className="form-label" htmlFor={id('phone')}>Mobile Number *</label><input id={id('phone')} className="form-input" value={form[`${prefix}_phone`]} onChange={handlePhoneChange(`${prefix}_phone`)} inputMode="numeric" maxLength={11} placeholder="09xxxxxxxxx" autoComplete="tel" required /></div>
-        <div className="form-group"><label className="form-label" htmlFor={id('facebook')}>Facebook Name *</label><input id={id('facebook')} className="form-input" value={form[`${prefix}_facebook`]} onChange={handleTextChange(`${prefix}_facebook`)} placeholder="Your name on Facebook" required /></div>
+        <div className="form-group" style={{ gridColumn: '1 / -1' }}><label className="form-label" htmlFor={id('name')}>Full Name *</label><input id={id('name')} className={`form-input ${fc('name')}`} value={form[`${prefix}_name`]} onChange={handleTextChange(`${prefix}_name`)} autoComplete={isSender ? 'name' : 'shipping name'} required />{errEl('name')}</div>
+        <div className="form-group"><label className="form-label" htmlFor={id('phone')}>Mobile Number *</label><input id={id('phone')} className={`form-input ${fc('phone')}`} value={form[`${prefix}_phone`]} onChange={handlePhoneChange(`${prefix}_phone`)} inputMode="numeric" maxLength={11} placeholder="09xxxxxxxxx" autoComplete="tel" required />{errEl('phone')}</div>
+        <div className="form-group"><label className="form-label" htmlFor={id('facebook')}>Facebook Name *</label><input id={id('facebook')} className={`form-input ${fc('facebook')}`} value={form[`${prefix}_facebook`]} onChange={handleTextChange(`${prefix}_facebook`)} placeholder="Your name on Facebook" required />{errEl('facebook')}</div>
         <div className="form-group"><label className="form-label" htmlFor={id('province')}>Province *</label>
-          <select id={id('province')} className="form-select" value={form[`${prefix}_province`]} onChange={e => { u(`${prefix}_province`, e.target.value); u(`${prefix}_city`, ''); }}>
+          <select id={id('province')} className={`form-select ${fc('province')}`} value={form[`${prefix}_province`]} onChange={e => { u(`${prefix}_province`, e.target.value); u(`${prefix}_city`, ''); }}>
             <option value="">Select Province</option>
             {getProvinces().map(p => <option key={p} value={p}>{p}</option>)}
-          </select>
+          </select>{errEl('province')}
         </div>
         <div className="form-group"><label className="form-label" htmlFor={id('city')}>City / Municipality *</label>
-          <select id={id('city')} className="form-select" value={form[`${prefix}_city`]} onChange={e => u(`${prefix}_city`, e.target.value)} disabled={!form[`${prefix}_province`]}>
+          <select id={id('city')} className={`form-select ${fc('city')}`} value={form[`${prefix}_city`]} onChange={e => u(`${prefix}_city`, e.target.value)} disabled={!form[`${prefix}_province`]}>
             <option value="">Select City</option>
             {cities.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+          </select>{errEl('city')}
         </div>
-        <div className="form-group"><label className="form-label" htmlFor={id('barangay')}>Barangay *</label><input id={id('barangay')} className="form-input" value={form[`${prefix}_barangay`]} onChange={handleTextChange(`${prefix}_barangay`)} autoComplete="address-level3" required /></div>
-        <div className="form-group"><label className="form-label" htmlFor={id('street')}>Street *</label><input id={id('street')} className="form-input" value={form[`${prefix}_street`]} onChange={handleTextChange(`${prefix}_street`)} autoComplete="address-line1" required /></div>
+        <div className="form-group"><label className="form-label" htmlFor={id('barangay')}>Barangay *</label><input id={id('barangay')} className={`form-input ${fc('barangay')}`} value={form[`${prefix}_barangay`]} onChange={handleTextChange(`${prefix}_barangay`)} autoComplete="address-level3" required />{errEl('barangay')}</div>
+        <div className="form-group"><label className="form-label" htmlFor={id('street')}>Street *</label><input id={id('street')} className={`form-input ${fc('street')}`} value={form[`${prefix}_street`]} onChange={handleTextChange(`${prefix}_street`)} autoComplete="address-line1" required />{errEl('street')}</div>
         <div className="form-group"><label className="form-label" htmlFor={id('lot-block')}>Lot / Block / Purok</label><input id={id('lot-block')} className="form-input" value={form[`${prefix}_lot_block`]} onChange={handleTextChange(`${prefix}_lot_block`)} autoComplete="address-line2" /></div>
         <div className="form-group"><label className="form-label" htmlFor={id('landmark')}>Landmark</label><input id={id('landmark')} className="form-input" value={form[`${prefix}_landmark`]} onChange={handleTextChange(`${prefix}_landmark`)} placeholder="Near what building/place?" /></div>
       </div>
@@ -347,8 +355,9 @@ const BookShipmentPage = () => {
           )}
           {renderAddressFields('sender')}
           <button type="button" className="btn btn-primary btn-lg w-full mt-20 justify-center" onClick={() => {
-            const err = validateSender();
-            if (err) { toast.error(err); return; }
+            const errs = validateSender();
+            if (Object.keys(errs).length) { setFieldErrors(errs); toast.error('Please fill in all required sender fields.'); return; }
+            setFieldErrors({});
             setStep(3);
           }}>Continue</button>
         </div></div>
@@ -366,10 +375,11 @@ const BookShipmentPage = () => {
           )}
           {renderAddressFields('receiver')}
           <button type="button" className="btn btn-primary btn-lg w-full mt-20 justify-center" onClick={() => {
-            const err = validateReceiver();
-            if (err) { toast.error(err); return; }
+            const errs = validateReceiver();
+            if (Object.keys(errs).length) { setFieldErrors(errs); toast.error('Please fill in all required receiver fields.'); return; }
             const v = validateRouteProvinces(form.sender_province, form.receiver_province, selectedRoute);
             if (!v.valid) { toast.error(v.error); return; }
+            setFieldErrors({});
             setStep(4);
           }}>Continue</button>
         </div></div>

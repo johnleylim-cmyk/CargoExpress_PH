@@ -6,6 +6,7 @@ import { SkeletonTableRow } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
 import PageTransition from '../../components/ui/PageTransition';
 import ResponsiveFilterControls from '../../components/ui/ResponsiveFilterControls';
+import Pagination from '../../components/ui/Pagination';
 import { motion } from 'framer-motion';
 import { Search, Package } from 'lucide-react';
 
@@ -17,12 +18,14 @@ const AdminOrdersPage = () => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('All');
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(15);
 
   useEffect(() => { loadOrders(); }, []);
   const loadOrders = async () => {
     setError(null);
     setLoading(true);
-    try { 
+    try {
       const data = await withTimeout(getOrders(null, true));
       setOrders(data || []); 
     } catch (e) { 
@@ -47,6 +50,14 @@ const AdminOrdersPage = () => {
     count: t === 'All' ? orders.length : orders.filter(o => o.status === t).length,
   }));
 
+  // Reset page on filter/search change
+  const handleTabChange = (tab) => { setActiveTab(tab); setCurrentPage(1); };
+  const handleSearchChange = (e) => { setSearch(e.target.value); setCurrentPage(1); };
+
+  // Paginate
+  const totalFiltered = filtered.length;
+  const paginated = filtered.slice((currentPage - 1) * perPage, currentPage * perPage);
+
   return (
     <PageTransition>
       <div className="admin-page-header">
@@ -66,14 +77,14 @@ const AdminOrdersPage = () => {
             aria-label="Search orders"
             placeholder="Search tracking, sender, or receiver..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={handleSearchChange}
           />
         </div>
       </div>
       <ResponsiveFilterControls
         options={filterOptions}
         value={activeTab}
-        onChange={setActiveTab}
+        onChange={handleTabChange}
         ariaLabel="Order status filters"
         label="Status"
         desktopClassName="tabs admin-mobile-tabs"
@@ -102,7 +113,7 @@ const AdminOrdersPage = () => {
             <table className="data-table">
               <thead><tr><th>Tracking</th><th>Customer</th><th>Route</th><th>Weight</th><th>Cost</th><th>Status</th><th>Date</th></tr></thead>
               <tbody>
-                {filtered.map((o, i) => (
+                {paginated.map((o, i) => (
                   <motion.tr 
                     key={o.id}
                     initial={{ opacity: 0, y: 10 }}
@@ -132,6 +143,13 @@ const AdminOrdersPage = () => {
               </tbody>
             </table>
           </div>
+          <Pagination
+            totalItems={totalFiltered}
+            currentPage={currentPage}
+            itemsPerPage={perPage}
+            onPageChange={setCurrentPage}
+            onPerPageChange={(n) => { setPerPage(n); setCurrentPage(1); }}
+          />
         </div>
       )}
     </PageTransition>

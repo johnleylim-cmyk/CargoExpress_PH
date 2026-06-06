@@ -5,10 +5,12 @@ import AnimatedCounter from '../../components/ui/AnimatedCounter';
 import StatusBadge from '../../components/ui/StatusBadge';
 import EmptyState from '../../components/ui/EmptyState';
 import ResponsiveFilterControls from '../../components/ui/ResponsiveFilterControls';
+import DonutChart from '../../components/ui/DonutChart';
+import MiniBarChart from '../../components/ui/MiniBarChart';
 import {
   FileText, Printer, Calendar, Package, CheckCircle,
   DollarSign, TrendingUp, Truck, MapPin, BarChart3,
-  Filter, RefreshCw, Clock, CreditCard, Loader, AlertTriangle
+  Filter, RefreshCw, Clock, CreditCard, Loader, AlertTriangle, Download
 } from 'lucide-react';
 
 const PERIODS = [
@@ -64,6 +66,32 @@ const ReportsPage = () => {
     window.print();
   };
 
+  const handleExportCSV = () => {
+    if (!data?.orders?.length) return;
+    const headers = ['Tracking', 'Sender', 'Receiver', 'Route', 'Weight (kg)', 'Cost (₱)', 'Paid (₱)', 'Payment Method', 'Payment Status', 'Status', 'Date'];
+    const rows = data.orders.map(o => [
+      o.tracking_number,
+      o.sender_name,
+      o.receiver_name,
+      `${o.origin} → ${o.destination}`,
+      o.actual_weight || o.package_weight || '',
+      parseFloat(o.shipping_cost || 0).toFixed(2),
+      parseFloat(o.amount_paid || 0).toFixed(2),
+      o.payment_method || '',
+      o.payment_status || '',
+      o.status,
+      new Date(o.created_at).toLocaleDateString('en-PH'),
+    ]);
+    const csvContent = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `CargoExpress_Report_${period}_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const s = data?.summary || {};
   const hasData = data && data.orders && data.orders.length > 0;
 
@@ -86,10 +114,16 @@ const ReportsPage = () => {
             Refresh
           </button>
           {hasData && (
-            <button type="button" className="btn btn-primary btn-sm" onClick={handlePrint}>
-              <Printer size={16} />
-              Print Report
-            </button>
+            <>
+              <button type="button" className="btn btn-outline btn-sm" onClick={handleExportCSV}>
+                <Download size={16} />
+                Export CSV
+              </button>
+              <button type="button" className="btn btn-primary btn-sm" onClick={handlePrint}>
+                <Printer size={16} />
+                Print Report
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -255,8 +289,40 @@ const ReportsPage = () => {
                   </div>
                 </div>
 
+                {/* Visual Status Donut */}
+                <div className="card stagger-item" style={{ animationDelay: '260ms' }}>
+                  <div className="card-header">
+                    <h3 className="flex items-center gap-8">
+                      <BarChart3 size={18} className="text-primary" />
+                      Status Distribution
+                    </h3>
+                  </div>
+                  <div className="card-body" style={{ display: 'flex', justifyContent: 'center', padding: '24px 16px' }}>
+                    <DonutChart
+                      size={170}
+                      thickness={24}
+                      centerLabel={String(s.totalOrders || 0)}
+                      centerSub="Orders"
+                      segments={STATUS_ORDER
+                        .filter(st => data.statusBreakdown[st])
+                        .map(st => ({
+                          label: st,
+                          value: data.statusBreakdown[st],
+                          color: st === 'Delivered' ? '#10B981'
+                            : st === 'Cancelled' ? '#EF4444'
+                            : st === 'Pending' ? '#F59E0B'
+                            : st === 'In Transit' ? '#3B82F6'
+                            : st === 'Out for Delivery' ? '#8B5CF6'
+                            : st === 'Picked Up' || st === 'Arrived at Hub' ? '#14B8A6'
+                            : '#64748B',
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+
                 {/* Financial Summary */}
-                <div className="card stagger-item" style={{ animationDelay: '300ms' }}>
+                <div className="card stagger-item" style={{ animationDelay: '300ms', gridColumn: '1 / -1' }}>
                   <div className="card-header">
                     <h3 className="flex items-center gap-8">
                       <CreditCard size={18} className="text-primary" />
@@ -314,6 +380,18 @@ const ReportsPage = () => {
                     </h3>
                   </div>
                   <div className="card-body">
+                    {/* Route Revenue Chart */}
+                    <div className="mb-20">
+                      <MiniBarChart
+                        height={140}
+                        valuePrefix="₱"
+                        bars={data.routeBreakdown.slice(0, 8).map((r, i) => ({
+                          label: r.route.length > 12 ? r.route.slice(0, 11) + '…' : r.route,
+                          value: r.revenue,
+                          color: ['var(--primary)', 'var(--accent)', 'var(--info)', 'var(--success)', 'var(--warning)', '#8B5CF6', '#EC4899', '#64748B'][i % 8],
+                        }))}
+                      />
+                    </div>
                     <div style={{ overflowX: 'auto' }}>
                       <table className="report-table">
                         <thead>

@@ -8,6 +8,7 @@ import PickupModal from '../../components/ui/PickupModal';
 import TripAssignModal from '../../components/ui/TripAssignModal';
 import ConfirmModal from '../../components/ui/ConfirmModal';
 import ImageLightbox from '../../components/ui/ImageLightbox';
+import Breadcrumb from '../../components/ui/Breadcrumb';
 import { SkeletonText } from '../../components/ui/SkeletonLoader';
 import ErrorBoundarySection from '../../components/ui/ErrorBoundarySection';
 import {
@@ -198,9 +199,11 @@ const AdminOrderDetailPage = () => {
 
   return (
     <div className="page-transition">
-      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost mb-16">
-        <ArrowLeft size={18} /> Back
-      </button>
+      <Breadcrumb items={[
+        { label: 'Dashboard', to: '/admin' },
+        { label: 'Orders', to: '/admin/orders' },
+        { label: order.tracking_number },
+      ]} />
 
       <ErrorBoundarySection message="Order info failed to load.">
       {/* Header */}

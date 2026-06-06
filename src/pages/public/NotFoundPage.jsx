@@ -1,17 +1,41 @@
 import { Link } from 'react-router-dom';
-import { Container, Home, Search } from 'lucide-react';
+import { PackageX, Home, Search, ArrowLeft, Compass } from 'lucide-react';
 
 const NotFoundPage = () => (
   <div className="not-found-page">
+    {/* Decorative background orbs */}
+    <div className="nf-orb nf-orb-1" aria-hidden="true" />
+    <div className="nf-orb nf-orb-2" aria-hidden="true" />
+
     <div className="not-found-card">
-      <div className="not-found-icon-wrap">
-        <Container size={32} color="var(--primary)" />
+      {/* Animated icon with pulse ring */}
+      <div className="nf-icon-wrap">
+        <div className="nf-icon-ring" />
+        <div className="nf-icon-circle">
+          <PackageX size={36} strokeWidth={1.8} />
+        </div>
       </div>
-      <h1 className="not-found-code">404</h1>
-      <h2 className="not-found-title">Page Not Found</h2>
+
+      {/* Error code with gradient */}
+      <h1 className="nf-code">
+        <span className="nf-code-4">4</span>
+        <span className="nf-code-0">0</span>
+        <span className="nf-code-4b">4</span>
+      </h1>
+
+      <h2 className="not-found-title">Shipment Not Found</h2>
       <p className="not-found-text">
-        The page you&apos;re looking for doesn&apos;t exist or has been moved.
+        Looks like this package got lost in transit. The page you're looking for
+        doesn't exist, has been moved, or is temporarily unavailable.
       </p>
+
+      {/* Navigation suggestions */}
+      <div className="nf-suggestions">
+        <div className="nf-suggestion-label">
+          <Compass size={14} /> Here's where you can go:
+        </div>
+      </div>
+
       <div className="not-found-actions">
         <Link to="/" className="btn btn-primary">
           <Home size={16} /> Go Home
@@ -20,6 +44,14 @@ const NotFoundPage = () => (
           <Search size={16} /> Track Shipment
         </Link>
       </div>
+
+      <button
+        type="button"
+        onClick={() => window.history.back()}
+        className="nf-back-link"
+      >
+        <ArrowLeft size={14} /> Go back to previous page
+      </button>
     </div>
   </div>
 );

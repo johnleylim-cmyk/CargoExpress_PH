@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getCustomers, withTimeout } from '../../lib/database';
 import { SkeletonTableRow } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
+import Pagination from '../../components/ui/Pagination';
 import { Search, Users } from 'lucide-react';
 
 const CustomersPage = () => {
@@ -10,6 +11,8 @@ const CustomersPage = () => {
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(15);
   
   useEffect(() => { loadCustomers(); }, []);
   const loadCustomers = async () => {
@@ -25,6 +28,9 @@ const CustomersPage = () => {
     }
   };
   const filtered = customers.filter(c => !search || c.name?.toLowerCase().includes(search.toLowerCase()) || c.email?.toLowerCase().includes(search.toLowerCase()));
+  const totalFiltered = filtered.length;
+  const paginated = filtered.slice((currentPage - 1) * perPage, currentPage * perPage);
+  const handleSearchChange = (e) => { setSearch(e.target.value); setCurrentPage(1); };
 
   return (
     <div className="page-transition">
@@ -41,7 +47,7 @@ const CustomersPage = () => {
       <div className="admin-toolbar">
         <div className="search-box">
           <Search size={16} className="search-icon" />
-          <input aria-label="Search customers" placeholder="Search customers..." value={search} onChange={e => setSearch(e.target.value)} />
+          <input aria-label="Search customers" placeholder="Search customers..." value={search} onChange={handleSearchChange} />
         </div>
       </div>
       {loading ? (
@@ -67,7 +73,7 @@ const CustomersPage = () => {
             <table className="data-table">
               <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Province</th><th>Joined</th></tr></thead>
               <tbody>
-                {filtered.map((c, i) => (
+                {paginated.map((c, i) => (
                   <tr key={c.id} className="stagger-item" style={{ animationDelay: `${i * 30}ms` }}>
                     <td data-label="Name"><Link to={`/admin/customers/${c.id}`} className="fw-700 text-accent">{c.name}</Link></td>
                     <td data-label="Email" className="text-sm">{c.email}</td><td data-label="Phone" className="text-sm">{c.phone || '—'}</td>
@@ -89,6 +95,13 @@ const CustomersPage = () => {
               </tbody>
             </table>
           </div>
+          <Pagination
+            totalItems={totalFiltered}
+            currentPage={currentPage}
+            itemsPerPage={perPage}
+            onPageChange={setCurrentPage}
+            onPerPageChange={(n) => { setPerPage(n); setCurrentPage(1); }}
+          />
         </div>
       )}
     </div>

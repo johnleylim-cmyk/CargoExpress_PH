@@ -5,6 +5,7 @@ import StatusBadge from '../../components/ui/StatusBadge';
 import AnimatedCounter from '../../components/ui/AnimatedCounter';
 import { SkeletonStatCard, SkeletonText } from '../../components/ui/SkeletonLoader';
 import { ArrowLeft, User, Mail, Phone, MapPin, Package, DollarSign } from 'lucide-react';
+import Breadcrumb from '../../components/ui/Breadcrumb';
 
 const CustomerDetailPage = () => {
   const { id } = useParams(); const navigate = useNavigate();
@@ -41,7 +42,7 @@ const CustomerDetailPage = () => {
   );
   if (error) return (
     <div className="page-transition">
-      <div className="card text-center" style={{ padding: 40, color: 'var(--error)' }}>
+      <div className="card text-center admin-error-card p-40">
         <h3>Error Loading Customer</h3>
         <p className="mt-8 mb-20">{error}</p>
         <button type="button" className="btn btn-primary" onClick={() => load()}>Retry</button>
@@ -53,11 +54,15 @@ const CustomerDetailPage = () => {
 
   return (
     <div className="page-transition">
-      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost mb-16"><ArrowLeft size={18}/> Back</button>
-      <div className="card stagger-item mb-16" style={{overflow:'visible', animationDelay: '0ms'}}>
-        <div style={{background:'linear-gradient(135deg, var(--accent), var(--primary))',height:60,borderRadius:'12px 12px 0 0'}}/>
-        <div style={{padding:'0 24px 24px',marginTop:-30}}>
-          <div className="flex items-center justify-center text-xl fw-800" style={{width:60,height:60,borderRadius:'50%',background:'linear-gradient(135deg,var(--primary),var(--primary-light))',color:'white',border:'3px solid white'}}>{(customer.name||'U')[0].toUpperCase()}</div>
+      <Breadcrumb items={[
+        { label: 'Dashboard', to: '/admin' },
+        { label: 'Customers', to: '/admin/customers' },
+        { label: customer.name },
+      ]} />
+      <div className="card stagger-item mb-16 customer-profile-card">
+        <div className="customer-profile-banner" />
+        <div className="customer-profile-body">
+          <div className="customer-profile-avatar">{(customer.name||'U')[0].toUpperCase()}</div>
           <h2 className="fw-800 mt-8">{customer.name}</h2>
           <div className="text-sm text-secondary">{customer.email} • {customer.phone || '—'}</div>
           <div className="text-xs text-tertiary mt-4">{[customer.address_province,customer.address_city].filter(Boolean).join(', ')||'No address'}</div>
@@ -89,7 +94,7 @@ const CustomerDetailPage = () => {
                 <td data-label="Cost">₱{parseFloat(o.shipping_cost||0).toFixed(2)}</td><td data-label="Status"><StatusBadge status={o.status} size="sm"/></td>
                 <td data-label="Date" className="text-xs text-secondary">{new Date(o.created_at).toLocaleDateString()}</td></tr>
               ))}
-              {orders.length===0&&<tr><td colSpan={5} className="text-center text-secondary" style={{padding:30}}>No orders</td></tr>}
+              {orders.length===0&&<tr><td colSpan={5} className="text-center text-secondary p-30">No orders</td></tr>}
             </tbody>
           </table>
         </div>

@@ -6,6 +6,7 @@ import ConfirmModal from '../../components/ui/ConfirmModal';
 import { SkeletonText } from '../../components/ui/SkeletonLoader';
 import { ArrowLeft, Play, Flag, CheckCircle, XCircle, Loader } from 'lucide-react';
 import CapacityTracker from '../../components/ui/CapacityTracker';
+import Breadcrumb from '../../components/ui/Breadcrumb';
 import { useToast } from '../../hooks/useToast';
 
 const TripDetailPage = () => {
@@ -74,7 +75,11 @@ const TripDetailPage = () => {
 
   return (
     <div className="page-transition">
-      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost mb-16"><ArrowLeft size={18}/> Back</button>
+      <Breadcrumb items={[
+        { label: 'Dashboard', to: '/admin' },
+        { label: 'Trips', to: '/admin/trips' },
+        { label: trip.trip_number },
+      ]} />
       <div className="flex items-center justify-between mb-20">
         <div><h1 className="fw-800">{trip.trip_number}</h1><p className="text-sm text-secondary">{trip.origin} → {trip.destination}</p></div>
         <StatusBadge status={trip.status}/>

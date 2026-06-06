@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { getSalesData, withTimeout } from '../../lib/database';
-import { SkeletonStatCard, SkeletonText } from '../../components/ui/SkeletonLoader';
+import { SkeletonStatCard, SkeletonDonut, SkeletonBarChart } from '../../components/ui/SkeletonLoader';
 import AnimatedCounter from '../../components/ui/AnimatedCounter';
+import DonutChart from '../../components/ui/DonutChart';
+import MiniBarChart from '../../components/ui/MiniBarChart';
 import { BarChart3, DollarSign, TrendingUp, CreditCard } from 'lucide-react';
 
 const SalesPage = () => {
@@ -25,7 +27,7 @@ const SalesPage = () => {
 
   if (error) return (
     <div className="page-transition">
-      <div className="card text-center" style={{ padding: 40, color: 'var(--error)' }}>
+      <div className="card text-center admin-error-card p-40">
         <h3>Error</h3>
         <p>{error}</p>
         <button type="button" className="btn btn-primary mt-md" onClick={loadSales}>Retry</button>
@@ -81,34 +83,19 @@ const SalesPage = () => {
         {/* Payment Methods */}
         <div className="card admin-section-card stagger-item" style={{ animationDelay: '240ms' }}>
           <div className="card-header"><h3>Payment Methods</h3></div>
-          <div className="card-body">
-            {loading ? <SkeletonText lines={3} /> : (
-              <div className="flex flex-col gap-20">
-                {paymentMethods.map((m,i)=>(
-                  <div key={i}>
-                    <div className="flex items-center justify-between mb-8">
-                      <div className="flex items-center gap-10">
-                        <div style={{ width: 10, height: 10, borderRadius: '50%', background: m.c, flexShrink: 0 }} />
-                        <span className="text-sm fw-600" style={{ color: 'var(--text)' }}>{m.l}</span>
-                      </div>
-                      <span className="fw-700" style={{ fontSize: '0.9rem', color: 'var(--text)', whiteSpace: 'nowrap' }}>
-                        ₱{(m.v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </span>
-                    </div>
-                    <div className="w-full h-8 overflow-hidden" style={{
-                      background: 'var(--bg-secondary)',
-                      borderRadius: 4,
-                    }}>
-                      <div className="h-full" style={{
-                        width: `${Math.max(2, (m.v / maxPayment) * 100)}%`,
-                        background: m.c,
-                        borderRadius: 4,
-                        transition: 'width 0.8s ease',
-                      }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
+          <div className="card-body" style={{ display: 'flex', justifyContent: 'center', padding: '24px 16px' }}>
+            {loading ? <SkeletonDonut size={170} /> : (
+              <DonutChart
+                size={170}
+                thickness={26}
+                centerLabel={`₱${((s.paidTotal || 0) / 1000).toFixed(0)}k`}
+                centerSub="Collected"
+                segments={[
+                  { label: 'Cash', value: s.cashTotal || 0, color: 'var(--success)' },
+                  { label: 'GCash', value: s.gcashTotal || 0, color: 'var(--info)' },
+                  { label: 'Pay Later', value: s.paylaterTotal || 0, color: 'var(--warning)' },
+                ].filter(seg => seg.value > 0)}
+              />
             )}
           </div>
         </div>
@@ -117,39 +104,18 @@ const SalesPage = () => {
         <div className="card admin-section-card stagger-item" style={{ animationDelay: '300ms' }}>
           <div className="card-header"><h3>Monthly Revenue</h3></div>
           <div className="card-body">
-            {loading ? <SkeletonText lines={4} /> : (
-              <div className="flex flex-col gap-16">
-                {monthlySales.slice(0,6).map((m,i)=>(
-                  <div key={i}>
-                    <div className="flex justify-between mb-6 flex-wrap gap-4" style={{ alignItems: 'baseline' }}>
-                      <span className="fw-600" style={{ fontSize: '0.8rem', color: 'var(--text)', whiteSpace: 'nowrap' }}>
-                        {new Date(m.month + '-01').toLocaleDateString('en-PH', { month: 'short', year: 'numeric' })}
-                      </span>
-                      <div className="flex gap-10" style={{ alignItems: 'baseline' }}>
-                        <span className="fw-700 text-primary" style={{ fontSize: '0.9rem', whiteSpace: 'nowrap' }}>
-                          ₱{m.total_revenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                        </span>
-                        <span className="text-xs text-secondary" style={{ whiteSpace: 'nowrap' }}>
-                          collected: ₱{m.collected.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="w-full overflow-hidden" style={{
-                      height: 6,
-                      background: 'var(--bg-secondary)',
-                      borderRadius: 3,
-                    }}>
-                      <div className="h-full" style={{
-                        width: `${Math.max(2, (m.total_revenue / maxMonthly) * 100)}%`,
-                        background: 'linear-gradient(90deg, var(--primary), var(--primary-light))',
-                        borderRadius: 3,
-                        transition: 'width 0.8s ease',
-                      }} />
-                    </div>
-                  </div>
-                ))}
-                {monthlySales.length === 0 && <div className="text-center text-secondary p-20">No sales data</div>}
-              </div>
+            {loading ? <SkeletonBarChart height={180} bars={8} /> : monthlySales.length === 0 ? (
+              <div className="text-center text-secondary p-20">No sales data</div>
+            ) : (
+              <MiniBarChart
+                height={180}
+                valuePrefix="₱"
+                bars={monthlySales.slice(0, 8).map(m => ({
+                  label: new Date(m.month + '-01').toLocaleDateString('en-PH', { month: 'short' }),
+                  value: m.total_revenue,
+                  color: 'var(--primary)',
+                }))}
+              />
             )}
           </div>
         </div>

@@ -16,6 +16,7 @@
 @import './loading-search.css';
 @import './tabs-steps.css';
 @import './chatbot.css';
+@import './charts.css';
 
 /* ── 4. Layouts ── */
 @import './layout-admin.css';

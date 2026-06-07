@@ -18,10 +18,24 @@ const validatePhone = (phone) => {
   return null;
 };
 
+const cleanAddressPart = (val) => {
+  if (!val) return '';
+  return val
+    .toString()
+    .replace(/^[\s,]+|[\s,]+$/g, '') // strip leading/trailing spaces and commas
+    .replace(/,+/g, ',')              // merge consecutive commas
+    .trim();
+};
+
 const buildFullAddress = ({ lotBlock, street, barangay, city, province, landmark }) => {
-  const parts = [lotBlock, street, barangay, city, province].filter(Boolean);
+  const parts = [lotBlock, street, barangay, city, province]
+    .map(cleanAddressPart)
+    .filter(Boolean);
   let addr = parts.join(', ');
-  if (landmark) addr += ` (Landmark: ${landmark})`;
+  if (landmark) {
+    const cleanLandmark = cleanAddressPart(landmark);
+    if (cleanLandmark) addr += ` (Landmark: ${cleanLandmark})`;
+  }
   return addr;
 };
 

@@ -72,10 +72,22 @@ const PersonalInfoPage = () => {
     if (!user?.id) { setSaveStatus('error'); setSaveMessage('You are not logged in.'); return; }
     setLoading(true);
     try {
+      const cleanAddressPart = (val) => {
+        if (!val) return '';
+        return val
+          .toString()
+          .replace(/^[\s,]+|[\s,]+$/g, '') // strip leading/trailing spaces and commas
+          .replace(/,+/g, ',')              // merge consecutive commas
+          .trim();
+      };
+
       const combinedAddress = [
         form.address_lot_block, form.address_street,
         form.address_barangay,  form.address_city, form.address_province,
-      ].filter(Boolean).join(', ');
+      ]
+        .map(cleanAddressPart)
+        .filter(Boolean)
+        .join(', ');
 
       const { error: updateError } = await supabase
         .from('profiles')

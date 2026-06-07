@@ -32,10 +32,15 @@ const AnnouncementsPage = () => {
   };
 
   const handleCreate = async () => {
-    if (!form.title || !form.content) { toast.warning('Please fill in both title and content.'); return; }
+    if (!form.title.trim() || !form.content.trim()) { toast.warning('Please fill in both title and content.'); return; }
+    if (form.title.trim().length > 100) { toast.warning('Title must be 100 characters or less.'); return; }
+    if (form.content.trim().length > 1500) { toast.warning('Content must be 1500 characters or less.'); return; }
     setSaving(true);
     try {
-      await withTimeout(createAnnouncement(form));
+      await withTimeout(createAnnouncement({
+        title: form.title.trim(),
+        content: form.content.trim(),
+      }));
       setForm({ title: '', content: '' });
       setShowForm(false);
       await load();
@@ -74,8 +79,14 @@ const AnnouncementsPage = () => {
 
       {showForm && (
         <div className="card animate-scale-in mb-16"><div className="card-body">
-          <div className="form-group"><label className="form-label" htmlFor="announcement-title">Title</label><input id="announcement-title" className="form-input" value={form.title} onChange={e=>setForm(p=>({...p,title:e.target.value}))}/></div>
-          <div className="form-group"><label className="form-label" htmlFor="announcement-content">Content</label><textarea id="announcement-content" className="form-textarea" value={form.content} onChange={e=>setForm(p=>({...p,content:e.target.value}))}/></div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="announcement-title">Title * (Max 100 characters)</label>
+            <input id="announcement-title" className="form-input" value={form.title} onChange={e=>setForm(p=>({...p,title:e.target.value}))} maxLength={100} required />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="announcement-content">Content * (Max 1500 characters)</label>
+            <textarea id="announcement-content" className="form-textarea" value={form.content} onChange={e=>setForm(p=>({...p,content:e.target.value}))} maxLength={1500} required />
+          </div>
           <div className="admin-form-actions">
             <button type="button" className="btn btn-primary" onClick={handleCreate} disabled={saving}>{saving?<Loader size={16} className="animate-spin"/>:'Publish'}</button>
             <button type="button" className="btn btn-ghost" onClick={()=>setShowForm(false)}>Cancel</button>

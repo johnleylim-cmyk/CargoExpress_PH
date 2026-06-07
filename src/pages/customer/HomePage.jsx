@@ -7,7 +7,7 @@ import { SkeletonOrderCard, SkeletonStatCard } from '../../components/ui/Skeleto
 import EmptyState from '../../components/ui/EmptyState';
 import PageTransition, { StaggerItem } from '../../components/ui/PageTransition';
 import {
-  Package, Search, Plus, Megaphone, ArrowRight,
+  Package, Search, Plus, ArrowRight,
   Container, MapPin, Calendar, Weight, ChevronRight,
   Truck,
 } from 'lucide-react';
@@ -259,8 +259,7 @@ const HomePage = () => {
       {/* ── Announcements ────────────────────────────────────────── */}
       {!loading && visibleAnnouncements.length > 0 && (
         <StaggerItem delay={120}>
-          <h3 className="fw-700 mb-12 flex items-center gap-8">
-            <Megaphone size={18} className="text-primary" />
+          <h3 className="fw-700 mb-12">
             Announcements
           </h3>
           {visibleAnnouncements.slice(0, 3).map((a, index) => (

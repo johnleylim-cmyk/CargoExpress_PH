@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { buildProfileAddress, normalizeProfileAddressFields } from '../lib/address';
 import { getProfile, createProfile } from '../lib/database';
 
 const AuthContext = createContext({});
@@ -155,13 +156,8 @@ export const AuthProvider = ({ children }) => {
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
 
-      const combinedAddress = [
-        profileData.address_lot_block,
-        profileData.address_street,
-        profileData.address_barangay,
-        profileData.address_city,
-        profileData.address_province
-      ].filter(Boolean).join(', ');
+      const normalizedAddress = normalizeProfileAddressFields(profileData);
+      const combinedAddress = buildProfileAddress(normalizedAddress);
 
       await createProfile({
         id: data.user.id,
@@ -171,11 +167,11 @@ export const AuthProvider = ({ children }) => {
         phone: profileData.phone || null,
         role: 'customer',
         address: combinedAddress || null,
-        address_lot_block: profileData.address_lot_block || null,
-        address_street: profileData.address_street || null,
-        address_barangay: profileData.address_barangay || null,
-        address_city: profileData.address_city || null,
-        address_province: profileData.address_province || null,
+        address_lot_block: normalizedAddress.address_lot_block || null,
+        address_street: normalizedAddress.address_street || null,
+        address_barangay: normalizedAddress.address_barangay || null,
+        address_city: normalizedAddress.address_city || null,
+        address_province: normalizedAddress.address_province || null,
       });
 
       // Profile row now exists — safe to fetch

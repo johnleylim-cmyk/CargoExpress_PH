@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import {
@@ -85,7 +85,6 @@ const TrackingPage = () => {
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState('');
   const [searched, setSearched] = useState(false);
-  const inputRef = useRef(null);
 
   useEffect(() => {
     const q = searchParams.get('q');
@@ -125,7 +124,6 @@ const TrackingPage = () => {
     setOrder(null);
     setError('');
     setSearched(false);
-    inputRef.current?.focus();
   };
 
   const StatusIcon = getStatusIcon(order?.status);
@@ -163,7 +161,6 @@ const TrackingPage = () => {
         <div className={`trk-search-box ${loading ? 'trk-search-box--loading' : ''}`}>
           <Search size={18} className="trk-search-icon" aria-hidden="true" />
           <input
-            ref={inputRef}
             id="tracking-input"
             type="text"
             className="trk-search-input"
@@ -171,7 +168,6 @@ const TrackingPage = () => {
             value={trackingNumber}
             onChange={e => setTrackingNumber(e.target.value.toUpperCase())}
             aria-label="Tracking number"
-            autoFocus
             autoComplete="off"
             spellCheck="false"
           />

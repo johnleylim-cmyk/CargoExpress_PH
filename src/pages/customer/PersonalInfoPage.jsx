@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { buildProfileAddress, normalizeProfileAddressFields } from '../../lib/address';
 import { supabase } from '../../lib/supabase';
 import { PH_LOCATIONS, VALID_PROVINCES } from '../../constants/phLocations';
 import {
@@ -72,22 +73,8 @@ const PersonalInfoPage = () => {
     if (!user?.id) { setSaveStatus('error'); setSaveMessage('You are not logged in.'); return; }
     setLoading(true);
     try {
-      const cleanAddressPart = (val) => {
-        if (!val) return '';
-        return val
-          .toString()
-          .replace(/^[\s,]+|[\s,]+$/g, '') // strip leading/trailing spaces and commas
-          .replace(/,+/g, ',')              // merge consecutive commas
-          .trim();
-      };
-
-      const combinedAddress = [
-        form.address_lot_block, form.address_street,
-        form.address_barangay,  form.address_city, form.address_province,
-      ]
-        .map(cleanAddressPart)
-        .filter(Boolean)
-        .join(', ');
+      const normalizedAddress = normalizeProfileAddressFields(form);
+      const combinedAddress = buildProfileAddress(normalizedAddress);
 
       const { error: updateError } = await supabase
         .from('profiles')
@@ -96,11 +83,11 @@ const PersonalInfoPage = () => {
           facebook_name:     form.facebook_name.trim(),
           phone:             form.phone || null,
           address:           combinedAddress || null,
-          address_province:  form.address_province  || null,
-          address_city:      form.address_city      || null,
-          address_barangay:  form.address_barangay  || null,
-          address_street:    form.address_street    || null,
-          address_lot_block: form.address_lot_block || null,
+          address_province:  normalizedAddress.address_province || null,
+          address_city:      normalizedAddress.address_city || null,
+          address_barangay:  normalizedAddress.address_barangay || null,
+          address_street:    normalizedAddress.address_street || null,
+          address_lot_block: normalizedAddress.address_lot_block || null,
           updated_at:        new Date().toISOString(),
         })
         .eq('id', user.id);

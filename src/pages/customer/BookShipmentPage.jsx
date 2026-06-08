@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { createOrder, getTrips, getSettings } from '../../lib/database';
+import { buildFullAddress } from '../../lib/address';
 import { ROUTES, PH_LOCATIONS, VALID_PROVINCES, detectPickupLocation, validateRouteProvinces } from '../../constants/phLocations';
-import { ArrowLeft, Loader, CheckCircle, Package, MapPin, User, Truck, AlertTriangle, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Loader, CheckCircle, Package, MapPin, User, Truck, AlertTriangle } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -16,27 +17,6 @@ const validatePhone = (phone) => {
   if (!val.startsWith('09')) return 'Phone number must start with 09.';
   if (val.length !== 11) return 'Phone number must be exactly 11 digits.';
   return null;
-};
-
-const cleanAddressPart = (val) => {
-  if (!val) return '';
-  return val
-    .toString()
-    .replace(/^[\s,]+|[\s,]+$/g, '') // strip leading/trailing spaces and commas
-    .replace(/,+/g, ',')              // merge consecutive commas
-    .trim();
-};
-
-const buildFullAddress = ({ lotBlock, street, barangay, city, province, landmark }) => {
-  const parts = [lotBlock, street, barangay, city, province]
-    .map(cleanAddressPart)
-    .filter(Boolean);
-  let addr = parts.join(', ');
-  if (landmark) {
-    const cleanLandmark = cleanAddressPart(landmark);
-    if (cleanLandmark) addr += ` (Landmark: ${cleanLandmark})`;
-  }
-  return addr;
 };
 
 const formatBookingTripDate = (value) => {
@@ -263,36 +243,37 @@ const BookShipmentPage = () => {
     );
   };
 
-  if (success) return (
-    <div className="page-transition booking-page booking-success-page" style={{ padding: '40px 20px' }}>
-      <div className="animate-scale-in text-center">
-        <div className="w-88 rounded-full flex items-center justify-center mb-24" style={{ height: 88, background: 'linear-gradient(135deg, var(--success-bg), var(--success-glow))', margin: '0 auto', boxShadow: 'var(--shadow-md)' }}>
-          <CheckCircle size={44} color="var(--success)" strokeWidth={2} />
-        </div>
-        <h2 className="fw-800 mb-4 text-2xl">Booking Confirmed</h2>
-        <p className="text-secondary mb-20">Your shipment has been booked successfully.</p>
-        <div className="card mb-20 overflow-hidden">
-          <div className="px-20 py-16 text-inverse" style={{ background: 'linear-gradient(135deg, var(--accent), var(--accent-light))' }}>
-            <div className="text-xs fw-600 mb-4" style={{ opacity: 0.7 }}>TRACKING NUMBER</div>
-            <div className="text-2xl fw-800" style={{ letterSpacing: '0.02em' }}>{success.tracking_number}</div>
-          </div>
-          <div className="card-body p-16">
-            <div className="flex justify-between items-center">
-              <div>
-                <div className="text-xs text-tertiary">Estimated Cost</div>
-                <div className="fw-700 text-primary text-lg">₱{parseFloat(success.shipping_cost || 0).toFixed(2)}</div>
+  if (success) {
+    const orderPath = success.id ? `/customer/orders/${success.id}` : '/customer/orders';
+
+    return (
+      <div className="page-transition booking-page booking-success-page" aria-labelledby="booking-success-title">
+        <section className="booking-success-shell animate-scale-in">
+          <div className="booking-success-visual">
+            <div className="booking-success-rings" aria-hidden="true">
+              <span className="booking-success-ring ring-one" />
+              <span className="booking-success-ring ring-two" />
+              <span className="booking-success-ring ring-three" />
+              <div className="booking-success-check">
+                <CheckCircle size={46} strokeWidth={2.4} />
               </div>
-              <div className="text-xs text-tertiary">{form.route}</div>
             </div>
           </div>
-        </div>
-        <div className="flex gap-12 justify-center">
-          <button type="button" className="btn btn-outline flex-1" onClick={() => navigate('/customer/orders')}><Package size={16} /> View Orders</button>
-          <button type="button" className="btn btn-primary flex-1" onClick={() => { setSuccess(null); setStep(1); setForm(p => ({ ...p, package_description: '', package_weight: '', trip_id: '' })); setUseRegisteredReceiver(false); setUseRegisteredSender(false); }}><ArrowRight size={16} /> Book Another</button>
-        </div>
+
+          <div className="booking-success-copy-wrap" role="status" aria-live="polite">
+            <h2 id="booking-success-title" className="booking-success-title">Booking Confirmed</h2>
+            <p className="booking-success-subtitle">
+              Your shipment has been booked successfully.
+            </p>
+          </div>
+
+          <button type="button" className="btn booking-success-continue" onClick={() => navigate(orderPath)}>
+            Continue
+          </button>
+        </section>
       </div>
-    </div>
-  );
+    );
+  }
 
   const steps = ['Route', 'Sender', 'Receiver', 'Package', 'Review'];
 

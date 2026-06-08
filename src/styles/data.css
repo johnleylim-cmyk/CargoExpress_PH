@@ -193,6 +193,7 @@
   text-align: center;
   line-height: 1.2;
   max-width: 80px;
+  min-width: 0;
   overflow-wrap: anywhere;
 }
 .status-timeline-step.completed .status-timeline-label {

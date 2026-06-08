@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { normalizeProfileAddressFields } from '../../lib/address';
 import {
   Container, Eye, EyeOff, Loader, Check, ArrowRight, ArrowLeft,
   AlertTriangle, User, Mail, Phone, Lock, MapPin, MessageSquare,
@@ -99,15 +100,16 @@ const RegisterPage = () => {
     setError('');
     setLoading(true);
     try {
+      const normalizedAddress = normalizeProfileAddressFields(form);
       const result = await register(form.email, form.password, {
         name:             form.name,
         phone:            form.phone,
         facebook_name:    form.facebook_name,
-        address_province: form.address_province,
-        address_city:     form.address_city,
-        address_barangay: form.address_barangay,
-        address_street:   form.address_street,
-        address_lot_block:form.address_lot_block,
+        address_province: normalizedAddress.address_province,
+        address_city:     normalizedAddress.address_city,
+        address_barangay: normalizedAddress.address_barangay,
+        address_street:   normalizedAddress.address_street,
+        address_lot_block:normalizedAddress.address_lot_block,
       });
       setLoading(false);
       if (result.success) {

@@ -17,11 +17,9 @@ const ForgotPasswordPage = () => {
   const [countdown, setCountdown] = useState(0);
   const { resetPassword } = useAuth();
   const timerRef  = useRef(null);
-  const inputRef  = useRef(null);
 
-  // Focus email input on mount
+  // Clear resend countdown timer when leaving the screen.
   useEffect(() => {
-    inputRef.current?.focus();
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, []);
 
@@ -117,7 +115,6 @@ const ForgotPasswordPage = () => {
                 <div className="form-input-wrapper">
                   <Mail size={15} className="form-input-icon" aria-hidden="true" />
                   <input
-                    ref={inputRef}
                     id="forgot-email"
                     type="email"
                     className="form-input form-input-icon-left"

@@ -107,19 +107,11 @@ const LoginPage = () => {
   const [isTyping,    setIsTyping]    = useState(false);
   const [chatClosing, setChatClosing] = useState(false);
   const messagesEndRef                = useRef(null);
-  const chatInputRef                  = useRef(null);
   const liveRegionRef                 = useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
-
-  // Focus chat input when chat starts
-  useEffect(() => {
-    if (chatStarted && chatOpen) {
-      setTimeout(() => chatInputRef.current?.focus(), 100);
-    }
-  }, [chatStarted, chatOpen]);
 
   // ── Login handler ────────────────────────────────────────────────────────
   const handleLogin = async (e) => {
@@ -451,7 +443,6 @@ const LoginPage = () => {
                       value={chatName}
                       onChange={e => setChatName(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && startChat()}
-                      autoFocus
                       autoComplete="given-name"
                     />
                     <button
@@ -583,7 +574,6 @@ const LoginPage = () => {
                 {/* Input */}
                 <div className="chatbox-input">
                   <input
-                    ref={chatInputRef}
                     className="chat-input"
                     placeholder="Type a message…"
                     value={chatInput}

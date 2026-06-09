@@ -36,3 +36,9 @@
 
 /* ── 8. Premium Product Refresh ── */
 @import './premium-refresh.css';
+
+/* Customer mobile app refresh */
+@import './customer-mobile-refresh.css';
+
+/* Admin mobile app refresh */
+@import './admin-modern-refresh.css';

@@ -117,6 +117,29 @@ const HomePage = () => {
         </form>
       </div>
 
+      {!loading && (
+        <StaggerItem delay={30} className="customer-home-snapshot">
+          <div className="customer-snapshot-pill">
+            <div className="customer-snapshot-value">
+              <Package size={16} /> {orders.length}
+            </div>
+            <div className="customer-snapshot-label">Total orders</div>
+          </div>
+          <div className="customer-snapshot-pill">
+            <div className="customer-snapshot-value">
+              <Truck size={16} /> {activeOrders.length}
+            </div>
+            <div className="customer-snapshot-label">Active now</div>
+          </div>
+          <div className="customer-snapshot-pill">
+            <div className="customer-snapshot-value">
+              <Weight size={16} /> {activeTrip ? availableSlots.toFixed(0) : 0}
+            </div>
+            <div className="customer-snapshot-label">kg slots</div>
+          </div>
+        </StaggerItem>
+      )}
+
       {/* ── Loading Skeleton ─────────────────────────────────────── */}
       {loading && (
         <div>
@@ -239,15 +262,20 @@ const HomePage = () => {
             <StaggerItem key={order.id} delay={(index + 2) * 60} className="mb-12">
               <Link to={`/customer/orders/${order.id}`} className="customer-shipment-card card card-interactive block text-no-underline" style={{ color: 'inherit' }}>
                 <div className="card-body p-16">
-                  <div className="flex items-center justify-between mb-8">
-                    <span className="fw-700 text-accent" style={{ fontSize: '0.9375rem' }}>{order.tracking_number}</span>
-                    <StatusBadge status={order.status} />
+                  <div className="customer-list-card-top">
+                    <span className="customer-list-card-title">{order.tracking_number}</span>
+                    <div className="flex items-center gap-8">
+                      <StatusBadge status={order.status} />
+                      <ChevronRight size={18} className="customer-card-chevron" />
+                    </div>
                   </div>
-                  <div className="text-sm text-secondary">
-                    {order.origin || '—'} → {order.destination || '—'}
+                  <div className="customer-list-card-route">
+                    <MapPin size={14} />
+                    <span>{order.origin || 'Not set'} to {order.destination || 'Not set'}</span>
                   </div>
-                  <div className="text-xs text-tertiary mt-4">
-                    {order.receiver_name} • ₱{parseFloat(order.shipping_cost || 0).toFixed(2)}
+                  <div className="customer-list-card-footer">
+                    <span>To: {order.receiver_name || 'Receiver'}</span>
+                    <span className="customer-list-card-price">PHP {parseFloat(order.shipping_cost || 0).toFixed(2)}</span>
                   </div>
                 </div>
               </Link>

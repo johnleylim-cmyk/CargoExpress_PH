@@ -109,8 +109,8 @@ const OrderDetailPage = () => {
   const hasPhotos = resolvedPickupPhotos.length > 0;
 
   return (
-    <div className="page-transition">
-      <button onClick={() => navigate(-1)} className="btn btn-ghost mb-16">
+    <div className="page-transition customer-order-detail-screen">
+      <button onClick={() => navigate(-1)} className="btn btn-ghost customer-back-action mb-16">
         <ArrowLeft size={18} /> Back
       </button>
 

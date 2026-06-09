@@ -7,7 +7,7 @@ import { SkeletonOrderCard } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
 import PageTransition, { StaggerItem } from '../../components/ui/PageTransition';
 import ResponsiveFilterControls from '../../components/ui/ResponsiveFilterControls';
-import { Search, Package, AlertCircle } from 'lucide-react';
+import { Search, Package, AlertCircle, MapPin, ChevronRight } from 'lucide-react';
 
 const tabs = ['All', 'Pending', 'In Transit', 'Delivered', 'Cancelled'];
 
@@ -106,14 +106,20 @@ const OrdersPage = () => {
           <StaggerItem key={order.id} delay={(index + 2) * 60} className="mb-12">
             <Link to={`/customer/orders/${order.id}`} className="customer-order-list-card card card-interactive block text-no-underline" style={{ color: 'inherit' }}>
               <div className="card-body p-16">
-                <div className="flex items-center justify-between mb-6">
-                  <span className="fw-700 text-accent">{order.tracking_number}</span>
-                  <StatusBadge status={order.status} size="sm" />
+                <div className="customer-list-card-top">
+                  <span className="customer-list-card-title">{order.tracking_number}</span>
+                  <div className="flex items-center gap-8">
+                    <StatusBadge status={order.status} size="sm" />
+                    <ChevronRight size={18} className="customer-card-chevron" />
+                  </div>
                 </div>
-                <div className="text-sm text-secondary">{order.origin} → {order.destination}</div>
-                <div className="flex items-center justify-between mt-8">
-                  <span className="text-xs text-tertiary">To: {order.receiver_name}</span>
-                  <span className="text-sm font-bold">₱{parseFloat(order.shipping_cost || 0).toFixed(2)}</span>
+                <div className="customer-list-card-route">
+                  <MapPin size={14} />
+                  <span>{order.origin || 'Not set'} to {order.destination || 'Not set'}</span>
+                </div>
+                <div className="customer-list-card-footer">
+                  <span>To: {order.receiver_name || 'Receiver'}</span>
+                  <span className="customer-list-card-price">PHP {parseFloat(order.shipping_cost || 0).toFixed(2)}</span>
                 </div>
               </div>
             </Link>

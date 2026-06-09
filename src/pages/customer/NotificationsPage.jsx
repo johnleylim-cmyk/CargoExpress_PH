@@ -79,8 +79,8 @@ const NotificationsPage = () => {
   const groups = groupByDate(notifications);
 
   return (
-    <div className="page-transition">
-      <div className="section-header mb-20">
+    <div className="page-transition customer-notifications-page">
+      <div className="section-header customer-mobile-heading mb-20">
         <div>
           <h2 className="fw-800 flex items-center gap-8">
             Notifications

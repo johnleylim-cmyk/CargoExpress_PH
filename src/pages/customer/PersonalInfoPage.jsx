@@ -108,8 +108,8 @@ const PersonalInfoPage = () => {
   };
 
   return (
-    <div className="animate-slide-up">
-      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost mb-16">
+    <div className="animate-slide-up customer-personal-info-page">
+      <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost customer-back-action mb-16">
         <ArrowLeft size={18} /> Back
       </button>
       <h2 className="fw-800 mb-20">Personal Information</h2>

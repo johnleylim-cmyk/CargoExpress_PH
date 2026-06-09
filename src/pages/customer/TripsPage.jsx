@@ -4,7 +4,18 @@ import { getTrips } from '../../lib/database';
 import StatusBadge from '../../components/ui/StatusBadge';
 import { SkeletonOrderCard } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
-import { MapPin, Calendar, Truck, AlertCircle } from 'lucide-react';
+import { Calendar, Truck, AlertCircle, ChevronRight } from 'lucide-react';
+
+const formatTripDate = (value) => {
+  if (!value) return { month: 'TBD', day: '--', full: 'Date not set' };
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return { month: 'TBD', day: '--', full: 'Date not set' };
+  return {
+    month: date.toLocaleDateString('en-PH', { month: 'short' }).toUpperCase(),
+    day: date.toLocaleDateString('en-PH', { day: 'numeric' }),
+    full: date.toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' }),
+  };
+};
 
 const TripsPage = () => {
   const navigate = useNavigate();
@@ -23,8 +34,14 @@ const TripsPage = () => {
   }, []);
 
   return (
-    <div className="page-transition">
-      <h2 className="fw-800 mb-20">Available Trips</h2>
+    <div className="page-transition customer-trips-page">
+      <div className="customer-page-heading">
+        <div>
+          <h2 className="fw-800 mb-4">Available Trips</h2>
+          <p className="text-sm text-secondary">Choose a route and reserve cargo space fast.</p>
+        </div>
+        {!loading && <span className="badge badge-success">{trips.length} active</span>}
+      </div>
 
       {loading ? (
         <div>
@@ -52,24 +69,42 @@ const TripsPage = () => {
           />
         </div>
       ) : (
-        trips.map((trip, index) => (
-          <div key={trip.id} className="card card-interactive stagger-item mb-12" style={{ animationDelay: `${index * 60}ms` }}
-            onClick={() => navigate('/customer/book', { state: { preselectedRoute: `${trip.origin} → ${trip.destination}`, preselectedTripId: trip.id } })}>
-            <div className="card-body p-16">
-              <div className="flex items-center justify-between mb-8">
-                <span className="fw-700 text-accent">{trip.trip_number}</span>
-                <StatusBadge status={trip.status} size="sm" />
+        trips.map((trip, index) => {
+          const tripDate = formatTripDate(trip.departure_date);
+          return (
+            <button
+              key={trip.id}
+              type="button"
+              className="customer-trip-list-card card card-interactive stagger-item mb-12"
+              style={{ animationDelay: `${index * 60}ms` }}
+              onClick={() => navigate('/customer/book', { state: { preselectedRoute: `${trip.origin} → ${trip.destination}`, preselectedTripId: trip.id } })}
+            >
+              <div className="card-body p-16">
+                <div className="customer-trip-row">
+                  <div className="customer-trip-date-badge">
+                    <span>{tripDate.month}</span>
+                    <strong>{tripDate.day}</strong>
+                  </div>
+                  <div>
+                    <div className="customer-list-card-top mb-6">
+                      <span className="customer-list-card-title">{trip.origin} to {trip.destination}</span>
+                      <StatusBadge status={trip.status} size="sm" />
+                    </div>
+                    <div className="customer-list-card-meta mb-4">
+                      <Truck size={14} />
+                      <span>{trip.trip_number}</span>
+                    </div>
+                    <div className="customer-list-card-route">
+                      <Calendar size={14} />
+                      <span>{tripDate.full}</span>
+                    </div>
+                  </div>
+                  <ChevronRight size={18} className="customer-card-chevron" />
+                </div>
               </div>
-              <div className="flex items-center gap-sm text-sm mb-4">
-                <MapPin size={14} className="text-primary" />{trip.origin} → {trip.destination}
-              </div>
-              <div className="flex items-center gap-sm text-xs text-secondary">
-                <Calendar size={14} />{new Date(trip.departure_date).toLocaleDateString()}
-              </div>
-
-            </div>
-          </div>
-        ))
+            </button>
+          );
+        })
       )}
     </div>
   );

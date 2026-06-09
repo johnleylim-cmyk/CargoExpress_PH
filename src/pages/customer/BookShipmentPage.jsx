@@ -26,6 +26,14 @@ const formatBookingTripDate = (value) => {
   return date.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
+const formatBookingTripOption = (trip) => {
+  const date = trip.departure_date ? new Date(trip.departure_date) : null;
+  const dateLabel = date && !Number.isNaN(date.getTime())
+    ? date.toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })
+    : 'Date TBD';
+  return `${trip.trip_number} - ${dateLabel}`;
+};
+
 const BookShipmentPage = () => {
   const { user, userProfile } = useAuth();
   const navigate = useNavigate();
@@ -279,7 +287,7 @@ const BookShipmentPage = () => {
 
   return (
     <div className="page-transition booking-page">
-      <button type="button" onClick={() => step > 1 ? setStep(step - 1) : navigate(-1)} className="btn btn-ghost mb-16">
+      <button type="button" onClick={() => step > 1 ? setStep(step - 1) : navigate(-1)} className="btn btn-ghost customer-back-action mb-16">
         <ArrowLeft size={18} /> {step > 1 ? 'Back' : 'Cancel'}
       </button>
       <h2 className="fw-800 mb-8">Book Shipment</h2>
@@ -328,10 +336,26 @@ const BookShipmentPage = () => {
           {form.route && filteredTrips.length > 0 && (
             <div className="mt-16">
               <label className="form-label" htmlFor="booking-trip">Select Trip (Optional)</label>
-              <select id="booking-trip" className="form-select" value={form.trip_id} onChange={e => u('trip_id', e.target.value)}>
+              <select id="booking-trip" className="form-select booking-trip-select" value={form.trip_id} onChange={e => u('trip_id', e.target.value)}>
                 <option value="">No specific trip</option>
-                {filteredTrips.map(t => <option key={t.id} value={t.id}>{t.trip_number} - {formatBookingTripDate(t.departure_date)} - PHP {parseFloat(t.price_per_kg || pricePerKilo).toFixed(2)}/kg</option>)}
+                {filteredTrips.map(t => <option key={t.id} value={t.id}>{formatBookingTripOption(t)}</option>)}
               </select>
+              {selectedTrip && (
+                <div className="booking-trip-preview">
+                  <div>
+                    <span>Selected trip</span>
+                    <strong>{selectedTrip.trip_number}</strong>
+                  </div>
+                  <div>
+                    <span>Departure</span>
+                    <strong>{formatBookingTripDate(selectedTrip.departure_date)}</strong>
+                  </div>
+                  <div>
+                    <span>Rate</span>
+                    <strong>PHP {parseFloat(selectedTrip.price_per_kg || pricePerKilo).toFixed(2)}/kg</strong>
+                  </div>
+                </div>
+              )}
             </div>
           )}
           <button type="button" className="btn btn-primary btn-lg w-full mt-lg justify-center" disabled={!form.route} onClick={() => setStep(2)}>Continue</button>

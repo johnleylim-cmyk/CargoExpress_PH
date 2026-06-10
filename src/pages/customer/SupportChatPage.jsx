@@ -5,6 +5,7 @@ import { getOrCreateConversation, getMessages, sendMessage } from '../../lib/dat
 import { Send, Bot, Loader, MessageSquare } from 'lucide-react';
 import EmptyState from '../../components/ui/EmptyState';
 import { useToast } from '../../hooks/useToast';
+import { SkeletonChat } from '../../components/ui/SkeletonLoader';
 
 const formatTime = (ts) => {
   if (!ts) return '';
@@ -78,9 +79,14 @@ const SupportChatPage = () => {
 
   if (loading) {
     return (
-      <div className="page-transition flex flex-col items-center justify-center" style={{ minHeight: 300 }}>
-        <div className="spinner" />
-        <p className="text-secondary text-sm mt-12">Loading chat...</p>
+      <div
+        className="page-transition support-chat-page"
+        role="status"
+        aria-live="polite"
+        aria-busy="true"
+      >
+        <span className="sr-only">Loading support chat...</span>
+        <SkeletonChat />
       </div>
     );
   }

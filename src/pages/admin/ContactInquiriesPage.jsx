@@ -59,6 +59,14 @@ const ContactInquiriesPage = () => {
     }
   };
 
+  const handleInquiryRowKeyDown = (event, inquiry) => {
+    if (event.target.closest('button, a, input, select, textarea')) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleView(inquiry);
+    }
+  };
+
   const filtered = filter === 'all'
     ? inquiries
     : inquiries.filter(i => i.status === filter);
@@ -149,11 +157,15 @@ const ContactInquiriesPage = () => {
                   return (
                     <tr
                       key={inq.id}
-                      className="cursor-pointer"
+                      className="clickable"
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`View inquiry from ${inq.name}`}
                       style={{
                         background: inq.status === 'new' ? 'var(--warning-bg)' : undefined,
                       }}
                       onClick={() => handleView(inq)}
+                      onKeyDown={event => handleInquiryRowKeyDown(event, inq)}
                     >
                       <td data-label="Name">
                         <div className="flex items-center gap-8">

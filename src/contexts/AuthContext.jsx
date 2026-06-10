@@ -122,10 +122,10 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      setLoading(true);
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       
+      setLoading(true);
       // Await profile strictly so it doesn't navigate back to login due to empty profile
       await fetchProfile(data.user.id);
       return { success: true, user: data.user };
@@ -135,7 +135,7 @@ export const AuthProvider = ({ children }) => {
       // Map Supabase generic error to user-friendly messages
       if (msg.toLowerCase().includes('invalid login credentials') ||
           msg.toLowerCase().includes('invalid login')) {
-        msg = 'Incorrect password or no account found with this email.';
+        msg = 'Incorrect password or email.';
       } else if (msg.toLowerCase().includes('email not confirmed')) {
         msg = 'Your email is not confirmed. Please check your inbox.';
       } else if (msg.toLowerCase().includes('rate limit') ||

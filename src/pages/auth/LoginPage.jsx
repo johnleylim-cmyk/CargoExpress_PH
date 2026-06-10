@@ -2,19 +2,23 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import {
-  Container, Eye, EyeOff, Loader, ArrowRight,
+  Container, Eye, EyeOff,
   MessageCircle, Send, X, Bot, Package,
   DollarSign, Ship, Search, Zap, AlertTriangle,
   Mail, Lock, RefreshCw,
-  ChevronRight, Sparkles,
+  Sparkles,
 } from 'lucide-react';
 
 // ── Error mapper ─────────────────────────────────────────────────────────────
+const INVALID_CREDENTIALS_ERROR = 'Incorrect password or email.';
+
 const getFriendlyError = (msg) => {
   if (!msg) return 'An unexpected error occurred. Please try again.';
   const m = msg.toLowerCase();
   if (m.includes('invalid login') || m.includes('invalid credentials'))
-    return 'Incorrect password or no account found with this email.';
+    return INVALID_CREDENTIALS_ERROR;
+  if (m.includes('incorrect password') || m.includes('no account'))
+    return INVALID_CREDENTIALS_ERROR;
   if (m.includes('email not confirmed'))
     return 'Your email is not confirmed. Please check your inbox.';
   if (m.includes('too many') || m.includes('rate limit'))
@@ -22,8 +26,37 @@ const getFriendlyError = (msg) => {
   if (m.includes('network') || m.includes('fetch'))
     return 'Network error. Please check your connection.';
   if (m.includes('invalid'))
-    return 'Incorrect password or no account found with this email.';
+    return INVALID_CREDENTIALS_ERROR;
   return msg;
+};
+
+const isEmailValid = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+
+const getLoginErrorPlacement = (msg) => {
+  const friendly = getFriendlyError(msg);
+  const lower = friendly.toLowerCase();
+
+  if (friendly === INVALID_CREDENTIALS_ERROR) {
+    return {
+      fieldErrors: { email: '', password: '' },
+      loginError: INVALID_CREDENTIALS_ERROR,
+      credentialError: true,
+    };
+  }
+
+  if (lower.includes('email is not confirmed')) {
+    return {
+      fieldErrors: { email: friendly, password: '' },
+      loginError: friendly,
+      credentialError: false,
+    };
+  }
+
+  return {
+    fieldErrors: { email: '', password: '' },
+    loginError: friendly,
+    credentialError: false,
+  };
 };
 
 // ── Chatbot engine ────────────────────────────────────────────────────────────
@@ -95,6 +128,8 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError]     = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
+  const [fieldErrors, setFieldErrors]   = useState({ email: '', password: '' });
+  const [credentialErrorActive, setCredentialErrorActive] = useState(false);
   const { login }  = useAuth();
   const navigate   = useNavigate();
 
@@ -108,29 +143,95 @@ const LoginPage = () => {
   const [chatClosing, setChatClosing] = useState(false);
   const messagesEndRef                = useRef(null);
   const liveRegionRef                 = useRef(null);
+  const loginErrorTimerRef            = useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
+  useEffect(() => () => {
+    if (loginErrorTimerRef.current) clearTimeout(loginErrorTimerRef.current);
+  }, []);
+
   // ── Login handler ────────────────────────────────────────────────────────
+  const clearLoginErrorTimer = () => {
+    if (loginErrorTimerRef.current) {
+      clearTimeout(loginErrorTimerRef.current);
+      loginErrorTimerRef.current = null;
+    }
+  };
+
+  const showLoginAlert = (message, isCredentialError = false) => {
+    clearLoginErrorTimer();
+    setLoginError(message);
+    setCredentialErrorActive(isCredentialError);
+
+    if (message) {
+      loginErrorTimerRef.current = setTimeout(() => {
+        setLoginError('');
+        setCredentialErrorActive(false);
+        loginErrorTimerRef.current = null;
+      }, 5000);
+    }
+  };
+
+  const clearLoginFieldError = (field) => {
+    clearLoginErrorTimer();
+    setLoginError('');
+    setCredentialErrorActive(false);
+    setFieldErrors(prev => {
+      if (!prev[field]) return prev;
+      return { ...prev, [field]: '' };
+    });
+  };
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    clearLoginFieldError('email');
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    clearLoginFieldError('password');
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
+    clearLoginErrorTimer();
     setLoginError('');
-    if (!email.trim() || !password.trim()) {
-      setLoginError('Please enter a valid email and password.');
+    setCredentialErrorActive(false);
+    setFieldErrors({ email: '', password: '' });
+
+    const nextFieldErrors = { email: '', password: '' };
+    if (!email.trim()) {
+      nextFieldErrors.email = 'Email address is required.';
+    } else if (!isEmailValid(email)) {
+      nextFieldErrors.email = 'Please enter a valid email address.';
+    }
+
+    if (!password.trim()) {
+      nextFieldErrors.password = 'Password is required.';
+    }
+
+    if (nextFieldErrors.email || nextFieldErrors.password) {
+      setFieldErrors(nextFieldErrors);
       return;
     }
+
     setLoginLoading(true);
     try {
       const result = await login(email.trim(), password);
       if (result.success) {
         navigate('/');
       } else {
-        setLoginError(getFriendlyError(result.error));
+        const nextError = getLoginErrorPlacement(result.error);
+        setFieldErrors(nextError.fieldErrors);
+        showLoginAlert(nextError.loginError, nextError.credentialError);
       }
     } catch (err) {
-      setLoginError(getFriendlyError(err?.message));
+      const nextError = getLoginErrorPlacement(err?.message);
+      setFieldErrors(nextError.fieldErrors);
+      showLoginAlert(nextError.loginError, nextError.credentialError);
     } finally {
       setLoginLoading(false);
     }
@@ -194,6 +295,9 @@ const LoginPage = () => {
       setChatOpen(true);
     }
   };
+
+  const emailHasError = !!fieldErrors.email || credentialErrorActive;
+  const passwordHasError = !!fieldErrors.password || credentialErrorActive;
 
   return (
     <div className="login-split-page">
@@ -303,15 +407,20 @@ const LoginPage = () => {
                 <input
                   id="login-email"
                   type="email"
-                  className="form-input form-input-icon-left"
+                  className={`form-input form-input-icon-left ${emailHasError ? 'error' : ''}`}
                   placeholder="your@email.com"
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
                   required
                   autoComplete="email"
                   aria-required="true"
+                  aria-invalid={emailHasError}
+                  aria-describedby={fieldErrors.email ? 'login-email-error' : undefined}
                 />
               </div>
+              {fieldErrors.email && (
+                <p className="form-error" id="login-email-error">{fieldErrors.email}</p>
+              )}
             </div>
 
             {/* Password */}
@@ -327,13 +436,15 @@ const LoginPage = () => {
                 <input
                   id="login-password"
                   type={showPassword ? 'text' : 'password'}
-                  className="form-input form-input-icon-left form-input-icon-right"
+                  className={`form-input form-input-icon-left form-input-icon-right ${passwordHasError ? 'error' : ''}`}
                   placeholder="Enter your password"
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  onChange={handlePasswordChange}
                   required
                   autoComplete="current-password"
                   aria-required="true"
+                  aria-invalid={passwordHasError}
+                  aria-describedby={fieldErrors.password ? 'login-password-error' : undefined}
                 />
                 <button
                   type="button"
@@ -345,6 +456,9 @@ const LoginPage = () => {
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+              {fieldErrors.password && (
+                <p className="form-error" id="login-password-error">{fieldErrors.password}</p>
+              )}
             </div>
 
             <button
@@ -353,21 +467,18 @@ const LoginPage = () => {
               disabled={loginLoading}
               aria-busy={loginLoading}
             >
-              {loginLoading
-                ? <><Loader size={17} className="animate-spin" /> Signing in…</>
-                : <><ArrowRight size={17} /> Sign In</>
-              }
+              {loginLoading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
           {/* Divider */}
           <div className="login-divider">
-            <span>New to CargoExpress?</span>
+            <span>Don't have an account?</span>
           </div>
 
           {/* Sign up */}
           <Link to="/register" className="login-signup-btn">
-            Create a free account <ChevronRight size={15} />
+            Create account
           </Link>
 
 

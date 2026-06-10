@@ -64,8 +64,14 @@
   border: 1px solid var(--border-light);
   background: var(--surface);
   transition: var(--transition);
-  cursor: pointer;
+  cursor: default;
   margin-bottom: 8px;
+  width: 100%;
+  color: inherit;
+  text-align: left;
+}
+.notification-card-action {
+  cursor: pointer;
 }
 .notification-card:hover {
   border-color: var(--border);
@@ -2024,4 +2030,3 @@
     text-align: left;
   }
 }
-

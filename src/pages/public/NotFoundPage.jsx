@@ -23,7 +23,7 @@ const NotFoundPage = () => (
         <span className="nf-code-4b">4</span>
       </h1>
 
-      <h2 className="not-found-title">Shipment Not Found</h2>
+      <h2 className="not-found-title">Page Not Found</h2>
       <p className="not-found-text">
         Looks like this package got lost in transit. The page you're looking for
         doesn't exist, has been moved, or is temporarily unavailable.

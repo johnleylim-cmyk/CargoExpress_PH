@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { X, ZoomIn, ZoomOut, RotateCw, ChevronLeft, ChevronRight } from 'lucide-react';
+import FocusTrap from './FocusTrap';
 
 /**
  * ImageLightbox — Full-screen image viewer with zoom, pan, pinch, and swipe.
@@ -144,6 +145,7 @@ const ImageLightbox = ({ images = [], initialIndex = 0, onClose }) => {
   if (!images.length) return null;
 
   return (
+    <FocusTrap active>
     <div
       className="lightbox-overlay"
       ref={containerRef}
@@ -155,24 +157,26 @@ const ImageLightbox = ({ images = [], initialIndex = 0, onClose }) => {
       onTouchEnd={handleTouchEnd}
       role="dialog"
       aria-modal="true"
-      aria-label="Image viewer"
+      aria-labelledby="image-lightbox-title"
+      aria-describedby={images.length > 1 ? 'image-lightbox-counter' : undefined}
     >
+      <h2 id="image-lightbox-title" className="sr-only">Image viewer</h2>
       {/* Top bar */}
       <div className="lightbox-toolbar">
-        <span className="lightbox-counter">
+        <span className="lightbox-counter" id="image-lightbox-counter" aria-live="polite">
           {images.length > 1 ? `${index + 1} / ${images.length}` : ''}
         </span>
         <div className="lightbox-actions">
-          <button onClick={() => setScale(s => Math.min(s + 0.5, 5))} title="Zoom in" type="button">
+          <button onClick={() => setScale(s => Math.min(s + 0.5, 5))} title="Zoom in" aria-label="Zoom in image" type="button">
             <ZoomIn size={18} />
           </button>
-          <button onClick={() => setScale(s => Math.max(s - 0.5, 0.5))} title="Zoom out" type="button">
+          <button onClick={() => setScale(s => Math.max(s - 0.5, 0.5))} title="Zoom out" aria-label="Zoom out image" type="button">
             <ZoomOut size={18} />
           </button>
-          <button onClick={() => setRotation(r => r + 90)} title="Rotate" type="button">
+          <button onClick={() => setRotation(r => r + 90)} title="Rotate" aria-label="Rotate image" type="button">
             <RotateCw size={18} />
           </button>
-          <button onClick={onClose} title="Close" type="button">
+          <button onClick={onClose} title="Close" aria-label="Close image viewer" type="button">
             <X size={20} />
           </button>
         </div>
@@ -180,12 +184,12 @@ const ImageLightbox = ({ images = [], initialIndex = 0, onClose }) => {
 
       {/* Navigation arrows */}
       {images.length > 1 && index > 0 && (
-        <button className="lightbox-nav lightbox-prev" onClick={() => goTo(-1)} type="button">
+        <button className="lightbox-nav lightbox-prev" onClick={() => goTo(-1)} type="button" aria-label="Previous image">
           <ChevronLeft size={28} />
         </button>
       )}
       {images.length > 1 && index < images.length - 1 && (
-        <button className="lightbox-nav lightbox-next" onClick={() => goTo(1)} type="button">
+        <button className="lightbox-nav lightbox-next" onClick={() => goTo(1)} type="button" aria-label="Next image">
           <ChevronRight size={28} />
         </button>
       )}
@@ -200,7 +204,7 @@ const ImageLightbox = ({ images = [], initialIndex = 0, onClose }) => {
       >
         <img
           src={images[index]}
-          alt={`Image ${index + 1}`}
+          alt={`Image ${index + 1} of ${images.length}`}
           className="lightbox-image"
           style={{
             transform: `translate(${position.x}px, ${position.y}px) scale(${scale}) rotate(${rotation}deg)`,
@@ -219,6 +223,8 @@ const ImageLightbox = ({ images = [], initialIndex = 0, onClose }) => {
               className={`lightbox-thumb ${i === index ? 'active' : ''}`}
               onClick={() => { setIndex(i); resetTransform(); }}
               type="button"
+              aria-label={`View image ${i + 1} of ${images.length}`}
+              aria-current={i === index ? 'true' : undefined}
             >
               <img src={src} alt={`Thumbnail ${i + 1}`} />
             </button>
@@ -226,6 +232,7 @@ const ImageLightbox = ({ images = [], initialIndex = 0, onClose }) => {
         </div>
       )}
     </div>
+    </FocusTrap>
   );
 };
 

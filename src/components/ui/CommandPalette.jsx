@@ -4,6 +4,7 @@ import {
   Search, LayoutDashboard, Package, Truck, Users, BarChart3,
   Megaphone, MessageSquare, Settings, FileText, Mail
 } from 'lucide-react';
+import FocusTrap from './FocusTrap';
 
 const COMMANDS = [
   { label: 'Dashboard', to: '/admin', icon: LayoutDashboard, section: 'Navigation', keywords: 'home overview stats' },
@@ -40,6 +41,9 @@ const CommandPalette = ({ isOpen, onClose }) => {
   });
 
   const flatFiltered = filtered;
+  const activeDescendantId = flatFiltered[highlightedIndex]
+    ? `cmd-palette-option-${highlightedIndex}`
+    : undefined;
 
   const selectCommand = useCallback((cmd) => {
     navigate(cmd.to);
@@ -69,6 +73,13 @@ const CommandPalette = ({ isOpen, onClose }) => {
   }, [highlightedIndex]);
 
   const handleKeyDown = (e) => {
+    const isCommandButton = e.target.closest('.cmd-palette-item');
+
+    if (!flatFiltered.length && ['ArrowDown', 'ArrowUp', 'Enter'].includes(e.key)) {
+      e.preventDefault();
+      return;
+    }
+
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       setHighlightedIndex(prev => Math.min(prev + 1, flatFiltered.length - 1));
@@ -76,6 +87,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
       e.preventDefault();
       setHighlightedIndex(prev => Math.max(prev - 1, 0));
     } else if (e.key === 'Enter' && flatFiltered[highlightedIndex]) {
+      if (isCommandButton) return;
       e.preventDefault();
       selectCommand(flatFiltered[highlightedIndex]);
     } else if (e.key === 'Escape') {
@@ -88,8 +100,17 @@ const CommandPalette = ({ isOpen, onClose }) => {
   let itemIndex = -1;
 
   return (
+    <FocusTrap active>
     <div className="cmd-palette-overlay" onClick={onClose}>
-      <div className="cmd-palette" onClick={e => e.stopPropagation()} onKeyDown={handleKeyDown}>
+      <div
+        className="cmd-palette"
+        onClick={e => e.stopPropagation()}
+        onKeyDown={handleKeyDown}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cmd-palette-title"
+      >
+        <h2 id="cmd-palette-title" className="sr-only">Admin command palette</h2>
         {/* Search Input */}
         <div className="cmd-palette-input-wrap">
           <Search size={18} />
@@ -100,30 +121,47 @@ const CommandPalette = ({ isOpen, onClose }) => {
             value={query}
             onChange={e => setQuery(e.target.value)}
             autoComplete="off"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded="true"
+            aria-controls="cmd-palette-results"
+            aria-activedescendant={activeDescendantId}
+            aria-label="Search admin pages and actions"
             spellCheck={false}
           />
           <kbd className="cmd-palette-kbd">ESC</kbd>
         </div>
 
         {/* Results */}
-        <div className="cmd-palette-results" ref={resultsRef}>
+        <div
+          className="cmd-palette-results"
+          ref={resultsRef}
+          id="cmd-palette-results"
+          role="listbox"
+          aria-label="Admin command results"
+        >
           {flatFiltered.length === 0 ? (
             <div className="cmd-palette-empty">
               No results for "{query}"
             </div>
           ) : (
             Object.entries(sections).map(([section, items]) => (
-              <div key={section}>
+              <div key={section} role="group" aria-label={section}>
                 <div className="cmd-palette-section-label">{section}</div>
                 {items.map(cmd => {
                   itemIndex++;
                   const idx = itemIndex;
                   return (
                     <button
+                      type="button"
                       key={cmd.to}
+                      id={`cmd-palette-option-${idx}`}
                       className={`cmd-palette-item${idx === highlightedIndex ? ' highlighted' : ''}`}
                       onClick={() => selectCommand(cmd)}
                       onMouseEnter={() => setHighlightedIndex(idx)}
+                      onFocus={() => setHighlightedIndex(idx)}
+                      role="option"
+                      aria-selected={idx === highlightedIndex}
                     >
                       <cmd.icon size={18} />
                       <span className="cmd-palette-item-label">{cmd.label}</span>
@@ -143,6 +181,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
         </div>
       </div>
     </div>
+    </FocusTrap>
   );
 };
 

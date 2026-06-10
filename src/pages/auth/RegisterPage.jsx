@@ -14,6 +14,16 @@ const toTitleCase = (str) =>
   str.replace(/\b\w/g, (char) => char.toUpperCase());
 
 const isPhoneValid = (phone) => /^09\d{9}$/.test(phone);
+const isEmailValid = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
+const getPasswordError = (password) => {
+  if (!password) return 'Password is required.';
+  if (password.length < 8) return 'Password must be at least 8 characters.';
+  if (!/[A-Z]/.test(password)) return 'Password must include an uppercase letter.';
+  if (!/[a-z]/.test(password)) return 'Password must include a lowercase letter.';
+  if (!/[0-9]/.test(password)) return 'Password must include a number.';
+  return '';
+};
 
 const getPasswordStrength = (pw) => {
   if (!pw) return { level: 0, label: '', color: '' };
@@ -53,6 +63,7 @@ const RegisterPage = () => {
   const [loading,       setLoading]       = useState(false);
   const [success,       setSuccess]       = useState(false);
   const topRef = useRef(null);
+  const errorRef = useRef(null);
 
   const { register } = useAuth();
   const navigate     = useNavigate();
@@ -66,6 +77,15 @@ const RegisterPage = () => {
     topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [step]);
 
+  const showError = (message) => {
+    setError(message);
+    requestAnimationFrame(() => {
+      const target = errorRef.current || topRef.current;
+      target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      errorRef.current?.focus({ preventScroll: true });
+    });
+  };
+
   const handleTitleCase = (key) => (e) => update(key, toTitleCase(e.target.value));
 
   const handlePhone = (e) => {
@@ -78,25 +98,35 @@ const RegisterPage = () => {
   };
 
   const goToStep2 = () => {
-    if (!form.name.trim() || !form.email.trim() || !form.password.trim())
-      return setError('Please fill in all required fields.');
+    if (!form.name.trim())
+      return showError('Full name is required.');
+    if (!form.email.trim())
+      return showError('Email address is required.');
+    if (!isEmailValid(form.email))
+      return showError('Please enter a valid email address.');
     if (form.phone && !isPhoneValid(form.phone))
-      return setError('Mobile number must be 11 digits starting with 09.');
-    if (pwStrength.level < 2)
-      return setError('Please choose a stronger password (at least Fair).');
+      return showError('Mobile number must be 11 digits starting with 09.');
+    const passwordError = getPasswordError(form.password);
+    if (passwordError)
+      return showError(passwordError);
+    if (!form.confirmPassword)
+      return showError('Please confirm your password.');
     if (form.password !== form.confirmPassword)
-      return setError('Passwords do not match.');
+      return showError('Passwords do not match.');
     setError('');
     setStep(2);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (form.password !== form.confirmPassword) return setError('Passwords do not match.');
-    if (form.password.length < 8)     return setError('Password must be at least 8 characters.');
-    if (!/[A-Z]/.test(form.password)) return setError('Password must include an uppercase letter.');
-    if (!/[a-z]/.test(form.password)) return setError('Password must include a lowercase letter.');
-    if (!/[0-9]/.test(form.password)) return setError('Password must include a number.');
+    if (!form.name.trim()) return showError('Full name is required.');
+    if (!form.email.trim()) return showError('Email address is required.');
+    if (!isEmailValid(form.email)) return showError('Please enter a valid email address.');
+    if (form.phone && !isPhoneValid(form.phone)) return showError('Mobile number must be 11 digits starting with 09.');
+    const passwordError = getPasswordError(form.password);
+    if (passwordError) return showError(passwordError);
+    if (!form.confirmPassword) return showError('Please confirm your password.');
+    if (form.password !== form.confirmPassword) return showError('Passwords do not match.');
     setError('');
     setLoading(true);
     try {
@@ -116,11 +146,11 @@ const RegisterPage = () => {
         setSuccess(true);
         setTimeout(() => navigate('/'), 1400);
       } else {
-        setError(result.error);
+        showError(result.error);
       }
     } catch (err) {
       setLoading(false);
-      setError(err.message || 'Registration failed. Please try again.');
+      showError(err.message || 'Registration failed. Please try again.');
     }
   };
 
@@ -186,7 +216,7 @@ const RegisterPage = () => {
 
         {/* ── Error banner ── */}
         {error && (
-          <div className="auth-error-banner" role="alert">
+          <div className="auth-error-banner" role="alert" tabIndex={-1} ref={errorRef}>
             <AlertTriangle size={15} />
             <span>{error}</span>
           </div>
@@ -348,6 +378,7 @@ const RegisterPage = () => {
                   {[
                     { test: form.password.length >= 8,       text: '8+ characters'       },
                     { test: /[A-Z]/.test(form.password),     text: 'Uppercase letter'     },
+                    { test: /[a-z]/.test(form.password),     text: 'Lowercase letter'     },
                     { test: /[0-9]/.test(form.password),     text: 'Number'               },
                   ].map((r, i) => (
                     <div key={i} className={`pw-rule ${r.test ? 'met' : ''}`}>

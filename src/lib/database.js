@@ -678,7 +678,8 @@ export const getDashboardStats = async () => {
     activeTripsResult,
     totalCustomersResult,
     inTransitResult,
-    awaitingPickupResult,
+    pickedUpResult,
+    deliveredOrdersResult,
     recentOrdersResult,
   ] = await Promise.allSettled([
     supabase.from('orders').select('*', { count: 'exact', head: true }),
@@ -687,6 +688,7 @@ export const getDashboardStats = async () => {
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'customer'),
     supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'In Transit'),
     supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'Picked Up'),
+    supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'Delivered'),
     supabase
       .from('orders')
       .select('id, tracking_number, status, created_at, profiles:user_id (name)')
@@ -704,7 +706,8 @@ export const getDashboardStats = async () => {
       activeTrips:    safeCount(activeTripsResult),
       totalCustomers: safeCount(totalCustomersResult),
       inTransit:      safeCount(inTransitResult),
-      awaitingPickup: safeCount(awaitingPickupResult),
+      pickedUp:       safeCount(pickedUpResult),
+      delivered:      safeCount(deliveredOrdersResult),
     },
     recentOrders:
       recentOrdersResult.status === 'fulfilled'

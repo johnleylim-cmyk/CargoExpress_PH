@@ -1491,8 +1491,8 @@ body {
   }
 
   .customer-main:has(.support-chat-page) {
-    padding-bottom: 16px !important;
-    scroll-padding-bottom: 16px !important;
+    padding-bottom: calc(94px + env(safe-area-inset-bottom, 0px)) !important;
+    scroll-padding-bottom: calc(94px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   .booking-page {

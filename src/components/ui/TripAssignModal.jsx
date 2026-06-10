@@ -46,11 +46,11 @@ const TripAssignModal = ({ order, onClose, onAssign }) => {
 
   return (
     <FocusTrap active>
-    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="trip-assign-title">
       <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 480 }}>
         <div className="modal-header">
-          <h3><Truck size={18} className="inline mr-8" />Assign to Trip</h3>
-          <button className="btn-icon btn-ghost" onClick={onClose}><X size={20} /></button>
+          <h3 id="trip-assign-title"><Truck size={18} className="inline mr-8" />Assign to Trip</h3>
+          <button className="btn-icon btn-ghost" onClick={onClose} aria-label="Close trip assignment"><X size={20} /></button>
         </div>
 
         <div className="modal-body">
@@ -83,13 +83,21 @@ const TripAssignModal = ({ order, onClose, onAssign }) => {
                 const overloadWeight = Math.max(0, orderWeight - availableWeight);
 
                 return (
-                  <div
+                  <button
+                    type="button"
                     key={trip.id}
                     onClick={() => setSelectedTrip(trip)}
+                    aria-pressed={isSelected}
+                    aria-label={`Select trip ${trip.trip_number}, ${trip.status}, ${(trip.current_weight || 0).toFixed(1)} of ${trip.capacity} kilograms used`}
                     style={{
+                      display: 'block',
+                      width: '100%',
                       padding: 14, borderRadius: 10, cursor: 'pointer',
                       border: `2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}`,
                       background: isSelected ? 'var(--primary-glow)' : 'var(--surface)',
+                      color: 'inherit',
+                      font: 'inherit',
+                      textAlign: 'left',
                       transition: 'all 0.2s ease',
                     }}
                   >
@@ -122,7 +130,7 @@ const TripAssignModal = ({ order, onClose, onAssign }) => {
                         Exceeds capacity by {overloadWeight.toFixed(1)} kg. Admin override allowed.
                       </div>
                     )}
-                  </div>
+                  </button>
                 );
               })}
             </div>

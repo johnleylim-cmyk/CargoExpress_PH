@@ -9,7 +9,7 @@ import PageTransition, { StaggerItem } from '../../components/ui/PageTransition'
 import {
   Package, Search, Plus, ArrowRight,
   Container, MapPin, Calendar, Weight, ChevronRight,
-  Truck,
+  Truck, CheckCircle,
 } from 'lucide-react';
 
 const HomePage = () => {
@@ -49,6 +49,7 @@ const HomePage = () => {
   };
 
   const activeOrders = orders.filter(o => !['Delivered', 'Cancelled'].includes(o.status));
+  const deliveredOrders = orders.filter(o => o.status === 'Delivered');
   const visibleAnnouncements = announcements.filter(a => {
     const title = (a.title || '').trim().toLowerCase();
     const content = (a.content || '').trim().toLowerCase();
@@ -133,9 +134,9 @@ const HomePage = () => {
           </div>
           <div className="customer-snapshot-pill">
             <div className="customer-snapshot-value">
-              <Weight size={16} /> {activeTrip ? availableSlots.toFixed(0) : 0}
+              <CheckCircle size={16} /> {deliveredOrders.length}
             </div>
-            <div className="customer-snapshot-label">kg slots</div>
+            <div className="customer-snapshot-label">Delivered orders</div>
           </div>
         </StaggerItem>
       )}

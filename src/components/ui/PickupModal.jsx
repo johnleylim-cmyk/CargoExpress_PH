@@ -273,44 +273,59 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrData.url)}`;
     
     return (
-      <div className="modal-overlay">
+      <FocusTrap active>
+      <div
+        className="modal-overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="gcash-payment-title"
+        aria-describedby="gcash-payment-status"
+      >
         <div className="modal text-center" style={{ maxWidth: 400 }}>
           <div className="modal-header">
-            <h3><Smartphone size={18} /> GCash Payment</h3>
-            <button className="btn-icon btn-ghost" onClick={() => { setQrData(null); setSaving(false); }}><X size={20} /></button>
+            <h3 id="gcash-payment-title"><Smartphone size={18} /> GCash Payment</h3>
+            <button
+              type="button"
+              className="btn-icon btn-ghost"
+              onClick={() => { setQrData(null); setSaving(false); }}
+              aria-label="Close GCash payment"
+            >
+              <X size={20} />
+            </button>
           </div>
           <div className="modal-body" style={{ padding: '30px 20px' }}>
             <h4 className="mb-16">Please ask customer to scan this QR</h4>
             <div style={{ background: 'var(--bg-secondary)', padding: 20, borderRadius: 16, display: 'inline-block', border: '2px solid var(--border)' }} className="mb-20">
-              <img src={qrUrl} alt="GCash QR" style={{ width: 250, height: 250 }} />
+              <img src={qrUrl} alt={`GCash payment QR code for order ${order.tracking_number}`} style={{ width: 250, height: 250 }} />
             </div>
             <div className="text-2xl fw-800 text-success mb-12">
               ₱{estimatedCost.toFixed(2)}
             </div>
-            <div className="flex items-center justify-center gap-8 text-secondary text-sm">
+            <div id="gcash-payment-status" className="flex items-center justify-center gap-8 text-secondary text-sm" role="status" aria-live="polite">
               <Loader size={16} className="animate-spin" />
               {pollStatus || 'Waiting for payment...'}
             </div>
             {error && (
-              <div className="text-error mt-16 text-sm">{error}</div>
+              <div className="text-error mt-16 text-sm" role="alert">{error}</div>
             )}
           </div>
           <div className="modal-footer justify-center">
-            <button className="btn btn-outline" onClick={() => { setQrData(null); setSaving(false); }}>Cancel & Try Another Method</button>
+            <button type="button" className="btn btn-outline" onClick={() => { setQrData(null); setSaving(false); }}>Cancel & Try Another Method</button>
           </div>
         </div>
       </div>
+      </FocusTrap>
     );
   }
 
   // ── Main View Render ──────────────────────────────────────────────────────
   return (
     <FocusTrap active>
-    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="pickup-modal-title">
       <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 560 }}>
         <div className="modal-header">
-          <h3><Package size={18} /> Pickup Processing</h3>
-          <button className="btn-icon btn-ghost" onClick={onClose}><X size={20} /></button>
+          <h3 id="pickup-modal-title"><Package size={18} /> Pickup Processing</h3>
+          <button type="button" className="btn-icon btn-ghost" onClick={onClose} aria-label="Close pickup processing"><X size={20} /></button>
         </div>
 
         <div className="modal-body">
@@ -334,7 +349,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
               background: 'var(--error-bg)', color: 'var(--error-dark)', padding: '10px 14px',
               borderRadius: 8, fontSize: '0.8125rem', marginBottom: 16,
               border: '1px solid var(--error)',
-            }}>
+            }} role="alert">
               {error}
             </div>
           )}
@@ -374,6 +389,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
                   type="button"
                   className={`btn ${form.payment_method === m ? 'btn-primary' : 'btn-outline'} btn-sm flex-1 justify-center text-capitalize`}
                   onClick={() => setForm(p => ({ ...p, payment_method: m }))}
+                  aria-pressed={form.payment_method === m}
                 >
                   {m === 'gcash' ? 'GCash' : m === 'paylater' ? 'Pay Later' : 'Cash'}
                 </button>
@@ -391,6 +407,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
                   type="button"
                     className={`btn ${form.payer_type === t ? 'btn-secondary' : 'btn-outline'} btn-sm flex-1 justify-center text-capitalize`}
                     onClick={() => setForm(p => ({ ...p, payer_type: t }))}
+                    aria-pressed={form.payer_type === t}
                 >
                   {t}
                 </button>
@@ -463,6 +480,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
                     type="button"
                     onClick={() => removePhoto(i)}
                     className="pickup-photo-remove-btn"
+                    aria-label={`Remove pickup proof photo ${i + 1}`}
                   >
                     <Trash2 size={12} />
                   </button>
@@ -472,6 +490,7 @@ const PickupModal = ({ order, onClose, onSave, pricePerKilo = 70 }) => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
+                  aria-label="Add pickup proof photo"
                   style={{
                     width: 90, height: 90, borderRadius: 8, border: '2px dashed var(--border)',
                     background: 'var(--bg-secondary)', display: 'flex', flexDirection: 'column',

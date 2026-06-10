@@ -126,12 +126,22 @@ const NotificationsPage = () => {
             <div className="notification-date-separator">{dateLabel}</div>
             {items.map((n, index) => {
               const Icon = iconMap[n.type] || Bell;
+              const isUnread = !n.is_read;
+              const CardTag = isUnread ? 'button' : 'article';
+              const cardProps = isUnread
+                ? {
+                    type: 'button',
+                    onClick: () => handleRead(n.id),
+                    'aria-label': `Mark notification as read: ${n.title}`,
+                  }
+                : {};
+
               return (
-                <div
+                <CardTag
                   key={n.id}
-                  className={`notification-card stagger-item ${!n.is_read ? 'unread' : ''}`}
+                  className={`notification-card stagger-item ${isUnread ? 'unread notification-card-action' : ''}`}
                   style={{ animationDelay: `${index * 40}ms` }}
-                  onClick={() => !n.is_read && handleRead(n.id)}
+                  {...cardProps}
                 >
                   <div className="notification-icon-wrap">
                     <Icon size={18} />
@@ -139,7 +149,7 @@ const NotificationsPage = () => {
                   <div className="notification-content">
                     <div className="notification-title">
                       {n.title}
-                      {!n.is_read && <span className="notification-unread-dot" />}
+                      {isUnread && <span className="notification-unread-dot" />}
                     </div>
                     <div className="notification-body">{n.message}</div>
                     <div className="notification-time">
@@ -148,7 +158,7 @@ const NotificationsPage = () => {
                       })}
                     </div>
                   </div>
-                </div>
+                </CardTag>
               );
             })}
           </div>

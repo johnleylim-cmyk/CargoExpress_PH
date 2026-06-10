@@ -52,6 +52,18 @@ const DashboardPage = () => {
     { label: 'Active Trips', value: stats?.activeTrips || 0, icon: Truck, tone: 'info' },
     { label: 'Customers', value: stats?.totalCustomers || 0, icon: Users, tone: 'success' },
   ];
+  const totalOrders = stats?.totalOrders || 0;
+  const knownOrderSegments = [
+    { label: 'Pending', value: stats?.pendingOrders || 0, color: '#F59E0B' },
+    { label: 'Picked Up', value: stats?.pickedUp || 0, color: '#8B5CF6' },
+    { label: 'In Transit', value: stats?.inTransit || 0, color: '#3B82F6' },
+    { label: 'Delivered', value: stats?.delivered || 0, color: '#10B981' },
+  ];
+  const knownOrderCount = knownOrderSegments.reduce((sum, segment) => sum + segment.value, 0);
+  const orderDistributionSegments = [
+    ...knownOrderSegments,
+    { label: 'Other Orders', value: Math.max(0, totalOrders - knownOrderCount), color: '#64748B' },
+  ].filter(segment => segment.value > 0);
 
   return (
     <PageTransition>
@@ -126,15 +138,9 @@ const DashboardPage = () => {
               <DonutChart
                 size={170}
                 thickness={26}
-                centerLabel={String(stats?.totalOrders || 0)}
+                centerLabel={String(totalOrders)}
                 centerSub="Total"
-                segments={[
-                  { label: 'Pending', value: stats?.pendingOrders || 0, color: '#F59E0B' },
-                  { label: 'In Transit', value: stats?.inTransit || 0, color: '#3B82F6' },
-                  { label: 'Awaiting Pickup', value: stats?.awaitingPickup || 0, color: '#8B5CF6' },
-                  { label: 'Delivered', value: Math.max(0, (stats?.totalOrders || 0) - (stats?.pendingOrders || 0) - (stats?.inTransit || 0) - (stats?.awaitingPickup || 0) - (stats?.activeTrips || 0)), color: '#10B981' },
-                  { label: 'Other', value: stats?.activeTrips || 0, color: '#64748B' },
-                ].filter(s => s.value > 0)}
+                segments={orderDistributionSegments}
               />
             )}
           </div>

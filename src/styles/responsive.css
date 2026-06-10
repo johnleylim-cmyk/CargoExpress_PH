@@ -1,5 +1,21 @@
 /* --- RESPONSIVE -------------------------------------------------------- */
 
+@media (max-width: 899.98px) {
+  html:has(:is(.auth-page, .login-split-page, .trk-page, .public-about-page, .not-found-page)),
+  body:has(:is(.auth-page, .login-split-page, .trk-page, .public-about-page, .not-found-page)),
+  :is(.auth-page, .login-split-page, .trk-page, .public-about-page, .not-found-page) {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  html:has(:is(.auth-page, .login-split-page, .trk-page, .public-about-page, .not-found-page))::-webkit-scrollbar,
+  body:has(:is(.auth-page, .login-split-page, .trk-page, .public-about-page, .not-found-page))::-webkit-scrollbar,
+  :is(.auth-page, .login-split-page, .trk-page, .public-about-page, .not-found-page)::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
 @media (max-width: 1024px) {
   .sidebar,
   .sidebar.collapsed {

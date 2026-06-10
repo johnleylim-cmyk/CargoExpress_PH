@@ -911,8 +911,8 @@
 }
 
 .support-chat-page {
-  min-height: calc(100dvh - 238px - var(--customer-safe-bottom));
-  height: calc(100dvh - 238px - var(--customer-safe-bottom));
+  min-height: 500px;
+  height: calc(100vh - 160px);
   gap: 12px;
 }
 
@@ -952,20 +952,31 @@
   color: var(--customer-ink);
 }
 
-.chat-send-btn {
+.customer-layout-v2 .support-chat-page .chat-send-btn {
   border-radius: 999px;
   background: var(--customer-green);
   color: #FFFFFF;
   box-shadow: 0 12px 24px rgba(18, 138, 90, 0.24);
 }
 
-.chat-send-btn:disabled {
+.customer-layout-v2 .support-chat-page .chat-send-btn:disabled {
   opacity: 0.5;
 }
 
+.login-split-page .chat-send-btn {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(232, 114, 42, 0.3);
+}
+
+.login-split-page .chat-send-btn:disabled {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #FFFFFF;
+  opacity: 0.55;
+}
+
 .support-chat-page > .flex.gap-8:last-child {
-  position: sticky;
-  bottom: calc(94px + var(--customer-safe-bottom));
+  position: relative;
   z-index: 4;
   padding: 8px;
   border: 1px solid var(--customer-line);
@@ -977,8 +988,8 @@
 }
 
 .customer-main:has(.support-chat-page) {
-  padding-bottom: calc(150px + var(--customer-safe-bottom)) !important;
-  scroll-padding-bottom: calc(150px + var(--customer-safe-bottom)) !important;
+  padding-bottom: calc(94px + var(--customer-safe-bottom)) !important;
+  scroll-padding-bottom: calc(94px + var(--customer-safe-bottom)) !important;
 }
 
 @media (max-width: 899.98px) {
@@ -1057,8 +1068,8 @@
   }
 
   .support-chat-page {
-    min-height: calc(100dvh - 230px - var(--customer-safe-bottom));
-    height: calc(100dvh - 230px - var(--customer-safe-bottom));
+    min-height: calc(100dvh - 176px - var(--customer-safe-bottom));
+    height: calc(100dvh - 176px - var(--customer-safe-bottom));
   }
 
   .booking-trip-preview {

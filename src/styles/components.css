@@ -235,6 +235,11 @@
   box-shadow: var(--shadow-lg);
 }
 
+.custom-select-menu.open-up {
+  top: auto;
+  bottom: calc(100% + 8px);
+}
+
 .custom-select-option {
   width: 100%;
   min-height: 44px;

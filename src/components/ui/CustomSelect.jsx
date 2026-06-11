@@ -18,6 +18,8 @@ const CustomSelect = ({
   ...rest
 }) => {
   const [open, setOpen] = useState(false);
+  const [menuPlacement, setMenuPlacement] = useState('bottom');
+  const [menuMaxHeight, setMenuMaxHeight] = useState(null);
   const generatedId = useId();
   const listboxId = `${generatedId}-listbox`;
   const rootRef = useRef(null);
@@ -33,8 +35,32 @@ const CustomSelect = ({
   const selected = options.find(option => String(option.value) === String(value)) || options[0];
   const selectedIndex = Math.max(0, options.findIndex(option => String(option.value) === String(value)));
 
+  const updateMenuPlacement = () => {
+    if (!rootRef.current || typeof window === 'undefined') return;
+
+    const rect = rootRef.current.getBoundingClientRect();
+    const gutter = 8;
+    const viewportHeight = window.visualViewport?.height || window.innerHeight;
+    const optionHeight = 44;
+    const estimatedMenuHeight = Math.min(320, viewportHeight * 0.52, (options.length * optionHeight) + 12);
+    const spaceBelow = viewportHeight - rect.bottom - gutter;
+    const spaceAbove = rect.top - gutter;
+    const shouldOpenUp = spaceBelow < estimatedMenuHeight && spaceAbove > spaceBelow;
+    const availableSpace = shouldOpenUp ? spaceAbove : spaceBelow;
+
+    setMenuPlacement(shouldOpenUp ? 'top' : 'bottom');
+    setMenuMaxHeight(Math.max(96, Math.min(320, availableSpace - gutter)));
+  };
+
+  const openMenu = () => {
+    updateMenuPlacement();
+    setOpen(true);
+  };
+
   useEffect(() => {
     if (!open) return undefined;
+
+    updateMenuPlacement();
 
     const closeOnOutsidePointer = (event) => {
       if (!rootRef.current?.contains(event.target)) {
@@ -48,14 +74,20 @@ const CustomSelect = ({
       }
     };
 
+    const repositionMenu = () => updateMenuPlacement();
+
     document.addEventListener('pointerdown', closeOnOutsidePointer);
     document.addEventListener('keydown', closeOnEscape);
+    window.addEventListener('resize', repositionMenu);
+    window.addEventListener('scroll', repositionMenu, true);
 
     return () => {
       document.removeEventListener('pointerdown', closeOnOutsidePointer);
       document.removeEventListener('keydown', closeOnEscape);
+      window.removeEventListener('resize', repositionMenu);
+      window.removeEventListener('scroll', repositionMenu, true);
     };
-  }, [open]);
+  }, [open, options.length]);
 
   const emitChange = (nextValue) => {
     onChange?.({ target: { value: nextValue } });
@@ -80,13 +112,13 @@ const CustomSelect = ({
 
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      open ? moveSelection(1) : setOpen(true);
+      open ? moveSelection(1) : openMenu();
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
-      open ? moveSelection(-1) : setOpen(true);
+      open ? moveSelection(-1) : openMenu();
     } else if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      setOpen(prev => !prev);
+      open ? setOpen(false) : openMenu();
     }
   };
 
@@ -101,7 +133,7 @@ const CustomSelect = ({
         aria-expanded={open}
         aria-controls={listboxId}
         disabled={disabled}
-        onClick={() => setOpen(prev => !prev)}
+        onClick={() => (open ? setOpen(false) : openMenu())}
         onKeyDown={handleKeyDown}
         {...rest}
       >
@@ -112,7 +144,13 @@ const CustomSelect = ({
       </button>
 
       {open && !disabled && (
-        <div className="custom-select-menu" id={listboxId} role="listbox" aria-label={ariaLabel}>
+        <div
+          className={`custom-select-menu ${menuPlacement === 'top' ? 'open-up' : ''}`.trim()}
+          id={listboxId}
+          role="listbox"
+          aria-label={ariaLabel}
+          style={menuMaxHeight ? { maxHeight: `${menuMaxHeight}px` } : undefined}
+        >
           {options.map(option => {
             const active = String(option.value) === String(value);
 

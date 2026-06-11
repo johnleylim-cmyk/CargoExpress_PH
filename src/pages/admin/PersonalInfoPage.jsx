@@ -251,7 +251,7 @@ const AdminPersonalInfoPage = () => {
           <div className="form-group">
             <label className="form-label" htmlFor="admin-manila-address">Manila Address</label>
             <div className="form-input-wrapper items-start">
-              <Building size={15} className="form-input-icon" style={{ marginTop: 14 }} />
+              <Building size={15} className="form-input-icon" />
               <textarea
                 id="admin-manila-address"
                 className="form-textarea form-input-icon-left"
@@ -266,7 +266,7 @@ const AdminPersonalInfoPage = () => {
           <div className="form-group">
             <label className="form-label" htmlFor="admin-bohol-address">Bohol Address</label>
             <div className="form-input-wrapper items-start">
-              <MapPin size={15} className="form-input-icon" style={{ marginTop: 14 }} />
+              <MapPin size={15} className="form-input-icon" />
               <textarea
                 id="admin-bohol-address"
                 className="form-textarea form-input-icon-left"

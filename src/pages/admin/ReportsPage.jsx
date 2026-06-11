@@ -36,10 +36,16 @@ const ReportsPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const printRef = useRef(null);
+  const hasCustomDateRange = customStart && customEnd;
+  const customDateRangeInvalid = Boolean(hasCustomDateRange && customEnd < customStart);
 
   const loadReport = async () => {
     if (period === 'custom' && (!customStart || !customEnd)) {
       setError('Please select both start and end dates for custom range.');
+      return;
+    }
+    if (period === 'custom' && customDateRangeInvalid) {
+      setError('End date must be the same as or later than the start date.');
       return;
     }
     setLoading(true);
@@ -151,7 +157,10 @@ const ReportsPage = () => {
                 type="date"
                 className="form-input"
                 value={customStart}
-                onChange={e => setCustomStart(e.target.value)}
+                onChange={e => {
+                  setCustomStart(e.target.value);
+                  if (error) setError(null);
+                }}
               />
             </div>
             <div className="form-group">
@@ -161,15 +170,23 @@ const ReportsPage = () => {
                 type="date"
                 className="form-input"
                 value={customEnd}
-                onChange={e => setCustomEnd(e.target.value)}
+                onChange={e => {
+                  setCustomEnd(e.target.value);
+                  if (error) setError(null);
+                }}
               />
             </div>
           </div>
+          {customDateRangeInvalid && (
+            <p className="form-error" role="alert">
+              End date must be the same as or later than the start date.
+            </p>
+          )}
           <button
             type="button"
             className="btn btn-primary btn-sm"
             onClick={loadReport}
-            disabled={!customStart || !customEnd || loading}
+            disabled={!customStart || !customEnd || customDateRangeInvalid || loading}
           >
             {loading ? <Loader size={16} className="animate-spin" /> : <BarChart3 size={16} />}
             Generate Report

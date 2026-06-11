@@ -42,3 +42,6 @@
 
 /* Admin mobile app refresh */
 @import './admin-modern-refresh.css';
+
+/* Final mobile viewport and tap-readability hardening */
+@import './viewport-hardening.css';

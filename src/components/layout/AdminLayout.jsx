@@ -103,10 +103,10 @@ const AdminLayout = () => {
               aria-controls="admin-sidebar"
               aria-expanded={sidebarOpen}
             >
-              <Menu size={20} />
+              <Menu size={20} aria-hidden="true" />
             </button>
             <div className="topbar-title">
-              <Container size={22} color="var(--primary)" className="topbar-logo-icon" />
+              <Container size={22} color="var(--primary)" className="topbar-logo-icon" aria-hidden="true" />
               <span>
                 <span className="text-accent">CARGO</span>
                 <span className="text-primary">EXPRESS</span>
@@ -117,15 +117,15 @@ const AdminLayout = () => {
             <ThemeToggle />
             {/* Command Palette Trigger */}
             <button
-              className="btn-icon btn-ghost gap-6 text-tertiary"
+              className="btn-icon btn-ghost gap-6 text-tertiary topbar-command-btn"
               type="button"
               onClick={() => setCmdPaletteOpen(true)}
               title="Search (Ctrl+K)"
               aria-label="Open command palette"
               style={{ fontSize: '0.8125rem' }}
             >
-              <Search size={17} />
-              <kbd style={{
+              <Search size={17} aria-hidden="true" />
+              <kbd className="topbar-command-kbd" style={{
                 fontSize: '0.625rem', fontWeight: 600,
                 background: 'var(--bg-secondary)',
                 padding: '1px 5px', borderRadius: 3,

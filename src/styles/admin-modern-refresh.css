@@ -22,6 +22,7 @@
   background:
     linear-gradient(180deg, #FCFEFC 0%, #F5F8F4 42%, #F7F8FB 100%);
   color: var(--admin-ink);
+  overflow-x: clip;
 }
 
 [data-theme="dark"] .app-layout {
@@ -162,6 +163,12 @@
   background: var(--admin-panel-solid);
   color: var(--admin-green-dark);
   box-shadow: var(--admin-shadow-soft);
+}
+
+.app-layout .sidebar-collapse-btn {
+  width: 36px;
+  height: 36px;
+  right: -18px;
 }
 
 .app-layout .topbar {
@@ -373,6 +380,18 @@
   border-bottom: 0;
 }
 
+.app-layout .admin-filter-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  overflow: visible;
+}
+
+.app-layout .responsive-filter-tabs.tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  overflow: visible;
+}
+
 .app-layout .tab,
 .app-layout .admin-filter-row .btn,
 .app-layout .report-period-tab {
@@ -382,6 +401,11 @@
   background: var(--admin-panel);
   color: var(--admin-muted);
   font-weight: 850;
+  min-width: 0;
+  width: 100%;
+  white-space: normal;
+  text-align: center;
+  justify-content: center;
 }
 
 .app-layout .tab.active,
@@ -390,6 +414,19 @@
   border-color: color-mix(in srgb, var(--admin-green) 40%, transparent);
   background: var(--admin-green-soft);
   color: var(--admin-green-dark);
+}
+
+.app-layout .tabs:not(.responsive-filter-tabs) .tab {
+  flex: 0 0 auto;
+  width: auto;
+  white-space: nowrap;
+}
+
+.app-layout .responsive-filter-tabs .tab,
+.app-layout .admin-filter-row .btn,
+.app-layout .report-period-tab {
+  width: 100%;
+  white-space: normal;
 }
 
 .app-layout .admin-table-card {
@@ -518,12 +555,22 @@
   }
 
   .app-layout .main-content,
-  .app-layout.sidebar-collapsed .main-content {
+  .app-layout.sidebar-collapsed .main-content,
+  .app-layout .sidebar.collapsed ~ .main-content {
     margin-left: 0;
+    width: 100%;
   }
 
   .app-layout .topbar {
     height: 66px;
+  }
+
+  .app-layout .responsive-filter-tabs {
+    display: none !important;
+  }
+
+  .app-layout .responsive-filter-select-wrap {
+    display: block;
   }
 }
 
@@ -535,6 +582,46 @@
   .app-layout .topbar {
     height: 62px;
     padding-inline: 18px;
+  }
+
+  .app-layout .topbar > .flex {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .app-layout .topbar-title {
+    min-width: 0;
+    font-size: 0.98rem;
+    gap: 8px;
+  }
+
+  .app-layout .topbar-title > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .app-layout .topbar-actions {
+    flex: 0 0 auto;
+    gap: 6px;
+  }
+
+  .app-layout .topbar-actions .btn-icon,
+  .app-layout .theme-toggle-btn {
+    min-width: 40px;
+    width: 40px;
+    min-height: 40px;
+    height: 40px;
+    padding: 0;
+  }
+
+  .app-layout .topbar-command-btn {
+    gap: 0 !important;
+  }
+
+  .app-layout .topbar-command-kbd {
+    display: none;
   }
 
   .app-layout .topbar::after {
@@ -553,7 +640,8 @@
 
   .app-layout .data-table tbody tr,
   .app-layout .report-table tbody tr {
-    margin: 10px;
+    width: 100%;
+    margin: 10px 0;
     padding: 12px;
     border: 1px solid var(--admin-line);
     border-radius: 20px;

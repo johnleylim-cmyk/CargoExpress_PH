@@ -6,6 +6,7 @@ import { buildFullAddress } from '../../lib/address';
 import { ROUTES, PH_LOCATIONS, VALID_PROVINCES, detectPickupLocation, validateRouteProvinces } from '../../constants/phLocations';
 import { ArrowLeft, Loader, CheckCircle, Package, MapPin, User, Truck, AlertTriangle } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
+import CustomSelect from '../../components/ui/CustomSelect';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 const toTitleCase = (str) => str.replace(/\b\w/g, (char) => char.toUpperCase());
@@ -232,16 +233,16 @@ const BookShipmentPage = () => {
         <div className="form-group"><label className="form-label" htmlFor={id('phone')}>Mobile Number *</label><input id={id('phone')} className={`form-input ${fc('phone')}`} value={form[`${prefix}_phone`]} onChange={handlePhoneChange(`${prefix}_phone`)} inputMode="numeric" maxLength={11} placeholder="09xxxxxxxxx" autoComplete="tel" required />{errEl('phone')}</div>
         <div className="form-group"><label className="form-label" htmlFor={id('facebook')}>Facebook Name *</label><input id={id('facebook')} className={`form-input ${fc('facebook')}`} value={form[`${prefix}_facebook`]} onChange={handleTextChange(`${prefix}_facebook`)} placeholder="Your name on Facebook" required />{errEl('facebook')}</div>
         <div className="form-group"><label className="form-label" htmlFor={id('province')}>Province *</label>
-          <select id={id('province')} className={`form-select ${fc('province')}`} value={form[`${prefix}_province`]} onChange={e => { u(`${prefix}_province`, e.target.value); u(`${prefix}_city`, ''); }}>
+          <CustomSelect id={id('province')} className={`form-select ${fc('province')}`} value={form[`${prefix}_province`]} onChange={e => { u(`${prefix}_province`, e.target.value); u(`${prefix}_city`, ''); }}>
             <option value="">Select Province</option>
             {getProvinces().map(p => <option key={p} value={p}>{p}</option>)}
-          </select>{errEl('province')}
+          </CustomSelect>{errEl('province')}
         </div>
         <div className="form-group"><label className="form-label" htmlFor={id('city')}>City / Municipality *</label>
-          <select id={id('city')} className={`form-select ${fc('city')}`} value={form[`${prefix}_city`]} onChange={e => u(`${prefix}_city`, e.target.value)} disabled={!form[`${prefix}_province`]}>
+          <CustomSelect id={id('city')} className={`form-select ${fc('city')}`} value={form[`${prefix}_city`]} onChange={e => u(`${prefix}_city`, e.target.value)} disabled={!form[`${prefix}_province`]}>
             <option value="">Select City</option>
             {cities.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>{errEl('city')}
+          </CustomSelect>{errEl('city')}
         </div>
         <div className="form-group"><label className="form-label" htmlFor={id('barangay')}>Barangay *</label><input id={id('barangay')} className={`form-input ${fc('barangay')}`} value={form[`${prefix}_barangay`]} onChange={handleTextChange(`${prefix}_barangay`)} autoComplete="address-level3" required />{errEl('barangay')}</div>
         <div className="form-group"><label className="form-label" htmlFor={id('street')}>Street *</label><input id={id('street')} className={`form-input ${fc('street')}`} value={form[`${prefix}_street`]} onChange={handleTextChange(`${prefix}_street`)} autoComplete="address-line1" required />{errEl('street')}</div>
@@ -336,10 +337,10 @@ const BookShipmentPage = () => {
           {form.route && filteredTrips.length > 0 && (
             <div className="mt-16">
               <label className="form-label" htmlFor="booking-trip">Select Trip (Optional)</label>
-              <select id="booking-trip" className="form-select booking-trip-select" value={form.trip_id} onChange={e => u('trip_id', e.target.value)}>
+              <CustomSelect id="booking-trip" className="form-select booking-trip-select" value={form.trip_id} onChange={e => u('trip_id', e.target.value)}>
                 <option value="">No specific trip</option>
                 {filteredTrips.map(t => <option key={t.id} value={t.id}>{formatBookingTripOption(t)}</option>)}
-              </select>
+              </CustomSelect>
               {selectedTrip && (
                 <div className="booking-trip-preview">
                   <div>
@@ -415,9 +416,9 @@ const BookShipmentPage = () => {
             <p id="package-weight-helper" className="text-xs text-secondary mt-4">Note: This is an estimate. Final weight may be updated by the admin during weighing.</p>
           </div>
           <div className="form-group"><label className="form-label" htmlFor="payer-type">Who Pays?</label>
-            <select id="payer-type" className="form-select" value={form.payer_type} onChange={e => u('payer_type', e.target.value)}>
+            <CustomSelect id="payer-type" className="form-select" value={form.payer_type} onChange={e => u('payer_type', e.target.value)}>
               <option value="sender">Sender</option><option value="receiver">Receiver</option>
-            </select>
+            </CustomSelect>
           </div>
           {form.package_weight && (
             <div className="booking-cost-card mb-16 text-center">

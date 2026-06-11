@@ -64,7 +64,8 @@
   .sidebar.collapsed .sidebar-footer .sidebar-link { justify-content: flex-start; }
   .sidebar.collapsed .sidebar-link::after { display: none; }
   .main-content,
-  .app-layout.sidebar-collapsed .main-content {
+  .app-layout.sidebar-collapsed .main-content,
+  .sidebar.collapsed ~ .main-content {
     margin-left: 0;
   }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }

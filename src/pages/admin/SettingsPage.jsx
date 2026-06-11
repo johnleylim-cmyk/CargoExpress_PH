@@ -64,7 +64,7 @@ const SettingsPage = () => {
             onClick={() => setActiveTab(tab.key)}
             className={`tab ${activeTab === tab.key ? 'active' : ''}`}
           >
-            <tab.icon size={18} /> {tab.label}
+            <tab.icon size={18} aria-hidden="true" /> {tab.label}
           </button>
         ))}
       </div>
@@ -87,7 +87,7 @@ const SettingsPage = () => {
             <div className="card animate-fade-in">
               <div className="card-header">
                 <h3 className="flex items-center gap-8">
-                  <Settings size={16} /> Pricing
+                  <Settings size={16} aria-hidden="true" /> Pricing
                 </h3>
               </div>
               <div className="card-body">
@@ -120,8 +120,8 @@ const SettingsPage = () => {
                     disabled={saving}
                   >
                     {saving
-                      ? <><Loader size={16} className="animate-spin" /> Saving...</>
-                      : <><Save size={16} /> Save Settings</>
+                      ? <><Loader size={16} className="animate-spin" aria-hidden="true" /> Saving...</>
+                      : <><Save size={16} aria-hidden="true" /> Save Settings</>
                     }
                   </button>
                 </div>

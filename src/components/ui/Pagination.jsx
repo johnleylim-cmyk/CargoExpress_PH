@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import CustomSelect from './CustomSelect';
 
 /**
  * Pagination — Reusable pagination controls
@@ -53,7 +54,7 @@ const Pagination = ({
           Showing <strong>{startItem}–{endItem}</strong> of <strong>{totalItems}</strong>
         </span>
         {onPerPageChange && (
-          <select
+          <CustomSelect
             className="pagination-per-page"
             value={itemsPerPage}
             onChange={(e) => onPerPageChange(Number(e.target.value))}
@@ -62,7 +63,7 @@ const Pagination = ({
             {perPageOptions.map(n => (
               <option key={n} value={n}>{n} / page</option>
             ))}
-          </select>
+          </CustomSelect>
         )}
       </div>
 
@@ -75,7 +76,7 @@ const Pagination = ({
             disabled={currentPage <= 1}
             aria-label="Previous page"
           >
-            <ChevronLeft size={16} />
+            <ChevronLeft size={16} aria-hidden="true" />
           </button>
 
           {getPageNumbers().map((page, i) =>
@@ -100,7 +101,7 @@ const Pagination = ({
             disabled={currentPage >= totalPages}
             aria-label="Next page"
           >
-            <ChevronRight size={16} />
+            <ChevronRight size={16} aria-hidden="true" />
           </button>
         </div>
       )}

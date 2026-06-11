@@ -9,6 +9,7 @@ import {
   User, Phone, MapPin, Home, Hash, MessageSquare, Map, Building,
 } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
+import CustomSelect from '../../components/ui/CustomSelect';
 
 const toTitleCase = (str) => str.replace(/\b\w/g, (c) => c.toUpperCase());
 
@@ -175,7 +176,7 @@ const PersonalInfoPage = () => {
             <label className="form-label" htmlFor="profile-province">Province</label>
             <div className="form-input-wrapper">
               <Map size={15} className="form-input-icon" />
-              <select
+              <CustomSelect
                 id="profile-province"
                 className="form-select form-input-icon-left"
                 value={form.address_province}
@@ -183,7 +184,7 @@ const PersonalInfoPage = () => {
               >
                 <option value="">Select Province</option>
                 {VALID_PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
-              </select>
+              </CustomSelect>
             </div>
           </div>
 
@@ -192,7 +193,7 @@ const PersonalInfoPage = () => {
             <label className="form-label" htmlFor="profile-city">City / Municipality</label>
             <div className="form-input-wrapper">
               <Building size={15} className="form-input-icon" />
-              <select
+              <CustomSelect
                 id="profile-city"
                 className="form-select form-input-icon-left"
                 value={form.address_city}
@@ -200,7 +201,7 @@ const PersonalInfoPage = () => {
               >
                 <option value="">Select City</option>
                 {cities.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
+              </CustomSelect>
             </div>
           </div>
 

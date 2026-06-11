@@ -98,7 +98,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
         onClick={onClose}
         data-tooltip={item.label}
       >
-        <item.icon size={18} />
+        <item.icon size={18} aria-hidden="true" />
         <span className="sidebar-link-label">{item.label}</span>
         {badgeCount > 0 && (
           <span className="sidebar-count-badge" aria-label={`${badgeCount} unread`}>
@@ -125,11 +125,11 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
           aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
-          <ChevronsLeft size={16} />
+          <ChevronsLeft size={16} aria-hidden="true" />
         </button>
 
         <div className="sidebar-brand">
-          <Container size={28} color="var(--primary)" />
+          <Container size={28} color="var(--primary)" aria-hidden="true" />
           <h1>CARGO<span>EXPRESS</span></h1>
           <button
             className="sidebar-drawer-close-btn"
@@ -137,7 +137,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
             onClick={onClose}
             aria-label="Close admin navigation"
           >
-            <ArrowLeft size={18} />
+            <ArrowLeft size={18} aria-hidden="true" />
           </button>
         </div>
 
@@ -163,7 +163,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
             </div>
           </div>
           <button className="sidebar-link danger" type="button" onClick={handleLogout} data-tooltip="Sign Out">
-            <LogOut size={18} />
+            <LogOut size={18} aria-hidden="true" />
             <span className="sidebar-link-label">Sign Out</span>
           </button>
         </div>

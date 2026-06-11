@@ -21,12 +21,12 @@ const Breadcrumb = ({ items = [] }) => {
               )}
               {isLast ? (
                 <span className="breadcrumb-current" aria-current="page">
-                  {i === 0 && <Home size={13} className="breadcrumb-home-icon" />}
+                  {i === 0 && <Home size={13} className="breadcrumb-home-icon" aria-hidden="true" />}
                   <span className="breadcrumb-text">{item.label}</span>
                 </span>
               ) : (
                 <Link to={item.to} className="breadcrumb-link">
-                  {i === 0 && <Home size={13} className="breadcrumb-home-icon" />}
+                  {i === 0 && <Home size={13} className="breadcrumb-home-icon" aria-hidden="true" />}
                   <span className="breadcrumb-text">{item.label}</span>
                 </Link>
               )}

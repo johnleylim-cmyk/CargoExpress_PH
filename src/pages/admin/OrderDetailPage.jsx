@@ -11,6 +11,7 @@ import ImageLightbox from '../../components/ui/ImageLightbox';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import { SkeletonText } from '../../components/ui/SkeletonLoader';
 import ErrorBoundarySection from '../../components/ui/ErrorBoundarySection';
+import CustomSelect from '../../components/ui/CustomSelect';
 import {
   STATUS_FLOW, STATUS_TIMELINE, validateStatusTransition,
   PAYMENT_METHODS, PAYMENT_STATUSES, ORDER_STATUS
@@ -364,17 +365,17 @@ const AdminOrderDetailPage = () => {
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="admin-order-payment-method">Payment Method</label>
-              <select id="admin-order-payment-method" className="form-select" value={payForm.payment_method} onChange={e => setPayForm(p => ({ ...p, payment_method: e.target.value }))}>
+              <CustomSelect id="admin-order-payment-method" className="form-select" value={payForm.payment_method} onChange={e => setPayForm(p => ({ ...p, payment_method: e.target.value }))}>
                 <option value="">Select</option>
                 {PAYMENT_METHODS.map(m => <option key={m} value={m}>{m === 'gcash' ? 'GCash' : m === 'paylater' ? 'Pay Later' : 'Cash'}</option>)}
-              </select>
+              </CustomSelect>
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="admin-order-payment-status">Payment Status</label>
-              <select id="admin-order-payment-status" className="form-select" value={payForm.payment_status} onChange={e => setPayForm(p => ({ ...p, payment_status: e.target.value }))}>
+              <CustomSelect id="admin-order-payment-status" className="form-select" value={payForm.payment_status} onChange={e => setPayForm(p => ({ ...p, payment_status: e.target.value }))}>
                 <option value="">Select</option>
                 {PAYMENT_STATUSES.map(s => <option key={s} value={s} className="text-capitalize">{s}</option>)}
-              </select>
+              </CustomSelect>
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="admin-order-amount-paid">Amount Paid (₱)</label>

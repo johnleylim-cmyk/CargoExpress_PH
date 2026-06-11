@@ -8,6 +8,7 @@ import {
   Home, Landmark, CheckCircle2, Sparkles,
 } from 'lucide-react';
 import { PH_LOCATIONS, VALID_PROVINCES } from '../../constants/phLocations';
+import CustomSelect from '../../components/ui/CustomSelect';
 
 /* ── Helpers ──────────────────────────────────────────────────────────── */
 const toTitleCase = (str) =>
@@ -451,7 +452,7 @@ const RegisterPage = () => {
                 </label>
                 <div className="form-input-wrapper">
                   <MapPin size={15} className="form-input-icon" aria-hidden="true" />
-                  <select
+                  <CustomSelect
                     id="reg-province"
                     className="form-select form-input-icon-left"
                     value={form.address_province}
@@ -460,7 +461,7 @@ const RegisterPage = () => {
                   >
                     <option value="">Select Province</option>
                     {VALID_PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
-                  </select>
+                  </CustomSelect>
                 </div>
               </div>
 
@@ -469,7 +470,7 @@ const RegisterPage = () => {
                 <label className="form-label" htmlFor="reg-city">City / Municipality</label>
                 <div className="form-input-wrapper">
                   <Landmark size={15} className="form-input-icon" aria-hidden="true" />
-                  <select
+                  <CustomSelect
                     id="reg-city"
                     className="form-select form-input-icon-left"
                     value={form.address_city}
@@ -479,7 +480,7 @@ const RegisterPage = () => {
                   >
                     <option value="">Select City</option>
                     {cities.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
+                  </CustomSelect>
                 </div>
               </div>
 

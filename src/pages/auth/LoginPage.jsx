@@ -1,12 +1,19 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { getSettings } from '../../lib/database';
+import {
+  getReply, detectTrackingNumber, DEFAULT_QUICK_QUESTIONS,
+  saveChat, loadChat, clearChat,
+} from '../../lib/chatEngine';
 import {
   Container, Eye, EyeOff,
   MessageCircle, Send, X, Bot, Package,
   DollarSign, Ship, Search, Zap, AlertTriangle,
-  Mail, Lock, RefreshCw,
-  Sparkles,
+  Mail, Lock, RefreshCw, ExternalLink, ArrowDown,
+  Sparkles, MapPin, Truck, Loader, Clock, CheckCircle, XCircle,
+  HelpCircle, ChevronRight,
 } from 'lucide-react';
 
 // ── Error mapper ─────────────────────────────────────────────────────────────
@@ -59,63 +66,89 @@ const getLoginErrorPlacement = (msg) => {
   };
 };
 
-// ── Chatbot engine ────────────────────────────────────────────────────────────
-const FAQ_TRIGGERS = [
-  {
-    patterns: ['book', 'how to book', 'booking', 'ship', 'send', 'order'],
-    answer: `To book a shipment:\n1. Create a free account (Sign Up)\n2. Go to "Place Order"\n3. Fill in sender and receiver details\n4. Select your route (Bohol to Manila or Manila to Bohol)\n5. Enter package weight\n6. Submit. Your tracking number will be generated.\n\nNeed help? Message us on Facebook.`,
-  },
-  {
-    patterns: ['route', 'routes', 'where', 'destination', 'bohol', 'manila'],
-    answer: `We serve two routes:\n\n🚢 Bohol to Manila\n🚢 Manila to Bohol\n\nContact us on Facebook for trip schedules.`,
-  },
-  {
-    patterns: ['price', 'fee', 'cost', 'rate', 'how much', 'charge', 'shipping fee'],
-    answer: `Shipping fees are per kilogram:\n\n💰 Final price = weight × rate per kg\n✅ You'll see the exact cost before confirming your order.\n\nFor current rates, message us on Facebook.`,
-  },
-  {
-    patterns: ['track', 'tracking', 'where is', 'status', 'locate', 'check order'],
-    answer: `To track your package:\n\n📦 Visit our Track page — no login needed.\n🔢 Enter your tracking number (CE-XXXXXXXX-XXXX).\n📡 See real-time status updates.\n\nOr log in and open Orders to view all shipments.`,
-  },
-  {
-    patterns: ['schedule', 'when', 'depart', 'trip', 'departure', 'date'],
-    answer: `Trip schedules vary. For the latest dates, message us on Facebook.\n\nWe'll confirm pickup and estimated delivery once your order is booked.`,
-  },
-  {
-    patterns: ['contact', 'reach', 'call', 'message', 'facebook', 'fb'],
-    answer: `Contact us:\n\n📘 Facebook: facebook.com/marlon.sarong.cargodeliveryservice\n\nWe respond Mon–Sat during business hours.`,
-  },
-  {
-    patterns: ['register', 'sign up', 'create account', 'signup'],
-    answer: `Creating an account is free!\n\n🆓 Click "Sign Up" below and fill in:\n• Full name\n• Email and password\n• Mobile number (09xxxxxxxxx)\n• Address\n\nThen you can book and track shipments.`,
-  },
-  {
-    patterns: ['cancel', 'cancellation'],
-    answer: `To cancel an order:\n\n🔄 Log in → Open Orders → Select the order → Choose Cancel.\n\nOrders can only be cancelled before pickup. For urgent cases, message us on Facebook.`,
-  },
-  {
-    patterns: ['payment', 'pay', 'gcash', 'cash'],
-    answer: `Payment options:\n\n💵 Cash on pickup or delivery\n📱 GCash — contact us for details\n⏳ Pay Later option available\n\nMessage us on Facebook for instructions.`,
-  },
-];
+// ── Chatbot helpers ───────────────────────────────────────────────────────────
+const formatTime = (ts) =>
+  new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-const QUICK_QUESTIONS = [
-  { label: '📦 How to book?', query: 'how to book', shortLabel: 'How to book?' },
-  { label: '🚢 Routes?', query: 'what routes are available', shortLabel: 'Routes?' },
-  { label: '💰 Shipping fee?', query: 'how much is the shipping fee', shortLabel: 'Shipping fee?' },
-  { label: '🔍 Track package?', query: 'how to track my order', shortLabel: 'Track package?' },
-];
+const MAX_CHAT_LENGTH = 300;
 
-const getBotReply = (input) => {
-  const lower = input.toLowerCase().trim();
-  for (const faq of FAQ_TRIGGERS) {
-    if (faq.patterns.some(p => lower.includes(p))) return faq.answer;
+// Parse text for URLs and phone numbers, return React elements
+const parseLinks = (text) => {
+  // Match URLs
+  const urlRegex = /(https?:\/\/[^\s]+|(?:www\.)?facebook\.com\/[^\s]+)/gi;
+  // Match PH phone numbers
+  const phoneRegex = /\b(09\d{9})\b/g;
+
+  const parts = [];
+  let lastIndex = 0;
+  const combined = new RegExp(`(${urlRegex.source})|(${phoneRegex.source})`, 'gi');
+  let m;
+
+  while ((m = combined.exec(text)) !== null) {
+    if (m.index > lastIndex) {
+      parts.push(text.slice(lastIndex, m.index));
+    }
+    const matched = m[0];
+    if (matched.match(/facebook|http/i)) {
+      const href = matched.startsWith('http') ? matched : `https://${matched}`;
+      parts.push(
+        { type: 'link', href, text: matched.replace(/^https?:\/\//, ''), key: m.index }
+      );
+    } else {
+      parts.push(
+        { type: 'phone', href: `tel:${matched}`, text: matched, key: m.index }
+      );
+    }
+    lastIndex = m.index + matched.length;
   }
-  return `I'm not sure about that yet. 🤔\n\nContact us directly:\n📘 Facebook: facebook.com/marlon.sarong.cargodeliveryservice\n\nOur team will be happy to help!`;
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+  return parts.length > 0 ? parts : [text];
 };
 
-const formatTime = (ts) => {
-  return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+// Render a single chat message line with clickable links
+const RichTextLine = ({ text }) => {
+  const parts = parseLinks(text);
+  return parts.map((part, i) => {
+    if (typeof part === 'string') return <span key={i}>{part}</span>;
+    return (
+      <a
+        key={part.key}
+        href={part.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="chat-inline-link"
+        onClick={e => e.stopPropagation()}
+      >
+        {part.text}
+        <ExternalLink size={10} className="chat-link-icon" />
+      </a>
+    );
+  });
+};
+
+// Status icon map for tracking cards
+const TRACKING_ICONS = {
+  Pending: Clock,
+  Assigned: Package,
+  'Picked Up': Package,
+  'In Transit': Truck,
+  'Arrived at Hub': MapPin,
+  'Out for Delivery': Truck,
+  Delivered: CheckCircle,
+  Cancelled: XCircle,
+};
+
+const TRACKING_COLORS = {
+  Pending: 'var(--warning)',
+  Assigned: 'var(--info)',
+  'Picked Up': 'var(--success)',
+  'In Transit': 'var(--info)',
+  'Arrived at Hub': 'var(--success)',
+  'Out for Delivery': 'var(--primary)',
+  Delivered: 'var(--success)',
+  Cancelled: 'var(--error)',
 };
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -141,13 +174,70 @@ const LoginPage = () => {
   const [messages,    setMessages]    = useState([]);
   const [isTyping,    setIsTyping]    = useState(false);
   const [chatClosing, setChatClosing] = useState(false);
-  const messagesEndRef                = useRef(null);
-  const liveRegionRef                 = useRef(null);
-  const loginErrorTimerRef            = useRef(null);
+  const [lastTopic,   setLastTopic]   = useState(null);
+  const [suggestions, setSuggestions] = useState(DEFAULT_QUICK_QUESTIONS);
+  const [pricePerKilo, setPricePerKilo] = useState(null);
+  const [showScrollPill, setShowScrollPill] = useState(false);
+  const messagesEndRef   = useRef(null);
+  const messagesBoxRef   = useRef(null);
+  const liveRegionRef    = useRef(null);
+  const loginErrorTimerRef = useRef(null);
+
+  // Scroll to bottom of messages
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isTyping]);
+    scrollToBottom();
+  }, [messages, isTyping, scrollToBottom]);
+
+  // Scroll detection for "new messages" pill
+  useEffect(() => {
+    const box = messagesBoxRef.current;
+    if (!box) return;
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = box;
+      setShowScrollPill(scrollHeight - scrollTop - clientHeight > 100);
+    };
+    box.addEventListener('scroll', handleScroll, { passive: true });
+    return () => box.removeEventListener('scroll', handleScroll);
+  }, [chatStarted]);
+
+  // Restore chat from sessionStorage on mount
+  useEffect(() => {
+    const saved = loadChat();
+    if (saved && saved.messages?.length > 0) {
+      setChatName(saved.name || '');
+      setMessages(saved.messages);
+      setChatStarted(true);
+      setLastTopic(saved.lastTopic || null);
+      setSuggestions(saved.suggestions || DEFAULT_QUICK_QUESTIONS);
+    }
+  }, []);
+
+  // Save chat to sessionStorage whenever it changes
+  useEffect(() => {
+    if (chatStarted && messages.length > 0) {
+      saveChat({
+        name: chatName,
+        messages,
+        lastTopic,
+        suggestions,
+      });
+    }
+  }, [messages, chatStarted, chatName, lastTopic, suggestions]);
+
+  // Fetch price_per_kilo from settings once
+  useEffect(() => {
+    let cancelled = false;
+    getSettings().then(s => {
+      if (!cancelled && s?.price_per_kilo) {
+        setPricePerKilo(Number(s.price_per_kilo));
+      }
+    }).catch(() => { /* non-critical */ });
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => () => {
     if (loginErrorTimerRef.current) clearTimeout(loginErrorTimerRef.current);
@@ -238,46 +328,96 @@ const LoginPage = () => {
   };
 
   // ── Chat handlers ────────────────────────────────────────────────────────
+
+  // Live tracking lookup via public RPC
+  const trackOrder = async (trackingNumber) => {
+    try {
+      const { data, error: fetchError } = await supabase
+        .rpc('track_order_public', { p_tracking_number: trackingNumber })
+        .maybeSingle();
+      if (fetchError || !data) {
+        return { success: false, message: `No shipment found for ${trackingNumber}. Please double-check and try again.` };
+      }
+      return { success: true, data };
+    } catch {
+      return { success: false, message: 'Something went wrong looking up that order. Please try again.' };
+    }
+  };
+
+  const addBotMessage = useCallback((text, type = 'text', data = null, followUps = null) => {
+    const botMsg = { from: 'bot', text, ts: Date.now(), type, data };
+    setIsTyping(false);
+    setMessages(prev => [...prev, botMsg]);
+    if (followUps) setSuggestions(followUps);
+    if (liveRegionRef.current) {
+      liveRegionRef.current.textContent = `CargoExpress assistant: ${typeof text === 'string' ? text : 'sent a response'}`;
+    }
+  }, []);
+
   const startChat = () => {
     const name = chatName.trim() || 'Guest';
     setChatName(name);
-    const greeting = `Hi ${name}! 👋 I'm the CargoExpress PH assistant.\n\nHow can I help you today?`;
-    setMessages([{ from: 'bot', text: greeting, ts: Date.now() }]);
+    const greeting = `Hi ${name}! 👋 I'm the CargoExpress PH assistant.\n\nI can help with booking, tracking, pricing, routes, and more. What can I do for you?`;
+    const msgs = [{ from: 'bot', text: greeting, ts: Date.now(), type: 'text' }];
+    setMessages(msgs);
     setChatStarted(true);
+    setSuggestions(DEFAULT_QUICK_QUESTIONS);
   };
 
-  const sendMessage = useCallback((text) => {
+  const sendMessage = useCallback(async (text) => {
     const userText = (text || chatInput).trim();
-    if (!userText) return;
+    if (!userText || isTyping) return;
     setChatInput('');
-    const now = Date.now();
-    const userMsg = { from: 'user', text: userText, ts: now };
+    const userMsg = { from: 'user', text: userText, ts: Date.now(), type: 'text' };
     setMessages(prev => [...prev, userMsg]);
 
-    // Announce to screen reader
     if (liveRegionRef.current) {
       liveRegionRef.current.textContent = `You said: ${userText}`;
     }
 
-    // Typing indicator
     setIsTyping(true);
+
+    // Get reply from engine
+    const context = { lastTopic, userName: chatName, pricePerKilo };
+    const reply = getReply(userText, context);
+
+    // Handle tracking lookup
+    if (reply.type === 'tracking_lookup') {
+      const trackingNum = reply.text;
+      // Show "looking up" message first
+      setTimeout(async () => {
+        addBotMessage(`🔍 Looking up ${trackingNum}...`, 'text');
+        setIsTyping(true);
+
+        const result = await trackOrder(trackingNum);
+        setTimeout(() => {
+          if (result.success) {
+            addBotMessage(trackingNum, 'tracking_card', result.data, reply.followUps);
+          } else {
+            addBotMessage(result.message, 'text', null, reply.followUps);
+          }
+          setLastTopic('tracking');
+        }, 400);
+      }, 600);
+      return;
+    }
+
+    // Normal reply with typing delay
+    const delay = 600 + Math.random() * 400;
     setTimeout(() => {
-      const botReply = getBotReply(userText);
-      const botMsg   = { from: 'bot', text: botReply, ts: Date.now() };
-      setIsTyping(false);
-      setMessages(prev => [...prev, botMsg]);
-      // Announce bot reply
-      if (liveRegionRef.current) {
-        liveRegionRef.current.textContent = `CargoExpress assistant: ${botReply}`;
-      }
-    }, 700 + Math.random() * 400);
-  }, [chatInput]);
+      addBotMessage(reply.text, reply.type, null, reply.followUps);
+      if (reply.topicId) setLastTopic(reply.topicId);
+    }, delay);
+  }, [chatInput, isTyping, lastTopic, chatName, pricePerKilo, addBotMessage]);
 
   const resetChat = () => {
     setChatStarted(false);
     setMessages([]);
     setChatName('');
     setIsTyping(false);
+    setLastTopic(null);
+    setSuggestions(DEFAULT_QUICK_QUESTIONS);
+    clearChat();
   };
 
   const closeChat = () => {
@@ -568,20 +708,24 @@ const LoginPage = () => {
                   <div className="chat-intro-quick">
                     <p className="chat-intro-quick-label">Or ask directly:</p>
                     <div className="chat-intro-quick-grid">
-                      {QUICK_QUESTIONS.map(q => (
+                      {DEFAULT_QUICK_QUESTIONS.map(q => (
                         <button
                           key={q.query}
                           className="chat-intro-quick-btn"
                           onClick={() => {
                             const name = chatName.trim() || 'Guest';
                             setChatName(name);
+                            const context = { userName: name, pricePerKilo };
+                            const reply = getReply(q.query, context);
                             const greeting = `Hi ${name}! 👋 How can I help you?`;
                             setMessages([
-                              { from: 'bot',  text: greeting,        ts: Date.now() },
-                              { from: 'user', text: q.shortLabel,    ts: Date.now() + 1 },
-                              { from: 'bot',  text: getBotReply(q.query), ts: Date.now() + 2 },
+                              { from: 'bot',  text: greeting,    ts: Date.now(),     type: 'text' },
+                              { from: 'user', text: q.label,     ts: Date.now() + 1, type: 'text' },
+                              { from: 'bot',  text: reply.text,  ts: Date.now() + 2, type: reply.type || 'text' },
                             ]);
                             setChatStarted(true);
+                            if (reply.followUps) setSuggestions(reply.followUps);
+                            if (reply.topicId) setLastTopic(reply.topicId);
                           }}
                         >
                           {q.label}
@@ -633,26 +777,80 @@ const LoginPage = () => {
                 </div>
 
                 {/* Messages */}
-                <div className="chat-window-messages" role="log" aria-label="Chat messages">
-                  {messages.map((msg, i) => (
-                    <div key={i} className={`chat-bubble-wrap ${msg.from}`}>
-                      {msg.from === 'bot' && (
-                        <div className="chat-avatar bot-avatar" aria-hidden="true">
-                          <Bot size={11} />
-                        </div>
-                      )}
-                      <div className="chat-msg-col">
-                        <div className={`chat-bubble ${msg.from === 'user' ? 'user-bubble' : 'bot-bubble'}`}>
-                          {msg.text.split('\n').map((line, j) => (
-                            <span key={j}>{line}{j < msg.text.split('\n').length - 1 && <br />}</span>
-                          ))}
-                        </div>
-                        <div className={`chat-ts ${msg.from}`}>
-                          {formatTime(msg.ts)}
+                <div className="chat-window-messages" ref={messagesBoxRef} role="log" aria-label="Chat messages">
+                  {messages.map((msg, i) => {
+                    const prevMsg = messages[i - 1];
+                    const isGrouped = prevMsg && prevMsg.from === msg.from;
+
+                    return (
+                      <div key={msg.ts + '-' + i} className={`chat-bubble-wrap ${msg.from} ${isGrouped ? 'chat-grouped' : ''}`}>
+                        {msg.from === 'bot' && !isGrouped && (
+                          <div className="chat-avatar bot-avatar" aria-hidden="true">
+                            <Bot size={11} />
+                          </div>
+                        )}
+                        {msg.from === 'bot' && isGrouped && (
+                          <div className="chat-avatar-spacer" aria-hidden="true" />
+                        )}
+                        <div className="chat-msg-col">
+                          {/* Tracking Card */}
+                          {msg.type === 'tracking_card' && msg.data ? (
+                            <div className="chat-tracking-card">
+                              <div className="chat-tracking-header">
+                                <Package size={14} />
+                                <span className="chat-tracking-num">{msg.data.tracking_number}</span>
+                              </div>
+                              <div className="chat-tracking-status" style={{
+                                '--tracking-color': TRACKING_COLORS[msg.data.status] || 'var(--primary)',
+                              }}>
+                                {(() => {
+                                  const StatusIcon = TRACKING_ICONS[msg.data.status] || Package;
+                                  return <StatusIcon size={14} />;
+                                })()}
+                                <span>{msg.data.status}</span>
+                              </div>
+                              <div className="chat-tracking-details">
+                                <div className="chat-tracking-row">
+                                  <MapPin size={12} />
+                                  <span>{msg.data.origin} → {msg.data.destination}</span>
+                                </div>
+                                {msg.data.sender_name && (
+                                  <div className="chat-tracking-row">
+                                    <Send size={12} />
+                                    <span>{msg.data.sender_name} → {msg.data.receiver_name}</span>
+                                  </div>
+                                )}
+                                {msg.data.package_weight && (
+                                  <div className="chat-tracking-row">
+                                    <Package size={12} />
+                                    <span>{msg.data.actual_weight || msg.data.package_weight} kg</span>
+                                  </div>
+                                )}
+                              </div>
+                              <Link to={`/track?q=${msg.data.tracking_number}`} className="chat-tracking-link">
+                                View full details <ChevronRight size={13} />
+                              </Link>
+                            </div>
+                          ) : (
+                            /* Normal text bubble */
+                            <div className={`chat-bubble ${msg.from === 'user' ? 'user-bubble' : 'bot-bubble'}`}>
+                              {msg.text.split('\n').map((line, j, arr) => (
+                                <span key={j}>
+                                  <RichTextLine text={line} />
+                                  {j < arr.length - 1 && <br />}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          {!isGrouped && (
+                            <div className={`chat-ts ${msg.from}`}>
+                              {formatTime(msg.ts)}
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
 
                   {/* Typing indicator */}
                   {isTyping && (
@@ -669,15 +867,27 @@ const LoginPage = () => {
                   <div ref={messagesEndRef} />
                 </div>
 
-                {/* Quick replies */}
+                {/* Scroll to bottom pill */}
+                {showScrollPill && (
+                  <button
+                    className="chat-scroll-pill"
+                    onClick={scrollToBottom}
+                    aria-label="Scroll to latest messages"
+                  >
+                    <ArrowDown size={13} /> New messages
+                  </button>
+                )}
+
+                {/* Contextual quick replies */}
                 <div className="chatbox-quick" role="group" aria-label="Quick reply suggestions">
-                  {QUICK_QUESTIONS.map(q => (
+                  {suggestions.map(q => (
                     <button
                       key={q.query}
                       className="quick-reply-btn"
                       onClick={() => sendMessage(q.query)}
+                      disabled={isTyping}
                     >
-                      {q.shortLabel}
+                      {q.label}
                     </button>
                   ))}
                 </div>
@@ -686,9 +896,9 @@ const LoginPage = () => {
                 <div className="chatbox-input">
                   <input
                     className="chat-input"
-                    placeholder="Type a message…"
+                    placeholder="Type a message or tracking #…"
                     value={chatInput}
-                    onChange={e => setChatInput(e.target.value)}
+                    onChange={e => setChatInput(e.target.value.slice(0, MAX_CHAT_LENGTH))}
                     onKeyDown={e => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
@@ -696,7 +906,7 @@ const LoginPage = () => {
                       }
                     }}
                     aria-label="Type your message"
-                    maxLength={300}
+                    maxLength={MAX_CHAT_LENGTH}
                   />
                   <button
                     className="chat-send-btn"
@@ -708,9 +918,17 @@ const LoginPage = () => {
                   </button>
                 </div>
 
-                <div className="chat-window-powered">
-                  <Bot size={11} />
-                  <span>Powered by CargoExpress AI</span>
+                {/* Character counter + powered by */}
+                <div className="chat-window-footer">
+                  {chatInput.length > 0 && (
+                    <span className={`chat-char-count ${chatInput.length > MAX_CHAT_LENGTH - 30 ? 'chat-char-warn' : ''}`}>
+                      {chatInput.length}/{MAX_CHAT_LENGTH}
+                    </span>
+                  )}
+                  <div className="chat-window-powered">
+                    <Bot size={11} />
+                    <span>Powered by CargoExpress AI</span>
+                  </div>
                 </div>
               </div>
             )}

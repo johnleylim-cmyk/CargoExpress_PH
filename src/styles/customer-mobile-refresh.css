@@ -204,8 +204,8 @@
 }
 
 .customer-avatar {
-  background: linear-gradient(135deg, var(--customer-green), #22C55E);
-  box-shadow: 0 10px 22px rgba(18, 138, 90, 0.24);
+  background: var(--bg-secondary);
+  box-shadow: none;
 }
 
 .customer-main {
@@ -728,26 +728,6 @@
     linear-gradient(135deg, var(--customer-green-soft), var(--customer-orange-soft));
 }
 
-.booking-success-page {
-  min-height: calc(100dvh - 144px);
-}
-
-.booking-success-shell {
-  border-radius: 32px;
-}
-
-.booking-success-check {
-  background: linear-gradient(135deg, var(--customer-green), #22C55E);
-  box-shadow: 0 18px 34px rgba(18, 138, 90, 0.28);
-}
-
-.booking-success-continue {
-  min-width: min(280px, 100%);
-  background: var(--customer-green);
-  color: #FFFFFF;
-  border-radius: 18px;
-}
-
 .customer-notifications-page {
   display: grid;
   gap: 12px;
@@ -1007,11 +987,6 @@
 
   .customer-navbar-brand {
     font-size: 0.98rem;
-  }
-
-  .customer-avatar-btn,
-  .customer-dropdown {
-    display: none;
   }
 
   .customer-main {

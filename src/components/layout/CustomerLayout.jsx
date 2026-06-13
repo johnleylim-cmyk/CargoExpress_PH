@@ -181,7 +181,7 @@ const CustomerLayout = () => {
                 aria-expanded={dropdownOpen}
               >
                 <div className="customer-avatar">
-                  {getInitials(userProfile?.name)}
+                  <User size={20} />
                 </div>
               </button>
 

@@ -1,12 +1,28 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { createOrder, getTrips, getSettings } from '../../lib/database';
 import { buildFullAddress } from '../../lib/address';
 import { ROUTES, PH_LOCATIONS, VALID_PROVINCES, detectPickupLocation, validateRouteProvinces } from '../../constants/phLocations';
-import { ArrowLeft, Loader, CheckCircle, Package, MapPin, User, Truck, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Loader, CheckCircle, Copy, Check, Package, MapPin, User, Truck, AlertTriangle } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
 import CustomSelect from '../../components/ui/CustomSelect';
+import { motion, useReducedMotion } from 'framer-motion';
+
+const luxeEase = [0.22, 1, 0.36, 1];
+
+function fallbackCopy(text) {
+  const el = document.createElement('textarea');
+  el.value = text;
+  el.setAttribute('readonly', '');
+  el.style.cssText = 'position:fixed;left:0;top:0;width:1px;height:1px;padding:0;border:none;outline:none;box-shadow:none;background:transparent;opacity:0';
+  document.body.appendChild(el);
+  el.focus();
+  el.select();
+  el.setSelectionRange(0, text.length);
+  try { document.execCommand('copy'); } catch {}
+  document.body.removeChild(el);
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 const toTitleCase = (str) => str.replace(/\b\w/g, (char) => char.toUpperCase());
@@ -252,34 +268,198 @@ const BookShipmentPage = () => {
     );
   };
 
+  const [trackingCopied, setTrackingCopied] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const particles = useMemo(
+    () => Array.from({ length: 24 }, (_, i) => ({
+      id: i,
+      angle: (i / 24) * Math.PI * 2,
+      distance: 100 + Math.random() * 80,
+      size: 3 + Math.random() * 5,
+      delay: 0.6 + Math.random() * 0.3,
+    })),
+    []
+  );
+
   if (success) {
     const orderPath = success.id ? `/customer/orders/${success.id}` : '/customer/orders';
+    const routeLabel = `${success.origin} → ${success.destination}`;
+    const statusLabel = success.status || 'Pending';
+    const isAssigned = statusLabel === 'Assigned';
 
     return (
-      <div className="page-transition booking-page booking-success-page" aria-labelledby="booking-success-title">
-        <section className="booking-success-shell animate-scale-in">
+      <div className="booking-success-page" aria-labelledby="booking-success-title">
+        {/* Ambient glow */}
+        <motion.div
+          className="booking-success-glow"
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.6, ease: luxeEase }}
+        />
+
+        {/* Rising lines */}
+        <div className="booking-success-lines" aria-hidden="true">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <motion.div
+              key={i}
+              className="booking-success-line"
+              style={{ left: `${15 + i * 14}%` }}
+              initial={{ scaleY: 0, opacity: 0 }}
+              animate={{ scaleY: 1, opacity: 1 }}
+              transition={{ duration: 1.2, delay: 0.2 + i * 0.08, ease: luxeEase }}
+            />
+          ))}
+        </div>
+
+        <div className="booking-success-content" role="status" aria-live="polite">
+          {/* Checkmark with rings */}
           <div className="booking-success-visual">
-            <div className="booking-success-rings" aria-hidden="true">
-              <span className="booking-success-ring ring-one" />
-              <span className="booking-success-ring ring-two" />
-              <span className="booking-success-ring ring-three" />
-              <div className="booking-success-check">
-                <CheckCircle size={46} strokeWidth={2.4} />
+            {/* Solid circle */}
+            <motion.div
+              className="booking-success-check-circle"
+              initial={{ scale: 0, rotate: -45 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 180, damping: 14, delay: 0.2 }}
+            />
+
+            {/* Particle burst */}
+            {!reduceMotion && particles.map((p) => (
+              <motion.span
+                key={p.id}
+                className="booking-success-particle"
+                style={{ width: p.size, height: p.size, marginLeft: -p.size / 2, marginTop: -p.size / 2 }}
+                initial={{ x: 0, y: 0, opacity: 0, scale: 0 }}
+                animate={{
+                  x: Math.cos(p.angle) * p.distance,
+                  y: Math.sin(p.angle) * p.distance,
+                  opacity: [0, 1, 0],
+                  scale: [0, 1, 0.3],
+                }}
+                transition={{ duration: 1.2, delay: p.delay, ease: luxeEase }}
+              />
+            ))}
+
+            {/* SVG checkmark drawn in */}
+            <svg viewBox="0 0 100 100" className="booking-success-checkmark-svg">
+              <motion.path
+                d="M28 52 L44 68 L74 36"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.7, delay: 0.55, ease: luxeEase }}
+              />
+            </svg>
+          </div>
+
+          {/* Eyebrow */}
+          <motion.div
+            className="booking-success-eyebrow"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.9, ease: luxeEase }}
+          >
+            {isAssigned ? 'Assigned' : 'Booked'}
+          </motion.div>
+
+          {/* Heading */}
+          <motion.h1
+            id="booking-success-title"
+            className="booking-success-heading"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 1.0, ease: luxeEase }}
+          >
+            Shipment booked!
+          </motion.h1>
+
+          {/* Subtitle */}
+          <motion.p
+            className="booking-success-subtitle"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 1.15, ease: luxeEase }}
+          >
+            Your package is on its way. Track it anytime from your orders.
+          </motion.p>
+
+          {/* Ticket card */}
+          <motion.div
+            className="booking-success-ticket"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 1.3, ease: luxeEase }}
+          >
+            <div className="booking-success-ticket-top">
+              <div className="booking-success-ticket-cell">
+                <span className="booking-success-ticket-label">Sender</span>
+                <span className="booking-success-ticket-value">{success.sender_name}</span>
+              </div>
+              <div className="booking-success-ticket-divider" />
+              <div className="booking-success-ticket-cell">
+                <span className="booking-success-ticket-label">Route</span>
+                <span className="booking-success-ticket-value">{routeLabel}</span>
+              </div>
+              <div className="booking-success-ticket-divider" />
+              <div className="booking-success-ticket-cell">
+                <span className="booking-success-ticket-label">Weight</span>
+                <span className="booking-success-ticket-value">{success.package_weight} kg</span>
               </div>
             </div>
-          </div>
 
-          <div className="booking-success-copy-wrap" role="status" aria-live="polite">
-            <h2 id="booking-success-title" className="booking-success-title">Booking Confirmed</h2>
-            <p className="booking-success-subtitle">
-              Your shipment has been booked successfully.
-            </p>
-          </div>
+            <div className="booking-success-ticket-perforation">
+              <span className="booking-success-ticket-hole booking-success-ticket-hole-left" />
+              <span className="booking-success-ticket-hole booking-success-ticket-hole-right" />
+              <div className="booking-success-ticket-dash" />
+            </div>
 
-          <button type="button" className="btn booking-success-continue" onClick={() => navigate(orderPath)}>
-            Continue
-          </button>
-        </section>
+            <div className="booking-success-ticket-bottom">
+              <div>
+                <span className="booking-success-ticket-label">Tracking Number</span>
+                <div className="booking-success-tracking-row">
+                  <span className="booking-success-ticket-tracking">{success.tracking_number}</span>
+                  <button
+                    type="button"
+                    className={`booking-success-copy-btn${trackingCopied ? ' is-copied' : ''}`}
+                    onClick={() => {
+                      fallbackCopy(success.tracking_number);
+                      setTrackingCopied(true);
+                      setTimeout(() => setTrackingCopied(false), 2000);
+                    }}
+                    aria-label="Copy tracking number"
+                  >
+                    {trackingCopied ? <Check size={14} /> : <Copy size={14} />}
+                  </button>
+                </div>
+              </div>
+              <span className={`booking-success-status-pill ${isAssigned ? 'is-assigned' : 'is-pending'}`}>
+                {statusLabel}
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Action buttons */}
+          <motion.div
+            className="booking-success-actions"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.5, ease: luxeEase }}
+          >
+            <button type="button" className="btn booking-success-btn-primary" onClick={() => navigate(orderPath)}>
+              View Order
+            </button>
+            <button
+              type="button"
+              className="btn booking-success-btn-outline"
+              onClick={() => { setSuccess(null); setStep(1); setForm(prev => ({ ...prev, route: '', trip_id: '', sender_name: '', sender_phone: '', sender_facebook: '', sender_lot_block: '', sender_street: '', sender_barangay: '', sender_city: '', sender_province: '', sender_landmark: '', receiver_name: '', receiver_phone: '', receiver_facebook: '', receiver_lot_block: '', receiver_street: '', receiver_barangay: '', receiver_city: '', receiver_province: '', receiver_landmark: '', package_description: '', package_weight: '', payer_type: 'sender', notes: '' })); }}
+            >
+              Book Another
+            </button>
+          </motion.div>
+        </div>
       </div>
     );
   }

@@ -171,13 +171,13 @@
 }
 .customer-avatar {
   width: 40px; height: 40px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  background: var(--bg-secondary);
   display: flex; align-items: center; justify-content: center;
-  color: white; font-size: 0.875rem; font-weight: 700;
+  color: var(--text-secondary); font-size: 0.875rem; font-weight: 700;
   transition: var(--transition);
-  box-shadow: 0 2px 8px rgba(232, 114, 42, 0.3);
+  -webkit-tap-highlight-color: transparent;
 }
-.customer-avatar:hover { transform: scale(1.08); box-shadow: var(--shadow-primary); }
+.customer-avatar:hover { color: var(--text); background: var(--border-light); }
 
 /* Dropdown */
 .customer-dropdown {
@@ -236,7 +236,8 @@
 .customer-mobile-link.danger:hover { background: var(--error-bg); }
 
 /* Customer Main */
-.customer-main { padding: 24px 20px 120px; max-width: 860px; margin: 0 auto; scroll-behavior: smooth; }
+.customer-main { padding: 24px 20px 120px; max-width: 860px; margin: 0 auto; scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none; }
+.customer-main::-webkit-scrollbar { display: none; }
 .customer-main:has(.support-chat-page) { padding-bottom: 24px; }
 
 /* -- Customer Bottom Tab Bar (Mobile)  Premium Floating Pill -- */

@@ -325,13 +325,13 @@ const ReportsPage = () => {
                         .map(st => ({
                           label: st,
                           value: data.statusBreakdown[st],
-                          color: st === 'Delivered' ? '#10B981'
-                            : st === 'Cancelled' ? '#EF4444'
-                            : st === 'Pending' ? '#F59E0B'
-                            : st === 'In Transit' ? '#3B82F6'
-                            : st === 'Out for Delivery' ? '#8B5CF6'
-                            : st === 'Picked Up' || st === 'Arrived at Hub' ? '#14B8A6'
-                            : '#64748B',
+                          color: st === 'Delivered' ? 'var(--success)'
+                            : st === 'Cancelled' ? 'var(--error)'
+                            : st === 'Pending' ? 'var(--warning)'
+                            : st === 'In Transit' ? 'var(--info)'
+                            : st === 'Out for Delivery' ? 'var(--chart-purple)'
+                            : st === 'Picked Up' || st === 'Arrived at Hub' ? 'var(--chart-teal)'
+                            : 'var(--chart-slate)',
                         }))
                       }
                     />
@@ -405,7 +405,7 @@ const ReportsPage = () => {
                         bars={data.routeBreakdown.slice(0, 8).map((r, i) => ({
                           label: r.route.length > 12 ? r.route.slice(0, 11) + '…' : r.route,
                           value: r.revenue,
-                          color: ['var(--primary)', 'var(--accent)', 'var(--info)', 'var(--success)', 'var(--warning)', '#8B5CF6', '#EC4899', '#64748B'][i % 8],
+                          color: ['var(--primary)', 'var(--accent)', 'var(--info)', 'var(--success)', 'var(--warning)', 'var(--chart-purple)', 'var(--chart-pink)', 'var(--chart-slate)'][i % 8],
                         }))}
                       />
                     </div>

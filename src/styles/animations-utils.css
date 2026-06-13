@@ -230,6 +230,7 @@
 .text-success { color: var(--success); }
 .text-error { color: var(--error); }
 .text-warning { color: var(--warning); }
+.text-white { color: #FFFFFF; }
 .w-full { width: 100%; }
 .mt-xs { margin-top: 4px; }
 .mt-sm { margin-top: 8px; }

@@ -69,7 +69,7 @@ const SalesPage = () => {
             {l:'Outstanding', v:s.unpaidTotal||0, g:'linear-gradient(135deg,var(--error),var(--error-dark, #dc2626))', prefix:'₱'},
             {l:'Unpaid Orders', v:s.unpaidCount||0, g:'linear-gradient(135deg,var(--warning),var(--warning-dark, #d97706))', prefix:''}
           ].map((c,i)=>(
-            <div key={i} className="stat-card stagger-item text-white" style={{background:c.g, color: 'white', animationDelay: `${i * 60}ms`}}>
+            <div key={i} className="stat-card stagger-item text-white" style={{background:c.g, animationDelay: `${i * 60}ms`}}>
               <div className="stat-value">
                 <AnimatedCounter value={c.v} prefix={c.prefix} decimals={0} duration={1200} />
               </div>

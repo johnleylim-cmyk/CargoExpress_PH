@@ -1,6 +1,6 @@
-/* --- CHATBOT STYLES — FULL PREMIUM ------------------------------------ */
+/* --- CHATBOT STYLES ï¿½ FULL PREMIUM ------------------------------------ */
 
-/* -- Legacy chatbox (admin/support pages) — keep intact -- */
+/* -- Legacy chatbox (admin/support pages) ï¿½ keep intact -- */
 .chatbox {
   display: flex; flex-direction: column;
   border: 1.5px solid var(--border); border-radius: var(--radius-md);
@@ -9,7 +9,7 @@
 .chatbox-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 14px;
-  background: linear-gradient(135deg, #152E4A, #2D5A8A);
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent-light));
   color: white;
 }
 .chatbox-messages {

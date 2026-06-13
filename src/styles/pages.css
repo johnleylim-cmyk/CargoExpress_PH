@@ -2,7 +2,7 @@
 
 .about-section { display: flex; flex-direction: column; gap: 0; }
 .about-hero {
-  background: linear-gradient(135deg, #0B1929, #1B3A5C, #2D5A8A);
+  background: linear-gradient(135deg, var(--accent-darker), var(--accent), var(--accent-light));
   border-radius: var(--radius-md); padding: 28px; text-align: center;
   color: white; margin-bottom: 20px;
   position: relative; overflow: hidden;

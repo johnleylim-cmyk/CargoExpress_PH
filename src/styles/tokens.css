@@ -13,7 +13,7 @@
   --primary-glow: rgba(232, 114, 42, 0.18);
 
   --accent: #1B3A5C;
-  --accent-dark: #0F2440;
+  --accent-dark: #152E4A;
   --accent-light: #2D5A8A;
   --accent-lighter: #3D7ABB;
   --bg-gradient: linear-gradient(135deg, #F3F7FA 0%, #E9EFF4 100%);
@@ -36,6 +36,14 @@
   --info: #3B82F6;
   --info-dark: #2563EB;
   --info-bg: #EFF6FF;
+
+  /* -- Chart Colors (theme-aware for data visualization) -- */
+  --chart-purple: #8B5CF6;
+  --chart-pink: #EC4899;
+  --chart-slate: #64748B;
+  --chart-teal: #14B8A6;
+
+  --accent-darker: #0B1929;
 
   /* -- Neutrals -- */
   --bg: #F3F7FA;
@@ -144,6 +152,13 @@
   --info: #60A5FA;
   --info-dark: #93C5FD;
   --info-bg: #101C2A;
+
+  --chart-purple: #A78BFA;
+  --chart-pink: #F472B6;
+  --chart-slate: #94A3B8;
+  --chart-teal: #2DD4BF;
+
+  --accent-darker: #112236;
 
   --bg: #0A1628;
   --bg-secondary: #111E33;

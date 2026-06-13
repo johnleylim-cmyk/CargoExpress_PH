@@ -54,15 +54,15 @@ const DashboardPage = () => {
   ];
   const totalOrders = stats?.totalOrders || 0;
   const knownOrderSegments = [
-    { label: 'Pending', value: stats?.pendingOrders || 0, color: '#F59E0B' },
-    { label: 'Picked Up', value: stats?.pickedUp || 0, color: '#8B5CF6' },
-    { label: 'In Transit', value: stats?.inTransit || 0, color: '#3B82F6' },
-    { label: 'Delivered', value: stats?.delivered || 0, color: '#10B981' },
+    { label: 'Pending', value: stats?.pendingOrders || 0, color: 'var(--warning)' },
+    { label: 'Picked Up', value: stats?.pickedUp || 0, color: 'var(--chart-purple)' },
+    { label: 'In Transit', value: stats?.inTransit || 0, color: 'var(--info)' },
+    { label: 'Delivered', value: stats?.delivered || 0, color: 'var(--success)' },
   ];
   const knownOrderCount = knownOrderSegments.reduce((sum, segment) => sum + segment.value, 0);
   const orderDistributionSegments = [
     ...knownOrderSegments,
-    { label: 'Other Orders', value: Math.max(0, totalOrders - knownOrderCount), color: '#64748B' },
+    { label: 'Other Orders', value: Math.max(0, totalOrders - knownOrderCount), color: 'var(--chart-slate)' },
   ].filter(segment => segment.value > 0);
 
   return (

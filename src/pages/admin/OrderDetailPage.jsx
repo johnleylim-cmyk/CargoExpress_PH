@@ -358,7 +358,7 @@ const AdminOrderDetailPage = () => {
               <input id="admin-order-actual-weight" type="number" min="0" step="0.1" className="form-input" value={payForm.actual_weight}
                 onChange={e => { const val = e.target.value; if (val === '' || (Number(val) >= 0 && !isNaN(val))) setPayForm(p => ({ ...p, actual_weight: val })); }} />
               {showsWeightWarning && (
-                <div className="text-warning text-xs flex items-center gap-4 mt-6" style={{ color: '#D97706', display: 'flex', alignItems: 'center', gap: 4, marginTop: 6, fontWeight: 600 }}>
+                <div className="text-warning text-xs flex items-center gap-4 mt-6">
                   <AlertTriangle size={14} /> Deviates significantly from estimate ({estimatedWeight} kg)
                 </div>
               )}

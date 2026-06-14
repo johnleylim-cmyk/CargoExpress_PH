@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Package, MapPin, Bell, Truck, ArrowRight, X, CheckCircle } from 'lucide-react';
+import FocusTrap from './FocusTrap';
 
 const ONBOARDING_KEY = 'cargoexpress_onboarding_done';
 
@@ -80,6 +81,7 @@ const OnboardingModal = () => {
       aria-modal="true"
       aria-label="Welcome tour"
     >
+      <FocusTrap active={show && !exiting}>
       <div className={`onboarding-card ${exiting ? 'onboarding-card-exit' : 'onboarding-card-enter'}`}>
         {!isLast && (
           <button className="onboarding-skip" onClick={handleSkip} type="button">
@@ -118,6 +120,7 @@ const OnboardingModal = () => {
           )}
         </button>
       </div>
+      </FocusTrap>
     </div>
   );
 };

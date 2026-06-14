@@ -6,6 +6,7 @@ import {
   Eye, EyeOff, ShieldCheck, AlertTriangle, Check,
   ArrowLeft,
 } from 'lucide-react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 /* ── Password strength helpers ───────────────────────────────────────── */
 const getPasswordStrength = (pw) => {
@@ -26,6 +27,7 @@ const getPasswordStrength = (pw) => {
    ResetPasswordPage — World-Class Premium Redesign
 ══════════════════════════════════════════════════════════════════════════ */
 const ResetPasswordPage = () => {
+  usePageTitle('Reset Password');
   const [password,        setPassword]        = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword,    setShowPassword]    = useState(false);

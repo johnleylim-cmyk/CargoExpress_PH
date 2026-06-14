@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
 import CustomSelect from '../../components/ui/CustomSelect';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const toTitleCase = (str) => str.replace(/\b\w/g, (c) => c.toUpperCase());
 
@@ -23,6 +24,7 @@ const validatePhone = (phone) => {
 };
 
 const PersonalInfoPage = () => {
+  usePageTitle('Personal Info');
   const { user, userProfile, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();

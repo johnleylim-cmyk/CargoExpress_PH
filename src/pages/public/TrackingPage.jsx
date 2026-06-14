@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { STATUS_TIMELINE, STATUS_COLORS } from '../../constants/status';
 import TrackingTimeline from '../../components/ui/TrackingTimeline';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const TRACKING_STATUS_TONES = {
   Pending: {
@@ -79,6 +80,7 @@ const formatDate = (iso, withTime = false) => {
    TrackingPage
 ══════════════════════════════════════════════════════════════════════ */
 const TrackingPage = () => {
+  usePageTitle('Track Shipment');
   const [searchParams] = useSearchParams();
   const [trackingNumber, setTrackingNumber] = useState(searchParams.get('q') || '');
   const [order,   setOrder]   = useState(null);

@@ -9,10 +9,12 @@ import ResponsiveFilterControls from '../../components/ui/ResponsiveFilterContro
 import Pagination from '../../components/ui/Pagination';
 import { motion } from 'framer-motion';
 import { Search, Package } from 'lucide-react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const tabs = ['All', 'Pending', 'Assigned', 'Picked Up', 'In Transit', 'Arrived at Hub', 'Out for Delivery', 'Delivered', 'Cancelled'];
 
 const AdminOrdersPage = () => {
+  usePageTitle('Orders');
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

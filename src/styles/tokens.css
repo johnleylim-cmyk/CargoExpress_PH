@@ -160,17 +160,17 @@
 
   --accent-darker: #112236;
 
-  --bg: #0A1628;
-  --bg-secondary: #111E33;
-  --surface: #152238;
-  --surface-raised: #1C2D45;
-  --border: #1E334A;
-  --border-light: #162840;
-  --border-hover: #2A4A6A;
+  --bg: #07111F;
+  --bg-secondary: #0D1A2B;
+  --surface: #132033;
+  --surface-raised: #17263B;
+  --border: #253850;
+  --border-light: #1B2B42;
+  --border-hover: #344B66;
 
-  --text: #E8EDF2;
-  --text-secondary: #CBD5E1;
-  --text-tertiary: #94A3B8;
+  --text: #F2F6FA;
+  --text-secondary: #C7D2E0;
+  --text-tertiary: #9AA9BA;
   --text-inverse: #0F172A;
 
   --glass-bg: rgba(21, 34, 56, 0.78);

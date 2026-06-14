@@ -12,6 +12,7 @@ import {
   DollarSign, TrendingUp, Truck, MapPin, BarChart3,
   Filter, RefreshCw, Clock, CreditCard, Loader, AlertTriangle, Download
 } from 'lucide-react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const PERIODS = [
   { key: 'daily', label: 'Daily', icon: Clock },
@@ -29,6 +30,7 @@ const formatDateTime = (d) => new Date(d).toLocaleString('en-PH', { month: 'shor
 const STATUS_ORDER = ['Pending', 'Assigned', 'Picked Up', 'In Transit', 'Arrived at Hub', 'Out for Delivery', 'Delivered', 'Cancelled'];
 
 const ReportsPage = () => {
+  usePageTitle('Reports');
   const [period, setPeriod] = useState('daily');
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');

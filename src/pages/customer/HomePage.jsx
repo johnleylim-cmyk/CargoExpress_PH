@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../hooks/useToast';
 import { getOrders, getAnnouncements, getTrips } from '../../lib/database';
 import StatusBadge from '../../components/ui/StatusBadge';
 import { SkeletonOrderCard, SkeletonStatCard } from '../../components/ui/SkeletonLoader';
@@ -11,9 +12,12 @@ import {
   Container, MapPin, Calendar, Weight, ChevronRight,
   Truck, CheckCircle,
 } from 'lucide-react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const HomePage = () => {
+  usePageTitle('Home');
   const { user, userProfile } = useAuth();
+  const toast = useToast();
   const navigate = useNavigate();
   const [orders, setOrders]           = useState([]);
   const [announcements, setAnnouncements] = useState([]);
@@ -42,7 +46,7 @@ const HomePage = () => {
 
       setActiveTrip(upcoming[0] || null);
     } catch (err) {
-      // Failed to load — user sees empty UI
+      toast.error('Failed to load data. Pull down to refresh.');
     } finally {
       setLoading(false);
     }

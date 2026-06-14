@@ -4,8 +4,10 @@ import { createTrip } from '../../lib/database';
 import { ROUTES } from '../../constants/phLocations';
 import { ArrowLeft, Calendar, Loader, Truck, DollarSign, Package, FileText, Lightbulb } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const CreateTripPage = () => {
+  usePageTitle('Create Trip');
   const navigate = useNavigate();
   const toast = useToast();
   const [loading, setLoading] = useState(false);

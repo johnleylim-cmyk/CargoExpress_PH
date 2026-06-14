@@ -6,6 +6,7 @@ import { SkeletonCard } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
 import ResponsiveFilterControls from '../../components/ui/ResponsiveFilterControls';
 import { Plus, Truck, Calendar, MapPin } from 'lucide-react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const tabs = ['All', 'scheduled', 'in_progress', 'arrived', 'completed', 'cancelled'];
 
@@ -27,6 +28,7 @@ const getCapacityState = (current = 0, max = 0) => {
 };
 
 const AdminTripsPage = () => {
+  usePageTitle('Trips');
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

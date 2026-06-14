@@ -21,8 +21,10 @@ import {
   Truck, Loader, Save, Camera, AlertTriangle, X, Image
 } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const AdminOrderDetailPage = () => {
+  usePageTitle('Order Details');
   const { id } = useParams();
   const navigate = useNavigate();
   const toast = useToast();

@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase';
 import { getUnreadNotificationCount } from '../../lib/database';
 import { requestNotificationPermission } from '../../lib/firebase-messaging';
 import ErrorBoundary from '../ui/ErrorBoundary';
+import ConfirmModal from '../ui/ConfirmModal';
 import OnboardingModal from '../ui/OnboardingModal';
 import PageTransition from '../ui/PageTransition';
 
@@ -18,7 +19,7 @@ const desktopNavItems = [
 ];
 
 const bottomNavItems = [
-  { to: '/customer', icon: Home, label: 'Home', end: true },
+  { to: '/customer', icon: Home, label: 'Home', end: true, hasBadge: true },
   { to: '/customer/orders', icon: Package, label: 'Orders' },
   { to: '/customer/book', icon: Plus, label: 'Book', isBookTab: true },
   { to: '/customer/trips', icon: MapPin, label: 'Trips' },
@@ -116,7 +117,10 @@ const CustomerLayout = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
   const handleLogout = async () => {
+    setShowLogoutConfirm(false);
     setDropdownOpen(false);
     await logout();
     navigate('/login');
@@ -204,7 +208,7 @@ const CustomerLayout = () => {
                       <User size={16} /> Account Settings
                       <ChevronRight size={14} className="ml-auto" style={{ opacity: 0.4 }} />
                     </Link>
-                    <button onClick={handleLogout} className="customer-dropdown-item danger">
+                    <button onClick={() => { setDropdownOpen(false); setShowLogoutConfirm(true); }} className="customer-dropdown-item danger">
                       <LogOut size={16} /> Logout
                     </button>
                   </div>
@@ -257,6 +261,15 @@ const CustomerLayout = () => {
         </div>
       </nav>
     </div>
+    <ConfirmModal
+      isOpen={showLogoutConfirm}
+      onClose={() => setShowLogoutConfirm(false)}
+      onConfirm={handleLogout}
+      title="Sign Out"
+      message="Are you sure you want to sign out?"
+      confirmLabel="Sign Out"
+      variant="warning"
+    />
     </>
   );
 };

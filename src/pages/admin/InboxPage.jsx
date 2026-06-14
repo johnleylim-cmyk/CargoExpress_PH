@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../hooks/useToast';
 import { supabase } from '../../lib/supabase';
 import {
   getAdminConversations,
@@ -10,9 +11,12 @@ import {
 } from '../../lib/database';
 import EmptyState from '../../components/ui/EmptyState';
 import { MessageSquare, Send, Loader, User } from 'lucide-react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const InboxPage = () => {
+  usePageTitle('Inbox');
   const { user } = useAuth();
+  const toast = useToast();
   const [conversations, setConversations] = useState([]);
   const [activeConv, setActiveConv] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -130,7 +134,8 @@ const InboxPage = () => {
         return [...prev, newMsg];
       });
     } catch (err) {
-      // Send failed — message not delivered
+      setInput(text);
+      toast.error('Failed to send message. Please try again.');
     } finally {
       setSending(false);
     }

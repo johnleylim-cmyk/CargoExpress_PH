@@ -9,8 +9,10 @@ import AnimatedCounter from '../../components/ui/AnimatedCounter';
 import PageTransition, { StaggerItem } from '../../components/ui/PageTransition';
 import ErrorBoundarySection from '../../components/ui/ErrorBoundarySection';
 import { Package, Truck, Users, Clock, ArrowRight, TrendingUp, Gauge, PieChart } from 'lucide-react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const DashboardPage = () => {
+  usePageTitle('Dashboard');
   const [stats, setStats] = useState(null);
   const [capacity, setCapacity] = useState(null);
   const [recent, setRecent] = useState([]);

@@ -8,10 +8,12 @@ import EmptyState from '../../components/ui/EmptyState';
 import PageTransition, { StaggerItem } from '../../components/ui/PageTransition';
 import ResponsiveFilterControls from '../../components/ui/ResponsiveFilterControls';
 import { Search, Package, AlertCircle, MapPin, ChevronRight } from 'lucide-react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const tabs = ['All', 'Pending', 'In Transit', 'Delivered', 'Cancelled'];
 
 const OrdersPage = () => {
+  usePageTitle('My Orders');
   const { user } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);

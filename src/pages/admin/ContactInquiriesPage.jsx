@@ -7,6 +7,7 @@ import {
   Mail, Phone, Clock, CheckCircle, Eye,
   Loader, MessageSquare, AlertCircle, X
 } from 'lucide-react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const STATUS_CONFIG = {
   new: { label: 'New', className: 'badge-warning' },
@@ -15,6 +16,7 @@ const STATUS_CONFIG = {
 };
 
 const ContactInquiriesPage = () => {
+  usePageTitle('Contact Inquiries');
   const [inquiries, setInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

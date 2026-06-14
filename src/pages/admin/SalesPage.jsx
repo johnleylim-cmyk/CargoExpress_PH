@@ -5,8 +5,10 @@ import AnimatedCounter from '../../components/ui/AnimatedCounter';
 import DonutChart from '../../components/ui/DonutChart';
 import MiniBarChart from '../../components/ui/MiniBarChart';
 import { BarChart3, DollarSign, TrendingUp, CreditCard } from 'lucide-react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const SalesPage = () => {
+  usePageTitle('Sales');
   const [data, setData] = useState(null); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

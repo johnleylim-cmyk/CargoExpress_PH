@@ -2,10 +2,15 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { getOrders } from '../../lib/database';
+import { useToast } from '../../hooks/useToast';
 import { User, LogOut, ChevronRight, Package, Truck, Bell, MessageCircle } from 'lucide-react';
+import ConfirmModal from '../../components/ui/ConfirmModal';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const ProfilePage = () => {
+  usePageTitle('Profile');
   const { user, userProfile, logout } = useAuth();
+  const toast = useToast();
   const navigate = useNavigate();
   const [orderStats, setOrderStats] = useState({ total: 0, active: 0, delivered: 0 });
   const [loading, setLoading] = useState(true);
@@ -20,11 +25,13 @@ const ProfilePage = () => {
           active: data.filter(o => !['Delivered', 'Cancelled'].includes(o.status)).length,
           delivered: data.filter(o => o.status === 'Delivered').length,
         });
-      }).catch(() => {}).finally(() => setLoading(false));
+      }).catch(() => { toast.error('Failed to load profile stats.'); }).finally(() => setLoading(false));
     }
   }, [user]);
 
-  const handleLogout = async () => { await logout(); navigate('/login'); };
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  const handleLogout = async () => { setShowLogoutConfirm(false); await logout(); navigate('/login'); };
 
   const menuItems = [
     { icon: User, color: 'var(--primary)', bg: 'var(--primary-glow)', label: 'Personal Information', desc: 'Edit your profile details', path: '/customer/personal-info' },
@@ -33,6 +40,7 @@ const ProfilePage = () => {
   ];
 
   return (
+    <>
     <div className="page-transition profile-page">
       {/* Profile Card */}
       <div className="profile-card-premium animate-slide-up">
@@ -103,12 +111,23 @@ const ProfilePage = () => {
       {/* Sign Out */}
       <button
         className="btn btn-outline w-full stagger-item justify-center profile-signout"
-        onClick={handleLogout}
+        onClick={() => setShowLogoutConfirm(true)}
         style={{ color: 'var(--error)', borderColor: 'var(--error-glow)', animationDelay: '180ms' }}
       >
         <LogOut size={18} /> Sign Out
       </button>
     </div>
+
+    <ConfirmModal
+      isOpen={showLogoutConfirm}
+      onClose={() => setShowLogoutConfirm(false)}
+      onConfirm={handleLogout}
+      title="Sign Out"
+      message="Are you sure you want to sign out?"
+      confirmLabel="Sign Out"
+      variant="warning"
+    />
+    </>
   );
 };
 

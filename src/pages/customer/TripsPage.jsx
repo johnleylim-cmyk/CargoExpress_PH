@@ -5,6 +5,7 @@ import StatusBadge from '../../components/ui/StatusBadge';
 import { SkeletonOrderCard } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
 import { Calendar, Truck, AlertCircle, ChevronRight } from 'lucide-react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const formatTripDate = (value) => {
   if (!value) return { month: 'TBD', day: '--', full: 'Date not set' };
@@ -18,6 +19,7 @@ const formatTripDate = (value) => {
 };
 
 const TripsPage = () => {
+  usePageTitle('Trips');
   const navigate = useNavigate();
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);

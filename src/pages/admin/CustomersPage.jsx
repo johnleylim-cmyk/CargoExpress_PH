@@ -5,8 +5,10 @@ import { SkeletonTableRow } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
 import Pagination from '../../components/ui/Pagination';
 import { Search, Users } from 'lucide-react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const CustomersPage = () => {
+  usePageTitle('Customers');
   const [customers, setCustomers] = useState([]); 
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null);

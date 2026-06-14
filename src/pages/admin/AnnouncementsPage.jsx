@@ -5,8 +5,10 @@ import EmptyState from '../../components/ui/EmptyState';
 import { SkeletonCard } from '../../components/ui/SkeletonLoader';
 import { Plus, Trash2, Megaphone, Loader } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const AnnouncementsPage = () => {
+  usePageTitle('Announcements');
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

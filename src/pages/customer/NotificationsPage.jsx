@@ -3,8 +3,10 @@ import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../../lib/database';
 import { Bell, Package, Truck, Megaphone, CheckCheck, Loader } from 'lucide-react';
+import { useToast } from '../../hooks/useToast';
 import EmptyState from '../../components/ui/EmptyState';
 import { SkeletonText } from '../../components/ui/SkeletonLoader';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const iconMap = { order_update: Package, trip_update: Truck, announcement: Megaphone, general: Bell };
 
@@ -28,7 +30,9 @@ const groupByDate = (notifications) => {
 };
 
 const NotificationsPage = () => {
+  usePageTitle('Notifications');
   const { user } = useAuth();
+  const toast = useToast();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [markingAll, setMarkingAll] = useState(false);
@@ -36,7 +40,7 @@ const NotificationsPage = () => {
   useEffect(() => { if (user) loadData(); }, [user]);
 
   const loadData = async () => {
-    try { setNotifications(await getNotifications(user.id)); } catch (e) { /* silently handled */ }
+    try { setNotifications(await getNotifications(user.id)); } catch (e) { toast.error('Failed to load notifications.'); }
     finally { setLoading(false); }
   };
 

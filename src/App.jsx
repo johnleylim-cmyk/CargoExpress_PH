@@ -45,6 +45,8 @@ const AnnouncementsPage = lazy(() => import('./pages/admin/AnnouncementsPage'));
 const InboxPage = lazy(() => import('./pages/admin/InboxPage'));
 const SettingsPage = lazy(() => import('./pages/admin/SettingsPage'));
 const ContactInquiriesPage = lazy(() => import('./pages/admin/ContactInquiriesPage'));
+const AdminProfilePage = lazy(() => import('./pages/admin/ProfilePage'));
+const AdminPersonalInfoPage = lazy(() => import('./pages/admin/PersonalInfoPage'));
 
 // Public Pages
 const TrackingPage = lazy(() => import('./pages/public/TrackingPage'));
@@ -168,6 +170,8 @@ function App() {
               <Route path="inbox" element={<Suspense fallback={<PageLoader />}><InboxPage /></Suspense>} />
               <Route path="settings" element={<Suspense fallback={<PageLoader />}><SettingsPage /></Suspense>} />
               <Route path="contact-inquiries" element={<Suspense fallback={<PageLoader />}><ContactInquiriesPage /></Suspense>} />
+              <Route path="profile" element={<Suspense fallback={<PageLoader />}><AdminProfilePage /></Suspense>} />
+              <Route path="personal-info" element={<Suspense fallback={<PageLoader />}><AdminPersonalInfoPage /></Suspense>} />
             </Route>
 
             {/* 404 */}

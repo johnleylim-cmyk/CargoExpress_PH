@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import { PackageX, Home, Search, ArrowLeft, Compass } from 'lucide-react';
+import usePageTitle from '../../hooks/usePageTitle';
 
-const NotFoundPage = () => (
+const NotFoundPage = () => {
+  usePageTitle('Page Not Found');
+  return (
   <div className="not-found-page">
     {/* Decorative background orbs */}
     <div className="nf-orb nf-orb-1" aria-hidden="true" />
@@ -54,6 +57,7 @@ const NotFoundPage = () => (
       </button>
     </div>
   </div>
-);
+  );
+};
 
 export default NotFoundPage;

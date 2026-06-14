@@ -6,8 +6,10 @@ import AnimatedCounter from '../../components/ui/AnimatedCounter';
 import { SkeletonStatCard, SkeletonText } from '../../components/ui/SkeletonLoader';
 import { ArrowLeft, User, Mail, Phone, MapPin, Package, DollarSign } from 'lucide-react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const CustomerDetailPage = () => {
+  usePageTitle('Customer Details');
   const { id } = useParams(); const navigate = useNavigate();
   const [data, setData] = useState(null); const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

@@ -8,6 +8,7 @@ import { ArrowLeft, Loader, CheckCircle, Copy, Check, Package, MapPin, User, Tru
 import { useToast } from '../../hooks/useToast';
 import CustomSelect from '../../components/ui/CustomSelect';
 import { motion, useReducedMotion } from 'framer-motion';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const luxeEase = [0.22, 1, 0.36, 1];
 
@@ -52,6 +53,7 @@ const formatBookingTripOption = (trip) => {
 };
 
 const BookShipmentPage = () => {
+  usePageTitle('Book Shipment');
   const { user, userProfile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();

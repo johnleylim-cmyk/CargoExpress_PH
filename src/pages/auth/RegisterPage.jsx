@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { PH_LOCATIONS, VALID_PROVINCES } from '../../constants/phLocations';
 import CustomSelect from '../../components/ui/CustomSelect';
+import usePageTitle from '../../hooks/usePageTitle';
 
 /* ── Helpers ──────────────────────────────────────────────────────────── */
 const toTitleCase = (str) =>
@@ -50,6 +51,7 @@ const STEPS = [
    RegisterPage
 ══════════════════════════════════════════════════════════════════════════ */
 const RegisterPage = () => {
+  usePageTitle('Create Account');
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({
     name: '', email: '', phone: '', password: '', confirmPassword: '',

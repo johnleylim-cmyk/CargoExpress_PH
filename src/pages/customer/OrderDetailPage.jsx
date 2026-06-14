@@ -10,8 +10,10 @@ import ImageLightbox from '../../components/ui/ImageLightbox';
 import { SkeletonOrderCard, SkeletonText } from '../../components/ui/SkeletonLoader';
 import { ArrowLeft, MapPin, User, Phone, Package, CreditCard, Truck, Camera, Image, XCircle, Loader, AlertTriangle } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const OrderDetailPage = () => {
+  usePageTitle('Order Details');
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();

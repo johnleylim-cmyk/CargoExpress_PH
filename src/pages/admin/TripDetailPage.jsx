@@ -8,8 +8,10 @@ import { ArrowLeft, Play, Flag, CheckCircle, XCircle, Loader } from 'lucide-reac
 import CapacityTracker from '../../components/ui/CapacityTracker';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import { useToast } from '../../hooks/useToast';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const TripDetailPage = () => {
+  usePageTitle('Trip Details');
   const { id } = useParams(); const navigate = useNavigate();
   const [data, setData] = useState(null); const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

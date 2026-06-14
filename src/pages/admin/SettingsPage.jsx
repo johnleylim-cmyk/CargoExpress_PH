@@ -4,8 +4,10 @@ import { SkeletonText } from '../../components/ui/SkeletonLoader';
 import { Settings, Loader, Save, User, DollarSign, CheckCircle, AlertTriangle } from 'lucide-react';
 import AdminPersonalInfoPage from './PersonalInfoPage';
 import { useToast } from '../../hooks/useToast';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const SettingsPage = () => {
+  usePageTitle('Settings');
   const [activeTab,    setActiveTab]    = useState('profile');
   const [pricePerKilo, setPricePerKilo] = useState('70');
   const [loading,      setLoading]      = useState(true);

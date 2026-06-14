@@ -1,13 +1,19 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { User, LogOut, ChevronRight, Shield } from 'lucide-react';
+import ConfirmModal from '../../components/ui/ConfirmModal';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const AdminProfilePage = () => {
+  usePageTitle('Profile');
   const { userProfile, logout } = useAuth();
   const navigate = useNavigate();
-  const handleLogout = async () => { await logout(); navigate('/login'); };
+  const handleLogout = async () => { setShowLogoutConfirm(false); await logout(); navigate('/login'); };
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   return (
+    <>
     <div className="page-transition" style={{ maxWidth: 520 }}>
       <h1 className="fw-800 text-2xl mb-24">Profile</h1>
 
@@ -39,10 +45,21 @@ const AdminProfilePage = () => {
       </div>
 
       {/* Sign Out */}
-      <button className="btn btn-outline btn-block btn-lg justify-center" onClick={handleLogout} style={{ color: 'var(--error)', borderColor: 'var(--error-glow)' }}>
+      <button className="btn btn-outline btn-block btn-lg justify-center" onClick={() => setShowLogoutConfirm(true)} style={{ color: 'var(--error)', borderColor: 'var(--error-glow)' }}>
         <LogOut size={18} /> Sign Out
       </button>
     </div>
+
+    <ConfirmModal
+      isOpen={showLogoutConfirm}
+      onClose={() => setShowLogoutConfirm(false)}
+      onConfirm={handleLogout}
+      title="Sign Out"
+      message="Are you sure you want to sign out?"
+      confirmLabel="Sign Out"
+      variant="warning"
+    />
+    </>
   );
 };
 

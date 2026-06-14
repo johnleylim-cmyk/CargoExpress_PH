@@ -9,6 +9,7 @@ import {
   Smartphone, Building,
 } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const toTitleCase = (str) => str.replace(/\b\w/g, c => c.toUpperCase());
 
@@ -33,6 +34,7 @@ const validateFB = (v) => {
 };
 
 const AdminPersonalInfoPage = () => {
+  usePageTitle('Personal Info');
   const { user, userProfile, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();

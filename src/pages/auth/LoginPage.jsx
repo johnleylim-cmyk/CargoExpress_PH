@@ -15,6 +15,7 @@ import {
   Sparkles, MapPin, Truck, Loader, Clock, CheckCircle, XCircle,
   HelpCircle, ChevronRight,
 } from 'lucide-react';
+import usePageTitle from '../../hooks/usePageTitle';
 
 // ── Error mapper ─────────────────────────────────────────────────────────────
 const INVALID_CREDENTIALS_ERROR = 'Incorrect password or email.';
@@ -155,6 +156,7 @@ const TRACKING_COLORS = {
 // LoginPage
 // ════════════════════════════════════════════════════════════════════════════
 const LoginPage = () => {
+  usePageTitle('Login');
   // ── Login state ──────────────────────────────────────────────────────────
   const [email, setEmail]               = useState('');
   const [password, setPassword]         = useState('');

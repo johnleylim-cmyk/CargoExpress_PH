@@ -6,6 +6,7 @@ import { Send, Bot, Loader, MessageSquare } from 'lucide-react';
 import EmptyState from '../../components/ui/EmptyState';
 import { useToast } from '../../hooks/useToast';
 import { SkeletonChat } from '../../components/ui/SkeletonLoader';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const formatTime = (ts) => {
   if (!ts) return '';
@@ -13,6 +14,7 @@ const formatTime = (ts) => {
 };
 
 const SupportChatPage = () => {
+  usePageTitle('Support Chat');
   const { user } = useAuth();
   const toast = useToast();
   const [conversationId, setConversationId] = useState(null);

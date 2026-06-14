@@ -7,6 +7,7 @@ import {
   Megaphone, MessageSquare, Settings, LogOut, Container, FileText, Mail,
   ChevronsLeft, ArrowLeft
 } from 'lucide-react';
+import ConfirmModal from '../ui/ConfirmModal';
 
 const mainNav = [
   { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
@@ -79,7 +80,10 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
     };
   }, [userProfile?.role]);
 
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
   const handleLogout = async () => {
+    setShowLogoutConfirm(false);
     await logout();
     navigate('/login');
   };
@@ -162,12 +166,21 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
               <div className="sidebar-user-role">Administrator</div>
             </div>
           </div>
-          <button className="sidebar-link danger" type="button" onClick={handleLogout} data-tooltip="Sign Out">
+          <button className="sidebar-link danger" type="button" onClick={() => setShowLogoutConfirm(true)} data-tooltip="Sign Out">
             <LogOut size={18} aria-hidden="true" />
             <span className="sidebar-link-label">Sign Out</span>
           </button>
         </div>
       </aside>
+      <ConfirmModal
+        isOpen={showLogoutConfirm}
+        onClose={() => setShowLogoutConfirm(false)}
+        onConfirm={handleLogout}
+        title="Sign Out"
+        message="Are you sure you want to sign out?"
+        confirmLabel="Sign Out"
+        variant="warning"
+      />
     </>
   );
 };

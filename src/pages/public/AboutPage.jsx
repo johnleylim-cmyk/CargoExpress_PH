@@ -6,6 +6,7 @@ import {
   Package, Truck, Shield, Clock, ExternalLink
 } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const FEATURES = [
   { icon: Package, title: 'Door-to-Door', desc: 'Complete pickup and delivery service' },
@@ -15,6 +16,7 @@ const FEATURES = [
 ];
 
 const AboutPage = () => {
+  usePageTitle('About Us');
   const toast = useToast();
   const [form, setForm] = useState({ name: '', phone: '', message: '' });
   const [loading, setLoading] = useState(false);

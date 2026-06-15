@@ -283,3 +283,12 @@
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
+
+/* -- Mobile Menu Toggle (moved from AdminLayout.jsx) -- */
+.mobile-menu-toggle { display: none; }
+.topbar-title { display: none !important; }
+@media (max-width: 1024px) {
+  .mobile-menu-toggle { display: flex !important; }
+  .topbar-title { display: flex !important; }
+  .sidebar-collapse-btn { display: none !important; }
+}

@@ -11,8 +11,7 @@ import {
 import { useToast } from '../../hooks/useToast';
 import CustomSelect from '../../components/ui/CustomSelect';
 import usePageTitle from '../../hooks/usePageTitle';
-
-const toTitleCase = (str) => str.replace(/\b\w/g, (c) => c.toUpperCase());
+import { toTitleCase } from '../../utils/string';
 
 const validatePhone = (phone) => {
   const val = (phone || '').trim();

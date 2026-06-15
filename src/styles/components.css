@@ -99,11 +99,6 @@
 }
 
 .card-interactive { cursor: pointer; transition: var(--transition-spring); }
-.card-interactive:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
-  border-color: var(--primary-light);
-}
 .card-interactive:active { transform: translateY(0); }
 
 .card-glass {

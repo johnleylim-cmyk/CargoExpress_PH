@@ -816,17 +816,6 @@
   80% { transform: translateX(2px); }
 }
 
-/* -- Premium Card Interactions -- */
-.card-interactive:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-lighter);
-}
-.card-interactive:active {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
 /* -- Stat Card Counter Glow -- */
 .stat-card:hover .stat-value {
   text-shadow: 0 0 20px rgba(255,255,255,0.3);

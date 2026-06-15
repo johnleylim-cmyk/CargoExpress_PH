@@ -87,7 +87,7 @@ const OrdersPage = () => {
       ) : error ? (
         <div className="card animate-scale-in text-center" role="alert" style={{ padding: 40 }}>
           <div className="flex items-center justify-center mx-auto mb-16" style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--error-bg)' }}>
-            <AlertCircle size={28} color="var(--error)" />
+            <AlertCircle size={28} color="var(--error)" aria-hidden="true" />
           </div>
           <h3 className="mb-8" style={{ color: 'var(--error-dark)' }}>Error Loading Orders</h3>
           <p className="text-secondary text-sm mb-20">{error}</p>

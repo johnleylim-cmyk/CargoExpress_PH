@@ -10,8 +10,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
 import usePageTitle from '../../hooks/usePageTitle';
-
-const toTitleCase = (str) => str.replace(/\b\w/g, c => c.toUpperCase());
+import { toTitleCase } from '../../utils/string';
 
 const validatePhone = (v) => {
   if (!v) return null;

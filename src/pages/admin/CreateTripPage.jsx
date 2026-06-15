@@ -57,7 +57,7 @@ const CreateTripPage = () => {
   return (
     <div className="page-transition">
       <button type="button" onClick={() => navigate(-1)} className="btn btn-ghost mb-16">
-        <ArrowLeft size={18} /> Back
+        <ArrowLeft size={18} aria-hidden="true" /> Back
       </button>
       <div className="admin-page-header">
         <div>
@@ -72,7 +72,7 @@ const CreateTripPage = () => {
         <div className="card stagger-item mb-16" style={{ animationDelay: '0ms' }}>
           <div className="card-body">
             <h3 className="fw-700 mb-16 flex items-center gap-8">
-              <Truck size={18} color="var(--primary)" /> Route *
+              <Truck size={18} color="var(--primary)" aria-hidden="true" /> Route *
             </h3>
             <div className="admin-route-options">
               {ROUTES.map(r => (
@@ -102,7 +102,7 @@ const CreateTripPage = () => {
         <div className="card stagger-item mb-16" style={{ animationDelay: '60ms' }}>
           <div className="card-body">
             <h3 className="fw-700 mb-16 flex items-center gap-8">
-              <Calendar size={18} color="var(--primary)" /> Schedule *
+              <Calendar size={18} color="var(--primary)" aria-hidden="true" /> Schedule *
             </h3>
             <div className="grid grid-2 gap-16">
               <div className="form-group">
@@ -121,7 +121,7 @@ const CreateTripPage = () => {
         <div className="card stagger-item mb-16" style={{ animationDelay: '120ms' }}>
           <div className="card-body">
             <h3 className="fw-700 mb-16 flex items-center gap-8">
-              <Package size={18} color="var(--primary)" /> Capacity & Pricing *
+              <Package size={18} color="var(--primary)" aria-hidden="true" /> Capacity & Pricing *
             </h3>
             <div className="grid grid-2 gap-16">
               <div className="form-group">

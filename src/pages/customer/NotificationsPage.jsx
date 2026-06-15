@@ -148,7 +148,7 @@ const NotificationsPage = () => {
                   {...cardProps}
                 >
                   <div className="notification-icon-wrap">
-                    <Icon size={18} />
+                    <Icon size={18} aria-hidden="true" />
                   </div>
                   <div className="notification-content">
                     <div className="notification-title">

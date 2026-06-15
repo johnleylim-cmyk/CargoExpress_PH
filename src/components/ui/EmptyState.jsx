@@ -21,7 +21,7 @@ const EmptyState = ({
 }) => (
   <div className={`empty-state-premium ${className || ''}`}>
     <div className="empty-state-icon-wrap">
-      <Icon size={48} strokeWidth={1.5} />
+      <Icon size={48} strokeWidth={1.5} aria-hidden="true" />
     </div>
 
     <h3 className="empty-state-title">{title}</h3>

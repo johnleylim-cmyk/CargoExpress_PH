@@ -149,16 +149,6 @@ const AdminLayout = () => {
 
       {/* Command Palette */}
       <CommandPalette isOpen={cmdPaletteOpen} onClose={() => setCmdPaletteOpen(false)} />
-
-      <style>{`
-        .mobile-menu-toggle { display: none; }
-        .topbar-title { display: none !important; }
-        @media (max-width: 1024px) {
-          .mobile-menu-toggle { display: flex !important; }
-          .topbar-title { display: flex !important; }
-          .sidebar-collapse-btn { display: none !important; }
-        }
-      `}</style>
     </div>
   );
 };

@@ -9,6 +9,7 @@ import { useToast } from '../../hooks/useToast';
 import CustomSelect from '../../components/ui/CustomSelect';
 import { motion, useReducedMotion } from 'framer-motion';
 import usePageTitle from '../../hooks/usePageTitle';
+import { toTitleCase } from '../../utils/string';
 
 const luxeEase = [0.22, 1, 0.36, 1];
 
@@ -26,7 +27,6 @@ function fallbackCopy(text) {
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
-const toTitleCase = (str) => str.replace(/\b\w/g, (char) => char.toUpperCase());
 
 const validatePhone = (phone) => {
   const val = (phone || '').trim();

@@ -686,7 +686,7 @@ Each of the 6 untracked `.md` audit files is scored below with every major claim
 7. ~~**Fix toast dark mode**~~ ✅ FIXED (dark overrides added to feedback.css)
 8. ~~**Add `hasBadge: true`** to Home bottom nav item~~ ✅ FIXED
 9. **Add `FocusTrap`** to ContactInquiriesPage modal — remaining
-10. **Extract `validatePhone`, `toTitleCase`, `getPasswordStrength`** to shared utilities — remaining
+10. ~~**Extract `toTitleCase`, `getPasswordStrength`** to shared utilities~~ ✅ FIXED (2026-06-16 — `utils/string.js` and `utils/password.js` created, 6 duplicates removed). **`validatePhone`** remains — 3 different implementations (required vs optional, different error messages), cannot be merged.
 11. ~~**Add `role="alert"`** to error containers~~ ✅ FIXED (2026-06-16 — added to DashboardPage, OrderDetailPage admin+customer, TripDetailPage, OrdersPage, SettingsPage)
 12. **Unify brand color** — decide orange vs green — remaining (design decision)
 13. ~~**Add Sign Out confirmation** modal~~ ✅ FIXED (all 4 locations)
@@ -701,18 +701,18 @@ Each of the 6 untracked `.md` audit files is scored below with every major claim
 19. **Consolidate breakpoints** from 13 to ~6
 20. ~~**Add per-page `document.title`** updates~~ ✅ FIXED (usePageTitle hook + 32 pages)
 21. ~~**Add `role="progressbar"`** to CapacityTracker~~ ✅ FIXED (2026-06-16 — added with aria-valuenow, aria-valuemin, aria-valuemax, aria-label)
-22. **Add `aria-hidden="true"`** to decorative icons missing it
-23. **Move inline `<style>`** from AdminLayout.jsx to CSS file
+22. ~~**Add `aria-hidden="true"`** to decorative icons missing it~~ ✅ FIXED (2026-06-16 — added to EmptyState, NotificationsPage, OrderDetailPage, OrdersPage, CreateTripPage icons)
+23. ~~**Move inline `<style>`** from AdminLayout.jsx to CSS file~~ ✅ FIXED (2026-06-16 — 5 rules moved to layout-admin.css)
 24. **Split `remaining.css`** (2,037 lines) into focused files
 
 ### Low Priority (backlog)
 
 25. ~~**Remove duplicate `.sr-only`** definition~~ ✅ FIXED (2026-06-16 — removed from tabs-steps.css, kept in animations-utils.css)
-26. **Standardize toast animation** — one entrance, not three
+26. ~~**Standardize toast animation** — one entrance, not three~~ ✅ FIXED (2026-06-16 — removed 2 dead `toastIn` keyframes from feedback.css, updated reference to `toastSlideIn`, only `remaining.css` keyframe remains)
 27. **Add `color-mix()` fallbacks** for older browsers
 28. ~~**Fix AboutPage double `<h1>`** — use one `<h1>` per page~~ ✅ FIXED (2026-06-16 — changed hero `<h1>` to `<h2>`)
 29. **Use `updateProfile`** helper in admin PersonalInfoPage
-30. **Consolidate card hover values** — pick one `translateY` value
+30. ~~**Consolidate card hover values** — pick one `translateY` value~~ ✅ FIXED (2026-06-16 — removed dead hover rules from components.css and remaining.css, only premium-refresh.css remains)
 31. **Remove duplicate utility classes** — choose `.gap-sm` or `.gap-8`, not both
 
 ### Additional Fixes (not in original audit, applied 2026-06-16)
@@ -723,5 +723,5 @@ Each of the 6 untracked `.md` audit files is scored below with every major claim
 ---
 
 *Every finding verified by direct grep/read/bash against source code. No claims inherited from prior audits without independent verification.*
-*All ✅ FIXED items were resolved on 2026-06-15 (Antigravity AI) and 2026-06-16 (Qoder — 11 fixes, commit e852a2f) and build-verified with `vite build` (zero errors).*
+*All ✅ FIXED items were resolved on 2026-06-15 (Antigravity AI) and 2026-06-16 (Qoder — 16 fixes across 2 commits: `e852a2f`, `6d6f4c5`) and build-verified with `vite build` (zero errors).*
 

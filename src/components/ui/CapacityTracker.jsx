@@ -58,7 +58,15 @@ const CapacityTracker = ({ currentWeight = 0, maxCapacity = 1000, tripNumber = '
         </div>
       )}
 
-      <div className="capacity-bar overflow-hidden" style={{ height: 14, borderRadius: 7, background: 'var(--bg-secondary)' }}>
+      <div
+        className="capacity-bar overflow-hidden"
+        role="progressbar"
+        aria-valuenow={Math.round(percent)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`Van capacity: ${percent.toFixed(1)}% used, status ${status}`}
+        style={{ height: 14, borderRadius: 7, background: 'var(--bg-secondary)' }}
+      >
         <div
           className={`capacity-fill ${percent > 100 ? 'danger' : ''}`}
           style={{ width: `${barPercent}%`, height: '100%', background: barColor, transition: 'width 0.5s ease-out, background-color 0.5s ease-out' }}

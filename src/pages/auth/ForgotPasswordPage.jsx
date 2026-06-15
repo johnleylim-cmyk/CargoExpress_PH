@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import {
-  Container, Mail, Loader, CheckCircle2,
+  Container, Mail, Loader,
   ArrowLeft, Send, AlertTriangle, RefreshCw, Inbox,
 } from 'lucide-react';
 import usePageTitle from '../../hooks/usePageTitle';

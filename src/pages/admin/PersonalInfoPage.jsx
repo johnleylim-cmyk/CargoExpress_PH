@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { updateProfile, withTimeout } from '../../lib/database';
 import {
-  ArrowLeft, Loader, Save, CheckCircle, AlertCircle,
+  ArrowLeft, Loader, Save,
   User, Phone, Globe, MapPin, ExternalLink, Link2,
   Smartphone, Building,
 } from 'lucide-react';

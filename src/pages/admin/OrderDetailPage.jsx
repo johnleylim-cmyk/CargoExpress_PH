@@ -166,7 +166,7 @@ const AdminOrderDetailPage = () => {
   );
   if (error) return (
     <div className="page-transition">
-      <div className="card text-center text-error" style={{ padding: 40 }}>
+      <div className="card text-center text-error" role="alert" style={{ padding: 40 }}>
         <h3>Error Loading Order</h3>
         <p className="mt-8 mb-20">{error}</p>
         <button type="button" className="btn btn-primary" onClick={() => loadOrder()}>Retry</button>

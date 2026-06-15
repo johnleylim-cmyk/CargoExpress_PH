@@ -82,7 +82,7 @@ const AboutPage = () => {
 
       {/* Hero */}
       <div className="public-about-hero animate-fade-in">
-        <h1>About CargoExpress PH</h1>
+        <h2>About CargoExpress PH</h2>
         <p>Fast & Reliable Cargo Delivery connecting Bohol and Manila<br />with safe, affordable sea cargo shipping.</p>
       </div>
 

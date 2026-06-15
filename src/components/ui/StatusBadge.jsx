@@ -1,5 +1,3 @@
-import { STATUS_COLORS } from '../../constants/status';
-
 const statusToClass = (status) => {
   const map = {
     'Pending': 'badge-pending', 'Assigned': 'badge-assigned',

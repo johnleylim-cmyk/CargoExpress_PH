@@ -8,7 +8,7 @@ import { SkeletonStatCard, SkeletonTableRow, SkeletonDonut } from '../../compone
 import AnimatedCounter from '../../components/ui/AnimatedCounter';
 import PageTransition, { StaggerItem } from '../../components/ui/PageTransition';
 import ErrorBoundarySection from '../../components/ui/ErrorBoundarySection';
-import { Package, Truck, Users, Clock, ArrowRight, TrendingUp, Gauge, PieChart } from 'lucide-react';
+import { Package, Truck, Users, Clock, ArrowRight, Gauge, PieChart } from 'lucide-react';
 import usePageTitle from '../../hooks/usePageTitle';
 
 const DashboardPage = () => {
@@ -40,7 +40,7 @@ const DashboardPage = () => {
 
   if (error) return (
     <PageTransition>
-      <div className="card text-center" style={{ padding: 40, color: 'var(--error)' }}>
+      <div className="card text-center" role="alert" style={{ padding: 40, color: 'var(--error)' }}>
         <h3>Error</h3>
         <p>{error}</p>
         <button type="button" className="btn btn-primary mt-md" onClick={loadData}>Retry</button>

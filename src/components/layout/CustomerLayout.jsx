@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate, Link, useLocation } from 'react-router-dom';
-import { Bell, User, Container, LogOut, Menu, X, MessageSquare, Package, MapPin, Plus, Home, ChevronRight } from 'lucide-react';
+import { Bell, User, Container, LogOut, MessageSquare, Package, MapPin, Plus, Home, ChevronRight } from 'lucide-react';
 import ThemeToggle from '../ui/ThemeToggle';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';

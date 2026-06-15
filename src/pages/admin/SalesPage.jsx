@@ -4,7 +4,7 @@ import { SkeletonStatCard, SkeletonDonut, SkeletonBarChart } from '../../compone
 import AnimatedCounter from '../../components/ui/AnimatedCounter';
 import DonutChart from '../../components/ui/DonutChart';
 import MiniBarChart from '../../components/ui/MiniBarChart';
-import { BarChart3, DollarSign, TrendingUp, CreditCard } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 import usePageTitle from '../../hooks/usePageTitle';
 
 const SalesPage = () => {
@@ -39,17 +39,13 @@ const SalesPage = () => {
 
   const s = data?.summary || {};
 
-  // Compute max for payment method bar chart
   const paymentMethods = [
     {l:'Cash', v:s.cashTotal || 0, c:'var(--success)'},
     {l:'GCash', v:s.gcashTotal || 0, c:'var(--info)'},
     {l:'Pay Later', v:s.paylaterTotal || 0, c:'var(--warning)'}
   ];
-  const maxPayment = Math.max(...paymentMethods.map(m => m.v), 1);
 
-  // Compute max for monthly revenue bars
   const monthlySales = data?.monthlySales || [];
-  const maxMonthly = Math.max(...monthlySales.map(m => m.total_revenue), 1);
 
   return (
     <div className="page-transition">

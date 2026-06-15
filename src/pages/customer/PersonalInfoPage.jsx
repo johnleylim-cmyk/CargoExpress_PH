@@ -5,7 +5,7 @@ import { buildProfileAddress, normalizeProfileAddressFields } from '../../lib/ad
 import { supabase } from '../../lib/supabase';
 import { PH_LOCATIONS, VALID_PROVINCES } from '../../constants/phLocations';
 import {
-  ArrowLeft, Loader, Save, CheckCircle, AlertCircle,
+  ArrowLeft, Loader, Save,
   User, Phone, MapPin, Home, Hash, MessageSquare, Map, Building,
 } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';

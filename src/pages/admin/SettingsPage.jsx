@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getSettings, updateSettings, withTimeout } from '../../lib/database';
 import { SkeletonText } from '../../components/ui/SkeletonLoader';
-import { Settings, Loader, Save, User, DollarSign, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Settings, Loader, Save, User, DollarSign } from 'lucide-react';
 import AdminPersonalInfoPage from './PersonalInfoPage';
 import { useToast } from '../../hooks/useToast';
 import usePageTitle from '../../hooks/usePageTitle';
@@ -71,16 +71,16 @@ const SettingsPage = () => {
         ))}
       </div>
 
-      {activeTab === 'profile' && <AdminPersonalInfoPage />}
+      {activeTab === 'profile' && <div role="tabpanel"><AdminPersonalInfoPage /></div>}
 
       {activeTab === 'pricing' && (
-        <>
+        <div role="tabpanel">
           {loading ? (
             <div className="card animate-fade-in">
               <div className="card-body"><SkeletonText lines={3} /></div>
             </div>
           ) : error ? (
-            <div className="card text-center p-32 text-error">
+            <div className="card text-center p-32 text-error" role="alert">
               <h3>Error</h3>
               <p>{error}</p>
               <button type="button" className="btn btn-primary mt-md" onClick={load}>Retry</button>
@@ -131,7 +131,7 @@ const SettingsPage = () => {
               </div>
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   );

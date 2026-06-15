@@ -40,8 +40,6 @@ const PersonalInfoPage = () => {
   });
 
   const [loading,     setLoading]     = useState(false);
-  const [saveStatus,  setSaveStatus]  = useState(null);
-  const [saveMessage, setSaveMessage] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
 
   const cities = form.address_province ? PH_LOCATIONS[form.address_province] || [] : [];
@@ -70,9 +68,8 @@ const PersonalInfoPage = () => {
   };
 
   const handleSave = async () => {
-    setSaveStatus(null); setSaveMessage('');
     if (!validate()) return;
-    if (!user?.id) { setSaveStatus('error'); setSaveMessage('You are not logged in.'); return; }
+    if (!user?.id) { toast.error('You are not logged in.'); return; }
     setLoading(true);
     try {
       const normalizedAddress = normalizeProfileAddressFields(form);

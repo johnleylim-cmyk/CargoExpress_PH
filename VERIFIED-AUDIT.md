@@ -685,7 +685,7 @@ Each of the 6 untracked `.md` audit files is scored below with every major claim
 6. ~~**Consolidate dark mode tokens**~~ ✅ FIXED (tokens.css is now single source of truth)
 7. ~~**Fix toast dark mode**~~ ✅ FIXED (dark overrides added to feedback.css)
 8. ~~**Add `hasBadge: true`** to Home bottom nav item~~ ✅ FIXED
-9. **Add `FocusTrap`** to ContactInquiriesPage modal — remaining
+9. ~~**Add `FocusTrap`** to ContactInquiriesPage modal~~ ✅ FIXED (2026-06-16 — FocusTrap wrapper, role="dialog", aria-modal, aria-labelledby added)
 10. ~~**Extract `toTitleCase`, `getPasswordStrength`** to shared utilities~~ ✅ FIXED (2026-06-16 — `utils/string.js` and `utils/password.js` created, 6 duplicates removed). **`validatePhone`** remains — 3 different implementations (required vs optional, different error messages), cannot be merged.
 11. ~~**Add `role="alert"`** to error containers~~ ✅ FIXED (2026-06-16 — added to DashboardPage, OrderDetailPage admin+customer, TripDetailPage, OrdersPage, SettingsPage)
 12. **Unify brand color** — decide orange vs green — remaining (design decision)
@@ -697,7 +697,7 @@ Each of the 6 untracked `.md` audit files is scored below with every major claim
 15. ~~**Delete dead CSS** — legacy `.tracking-*` (~200 lines), `.bento-grid` system~~ ✅ FIXED (2026-06-16)
 16. ~~**Fix `.btn::after` conflict** — remove dead ripple in `components.css`~~ ✅ FIXED (2026-06-16)
 17. ~~**Remove 12 unused imports** across 8 files~~ ✅ FIXED (2026-06-16)
-18. **Remove dead state** — `saveStatus`/`saveMessage` in both PersonalInfoPages
+18. ~~**Remove dead state** — `saveStatus`/`saveMessage` in both PersonalInfoPages~~ ✅ FIXED (2026-06-16 — state removed, error case replaced with toast.error)
 19. **Consolidate breakpoints** from 13 to ~6
 20. ~~**Add per-page `document.title`** updates~~ ✅ FIXED (usePageTitle hook + 32 pages)
 21. ~~**Add `role="progressbar"`** to CapacityTracker~~ ✅ FIXED (2026-06-16 — added with aria-valuenow, aria-valuemin, aria-valuemax, aria-label)
@@ -709,11 +709,11 @@ Each of the 6 untracked `.md` audit files is scored below with every major claim
 
 25. ~~**Remove duplicate `.sr-only`** definition~~ ✅ FIXED (2026-06-16 — removed from tabs-steps.css, kept in animations-utils.css)
 26. ~~**Standardize toast animation** — one entrance, not three~~ ✅ FIXED (2026-06-16 — removed 2 dead `toastIn` keyframes from feedback.css, updated reference to `toastSlideIn`, only `remaining.css` keyframe remains)
-27. **Add `color-mix()` fallbacks** for older browsers
+27. **Add `color-mix()` fallbacks** for older browsers — **SKIPPED** (57 usages mix CSS variables that change between light/dark themes; static hex fallbacks would be wrong in one theme; ~92% browser support makes this low-priority)
 28. ~~**Fix AboutPage double `<h1>`** — use one `<h1>` per page~~ ✅ FIXED (2026-06-16 — changed hero `<h1>` to `<h2>`)
-29. **Use `updateProfile`** helper in admin PersonalInfoPage
+29. ~~**Use `updateProfile`** helper in admin PersonalInfoPage~~ ✅ FIXED (2026-06-16 — replaced direct supabase call, removed unused supabase and withTimeout imports)
 30. ~~**Consolidate card hover values** — pick one `translateY` value~~ ✅ FIXED (2026-06-16 — removed dead hover rules from components.css and remaining.css, only premium-refresh.css remains)
-31. **Remove duplicate utility classes** — choose `.gap-sm` or `.gap-8`, not both
+31. ~~**Remove duplicate utility classes** — choose `.gap-sm` or `.gap-8`, not both~~ ✅ FIXED (2026-06-16 — `.gap-sm` removed, `.gap-8` kept, 2 JSX usages updated)
 
 ### Additional Fixes (not in original audit, applied 2026-06-16)
 
@@ -723,5 +723,5 @@ Each of the 6 untracked `.md` audit files is scored below with every major claim
 ---
 
 *Every finding verified by direct grep/read/bash against source code. No claims inherited from prior audits without independent verification.*
-*All ✅ FIXED items were resolved on 2026-06-15 (Antigravity AI) and 2026-06-16 (Qoder — 16 fixes across 2 commits: `e852a2f`, `6d6f4c5`) and build-verified with `vite build` (zero errors).*
+*All ✅ FIXED items were resolved on 2026-06-15 (Antigravity AI) and 2026-06-16 (Qoder — 20 fixes across 3 commits: `e852a2f`, `6d6f4c5`, pending) and build-verified with `vite build` (zero errors).*
 

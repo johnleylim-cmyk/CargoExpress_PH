@@ -8,6 +8,7 @@ import {
   Loader, MessageSquare, AlertCircle, X
 } from 'lucide-react';
 import usePageTitle from '../../hooks/usePageTitle';
+import FocusTrap from '../../components/ui/FocusTrap';
 
 const STATUS_CONFIG = {
   new: { label: 'New', className: 'badge-warning' },
@@ -239,10 +240,11 @@ const ContactInquiriesPage = () => {
 
       {/* Detail Modal */}
       {selectedInquiry && (
-        <div className="modal-overlay" onClick={() => setSelectedInquiry(null)}>
-          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 520 }}>
-            <div className="modal-header">
-              <h3 className="flex items-center gap-8">
+        <FocusTrap active={!!selectedInquiry}>
+          <div className="modal-overlay" onClick={() => setSelectedInquiry(null)}>
+            <div className="modal" role="dialog" aria-modal="true" aria-labelledby="inquiry-modal-title" onClick={e => e.stopPropagation()} style={{ maxWidth: 520 }}>
+              <div className="modal-header">
+                <h3 id="inquiry-modal-title" className="flex items-center gap-8">
                 <MessageSquare size={18} />
                 Inquiry Details
               </h3>
@@ -316,6 +318,7 @@ const ContactInquiriesPage = () => {
             </div>
           </div>
         </div>
+        </FocusTrap>
       )}
     </div>
   );

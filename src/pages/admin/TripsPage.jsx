@@ -109,8 +109,8 @@ const AdminTripsPage = () => {
                 <span className="fw-700 text-accent">{trip.trip_number}</span>
                 <StatusBadge status={trip.status} size="sm" />
               </div>
-              <div className="flex items-center gap-sm text-sm"><MapPin size={14} className="text-primary" />{trip.origin} → {trip.destination}</div>
-              <div className="flex items-center gap-sm text-xs text-secondary mt-4">
+              <div className="flex items-center gap-8 text-sm"><MapPin size={14} className="text-primary" />{trip.origin} → {trip.destination}</div>
+              <div className="flex items-center gap-8 text-xs text-secondary mt-4">
                 <Calendar size={14} />{formatTripDate(trip.departure_date)}
                 {trip.vehicle_info && <> • {trip.vehicle_info}</>}
               </div>

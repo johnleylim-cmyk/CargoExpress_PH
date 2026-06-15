@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { supabase } from '../../lib/supabase';
-import { updateProfile, withTimeout } from '../../lib/database';
+import { updateProfile } from '../../lib/database';
 import {
   ArrowLeft, Loader, Save,
   User, Phone, Globe, MapPin, ExternalLink, Link2,
@@ -49,8 +48,6 @@ const AdminPersonalInfoPage = () => {
   });
 
   const [loading,     setLoading]     = useState(false);
-  const [saveStatus,  setSaveStatus]  = useState(null);
-  const [saveMessage, setSaveMessage] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
 
   const setField = (k, v) => setForm(p => ({ ...p, [k]: v }));
@@ -85,9 +82,8 @@ const AdminPersonalInfoPage = () => {
   };
 
   const handleSave = async () => {
-    setSaveStatus(null); setSaveMessage('');
     if (!validate()) return;
-    if (!user?.id) { setSaveStatus('error'); setSaveMessage('Not logged in.'); return; }
+    if (!user?.id) { toast.error('Not logged in.'); return; }
     setLoading(true);
     try {
       const payload = {
@@ -100,10 +96,7 @@ const AdminPersonalInfoPage = () => {
         bohol_address:  form.bohol_address  || null,
         updated_at:     new Date().toISOString(),
       };
-      const { error: updateError } = await withTimeout(
-        supabase.from('profiles').update(payload).eq('id', user.id).select().single()
-      );
-      if (updateError) throw updateError;
+      await updateProfile(user.id, payload);
       await refreshProfile();
       toast.success('Profile updated successfully!');
       setTimeout(() => navigate(-1), 1200);

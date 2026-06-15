@@ -2,9 +2,9 @@
 
 > Every finding below was verified directly against source code using `grep`, `Read`, and `wc`.
 > No claims are inherited from prior AI-generated audits. If a prior audit made a false claim, it is corrected here.
-> **Date**: 2026-06-14 · **Updated**: 2026-06-15 · **Branch**: main · **Files verified**: 22 CSS, 41+ JSX, 2 contexts, 2 hooks
+> **Date**: 2026-06-14 · **Updated**: 2026-06-16 · **Branch**: main · **Files verified**: 22 CSS, 41+ JSX, 2 contexts, 2 hooks
 > **Accuracy**: ~99% — All critical and high-priority issues have been **FIXED** (marked with ✅ FIXED below).
-> **Fixed by**: Antigravity AI (10 critical/high fixes + 2 additional catches)
+> **Fixed by**: Antigravity AI (10 critical/high fixes + 2 additional catches) · Qoder (11 verified fixes on 2026-06-16)
 
 ---
 
@@ -676,7 +676,7 @@ Each of the 6 untracked `.md` audit files is scored below with every major claim
 
 1. ~~**Add admin `/admin/profile` and `/admin/personal-info` routes** to `App.jsx`~~ ✅ FIXED
 2. ~~**Add top-level `<ErrorBoundary>`** in `main.jsx`~~ ✅ FIXED
-3. **Add `<React.StrictMode>`** in `main.jsx` — hides double-render bugs in development (optional, dev-only)
+3. ~~**Add `<React.StrictMode>`** in `main.jsx`~~ ✅ FIXED (2026-06-16)
 4. ~~**Fix silent error swallowing** in HomePage, NotificationsPage, InboxPage~~ ✅ FIXED (toast.error added)
 5. ~~**Add `FocusTrap`** to OnboardingModal~~ ✅ FIXED
 
@@ -687,36 +687,41 @@ Each of the 6 untracked `.md` audit files is scored below with every major claim
 8. ~~**Add `hasBadge: true`** to Home bottom nav item~~ ✅ FIXED
 9. **Add `FocusTrap`** to ContactInquiriesPage modal — remaining
 10. **Extract `validatePhone`, `toTitleCase`, `getPasswordStrength`** to shared utilities — remaining
-11. **Add `role="alert"`** to error containers — remaining
+11. ~~**Add `role="alert"`** to error containers~~ ✅ FIXED (2026-06-16 — added to DashboardPage, OrderDetailPage admin+customer, TripDetailPage, OrdersPage, SettingsPage)
 12. **Unify brand color** — decide orange vs green — remaining (design decision)
 13. ~~**Add Sign Out confirmation** modal~~ ✅ FIXED (all 4 locations)
 
 ### Medium Priority — ✅ PARTIALLY FIXED
 
 14. **Reduce inline styles** — 324 occurrences across 41 files
-15. **Delete dead CSS** — legacy `.tracking-*` (~200 lines), `.bento-grid` system
-16. **Fix `.btn::after` conflict** — remove dead ripple in `components.css`
-17. **Remove 12 unused imports** across 8 files
+15. ~~**Delete dead CSS** — legacy `.tracking-*` (~200 lines), `.bento-grid` system~~ ✅ FIXED (2026-06-16)
+16. ~~**Fix `.btn::after` conflict** — remove dead ripple in `components.css`~~ ✅ FIXED (2026-06-16)
+17. ~~**Remove 12 unused imports** across 8 files~~ ✅ FIXED (2026-06-16)
 18. **Remove dead state** — `saveStatus`/`saveMessage` in both PersonalInfoPages
 19. **Consolidate breakpoints** from 13 to ~6
 20. ~~**Add per-page `document.title`** updates~~ ✅ FIXED (usePageTitle hook + 32 pages)
-21. **Add `role="progressbar"`** to CapacityTracker
+21. ~~**Add `role="progressbar"`** to CapacityTracker~~ ✅ FIXED (2026-06-16 — added with aria-valuenow, aria-valuemin, aria-valuemax, aria-label)
 22. **Add `aria-hidden="true"`** to decorative icons missing it
 23. **Move inline `<style>`** from AdminLayout.jsx to CSS file
 24. **Split `remaining.css`** (2,037 lines) into focused files
 
 ### Low Priority (backlog)
 
-25. **Remove duplicate `.sr-only`** definition
+25. ~~**Remove duplicate `.sr-only`** definition~~ ✅ FIXED (2026-06-16 — removed from tabs-steps.css, kept in animations-utils.css)
 26. **Standardize toast animation** — one entrance, not three
 27. **Add `color-mix()` fallbacks** for older browsers
-28. **Fix AboutPage double `<h1>`** — use one `<h1>` per page
+28. ~~**Fix AboutPage double `<h1>`** — use one `<h1>` per page~~ ✅ FIXED (2026-06-16 — changed hero `<h1>` to `<h2>`)
 29. **Use `updateProfile`** helper in admin PersonalInfoPage
 30. **Consolidate card hover values** — pick one `translateY` value
 31. **Remove duplicate utility classes** — choose `.gap-sm` or `.gap-8`, not both
 
+### Additional Fixes (not in original audit, applied 2026-06-16)
+
+32. ~~**Remove `maxPayment`/`maxMonthly` dead state** in SalesPage~~ ✅ FIXED (2026-06-16 — variables computed but never referenced in JSX)
+33. ~~**Add `role="tabpanel"`** to SettingsPage tab panels~~ ✅ FIXED (2026-06-16 — both profile and pricing tabs)
+
 ---
 
 *Every finding verified by direct grep/read/bash against source code. No claims inherited from prior audits without independent verification.*
-*All ✅ FIXED items were resolved on 2026-06-15 and build-verified with `vite build` (zero errors).*
+*All ✅ FIXED items were resolved on 2026-06-15 (Antigravity AI) and 2026-06-16 (Qoder — 11 fixes, commit e852a2f) and build-verified with `vite build` (zero errors).*
 

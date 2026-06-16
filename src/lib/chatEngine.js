@@ -244,10 +244,19 @@ const THANKS_PATTERNS = ['thank', 'thanks', 'salamat', 'bye', 'goodbye', 'ok', '
 const HELP_PATTERNS = ['help', 'assist', 'support', 'need help', 'what can you do', 'menu', 'options', 'commands'];
 const FOLLOW_UP_PATTERNS = ['more', 'details', 'explain', 'what else', 'tell me more', 'elaborate', 'and', 'continue', 'go on'];
 
-const isGreeting = (input) => GREETING_PATTERNS.some(p => input.includes(p));
-const isThanks = (input) => THANKS_PATTERNS.some(p => input.includes(p));
-const isHelp = (input) => HELP_PATTERNS.some(p => input.includes(p));
-const isFollowUp = (input) => FOLLOW_UP_PATTERNS.some(p => input.includes(p));
+const matchesPattern = (input, pattern) => {
+  if (input.includes(pattern)) {
+    if (pattern.length > 3) return true;
+    const words = input.split(/\W+/);
+    return words.some(w => w === pattern);
+  }
+  return false;
+};
+
+const isGreeting = (input) => GREETING_PATTERNS.some(p => matchesPattern(input, p));
+const isThanks = (input) => THANKS_PATTERNS.some(p => matchesPattern(input, p));
+const isHelp = (input) => HELP_PATTERNS.some(p => matchesPattern(input, p));
+const isFollowUp = (input) => FOLLOW_UP_PATTERNS.some(p => matchesPattern(input, p));
 
 // ── Default Quick Questions ─────────────────────────────────────────────────
 export const DEFAULT_QUICK_QUESTIONS = [

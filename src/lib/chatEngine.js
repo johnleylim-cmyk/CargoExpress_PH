@@ -264,6 +264,7 @@ export const DEFAULT_QUICK_QUESTIONS = [
   { label: '🚢 Routes?', query: 'what routes are available' },
   { label: '💰 Shipping fee?', query: 'how much is the shipping fee' },
   { label: '🔍 Track package', query: 'how to track my order' },
+  { label: '❓ Help', query: 'help' },
 ];
 
 export const HELP_QUICK_QUESTIONS = [

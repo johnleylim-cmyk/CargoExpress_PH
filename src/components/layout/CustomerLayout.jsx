@@ -5,7 +5,8 @@ import ThemeToggle from '../ui/ThemeToggle';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { getUnreadNotificationCount } from '../../lib/database';
-import { requestNotificationPermission } from '../../lib/firebase-messaging';
+import { requestNotificationPermission, onForegroundMessage, refreshFCMTokenIfNeeded } from '../../lib/firebase-messaging';
+import { useToast } from '../../hooks/useToast';
 import ErrorBoundary from '../ui/ErrorBoundary';
 import ConfirmModal from '../ui/ConfirmModal';
 import OnboardingModal from '../ui/OnboardingModal';
@@ -106,6 +107,27 @@ const CustomerLayout = () => {
     }, 3000);
     return () => clearTimeout(timer);
   }, [user]);
+
+  // ── Refresh FCM token if stale (every 12 hours) ───────────────────────────
+  useEffect(() => {
+    if (!user) return;
+    // Non-blocking — fires after initial permission is settled
+    const timer = setTimeout(() => {
+      refreshFCMTokenIfNeeded(user.id).catch(() => {});
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [user]);
+
+  // ── Foreground push notification handler (when app is open) ──────────────
+  const toast = useToast();
+  useEffect(() => {
+    const unsubscribe = onForegroundMessage((payload) => {
+      const title = payload?.notification?.title || 'New Notification';
+      const body = payload?.notification?.body || 'You have a new update';
+      toast.info(`${title}: ${body}`, 6000);
+    });
+    return () => unsubscribe();
+  }, [toast]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

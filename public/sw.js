@@ -432,7 +432,7 @@ self.addEventListener('push', (event) => {
       url: data.data?.url || notif.click_action || '/customer/notifications',
     },
     vibrate: [200, 100, 200],
-    tag: 'cargoexpress-notification',
+    tag: 'cargoexpress-' + Date.now(),
     renotify: true,
     actions: [
       { action: 'open', title: 'Open' },

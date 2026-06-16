@@ -1,10 +1,14 @@
 // Firebase Cloud Messaging — Push Notifications
-// Handles FCM token registration and foreground message listening
+// Handles FCM token registration, foreground message listening, and token refresh
 // Works on Firebase Free (Spark) plan — FCM is free & unlimited
 
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import app from './firebase';
 import { supabase } from './supabase';
+
+// Key for localStorage timestamp tracking token freshness
+const TOKEN_REFRESH_KEY = 'fcm_token_last_refresh';
+const TOKEN_REFRESH_INTERVAL_MS = 12 * 60 * 60 * 1000; // 12 hours
 
 /**
  * Request notification permission and register FCM token
@@ -36,14 +40,15 @@ export const requestNotificationPermission = async (userId) => {
 
     const messaging = getMessaging(app);
 
-    // Register service worker for FCM
-    const swRegistration = await navigator.serviceWorker.getRegistration('/sw.js');
+    // Wait for the service worker registered with scope '/' (matches index.html registration)
+    const swRegistration = await navigator.serviceWorker.getRegistration('/') 
+      || await navigator.serviceWorker.ready;
 
     const vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
 
     const token = await getToken(messaging, {
       vapidKey: vapidKey,
-      serviceWorkerRegistration: swRegistration || undefined,
+      serviceWorkerRegistration: swRegistration,
     });
 
     if (!token) {
@@ -56,9 +61,59 @@ export const requestNotificationPermission = async (userId) => {
       .update({ fcm_token: token })
       .eq('id', userId);
 
+    // Track when we last refreshed so we can skip redundant refreshes
+    try { localStorage.setItem(TOKEN_REFRESH_KEY, String(Date.now())); } catch {}
+
     return token;
   } catch (err) {
     return null;
+  }
+};
+
+/**
+ * Refresh the FCM token if it's stale (older than 12 hours).
+ * Compares the fresh token with the one stored in Supabase and updates only if changed.
+ * Call this on app mount — it's lightweight and non-blocking.
+ * @param {string} userId - Supabase user ID
+ * @returns {boolean} true if token was refreshed, false otherwise
+ */
+export const refreshFCMTokenIfNeeded = async (userId) => {
+  try {
+    const lastRefresh = parseInt(localStorage.getItem(TOKEN_REFRESH_KEY) || '0', 10);
+    if (Date.now() - lastRefresh < TOKEN_REFRESH_INTERVAL_MS) return false;
+
+    if (!app || !('Notification' in window) || Notification.permission !== 'granted') return false;
+
+    const messaging = getMessaging(app);
+    const swRegistration = await navigator.serviceWorker.getRegistration('/') 
+      || await navigator.serviceWorker.ready;
+    const vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
+
+    const freshToken = await getToken(messaging, {
+      vapidKey,
+      serviceWorkerRegistration: swRegistration,
+    });
+
+    if (!freshToken) return false;
+
+    // Fetch the currently stored token to compare
+    const { data } = await supabase
+      .from('profiles')
+      .select('fcm_token')
+      .eq('id', userId)
+      .single();
+
+    if (data?.fcm_token !== freshToken) {
+      await supabase
+        .from('profiles')
+        .update({ fcm_token: freshToken })
+        .eq('id', userId);
+    }
+
+    try { localStorage.setItem(TOKEN_REFRESH_KEY, String(Date.now())); } catch {}
+    return true;
+  } catch {
+    return false;
   }
 };
 

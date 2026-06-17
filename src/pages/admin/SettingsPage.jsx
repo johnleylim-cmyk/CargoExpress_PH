@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getSettings, updateSettings, withTimeout } from '../../lib/database';
 import { SkeletonText } from '../../components/ui/SkeletonLoader';
 import { Settings, Loader, Save, User, DollarSign } from 'lucide-react';
@@ -13,6 +14,7 @@ const SettingsPage = () => {
   const [loading,      setLoading]      = useState(true);
   const [error,        setError]        = useState(null);
   const [saving,       setSaving]       = useState(false);
+  const navigate = useNavigate();
   const toast = useToast();
 
   useEffect(() => { load(); }, []);
@@ -34,6 +36,7 @@ const SettingsPage = () => {
     try {
       await withTimeout(updateSettings('price_per_kilo', pricePerKilo));
       toast.success('Pricing saved successfully!');
+      setTimeout(() => navigate(-1), 1200);
     } catch (e) {
       toast.error(e.message || 'Failed to save settings.');
     } finally {

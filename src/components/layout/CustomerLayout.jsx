@@ -20,7 +20,7 @@ const desktopNavItems = [
 ];
 
 const bottomNavItems = [
-  { to: '/customer', icon: Home, label: 'Home', end: true, hasBadge: true },
+  { to: '/customer', icon: Home, label: 'Home', end: true },
   { to: '/customer/orders', icon: Package, label: 'Orders' },
   { to: '/customer/book', icon: Plus, label: 'Book', isBookTab: true },
   { to: '/customer/trips', icon: MapPin, label: 'Trips' },
@@ -271,9 +271,6 @@ const CustomerLayout = () => {
                 <>
                   <div className="relative inline-flex">
                     <item.icon size={20} />
-                    {item.hasBadge && unreadCount > 0 && (
-                      <span className="notification-badge-sm">{unreadCount > 9 ? '9+' : unreadCount}</span>
-                    )}
                   </div>
                   <span>{item.label}</span>
                 </>

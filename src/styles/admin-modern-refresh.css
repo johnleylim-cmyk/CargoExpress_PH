@@ -545,6 +545,10 @@
     height: calc(100vh - 24px);
     width: min(86vw, 320px);
     max-width: 320px;
+    background: var(--admin-panel-solid) !important;
+    background-color: var(--admin-panel-solid) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     transform: translateX(calc(-100% - 24px));
   }
 

@@ -26,6 +26,12 @@ const generateTripNumber = () => {
   return `TRIP-${date}-${rand}`;
 };
 
+const sendPushNotification = (userId, title, message, url = '/customer/notifications') => {
+  void supabase.functions.invoke('send-push', {
+    body: { user_id: userId, title, body: message, url },
+  }).catch(() => { /* Push delivery is best-effort. */ });
+};
+
 const getGlobalPricePerKilo = async () => {
   let pricePerKilo = 70;
   try {
@@ -570,7 +576,12 @@ export const createAnnouncement = async (announcement) => {
           type: 'announcement',
           reference_id: data.id,
         }));
-        await supabase.from('notifications').insert(notifications);
+        const { error: notificationError } = await supabase.from('notifications').insert(notifications);
+        if (notificationError) return;
+
+        customers.forEach(c => {
+          sendPushNotification(c.id, 'New Announcement', announcement.title);
+        });
       }
     } catch (notifErr) {
       // Non-critical — log but do not surface to the user
@@ -817,12 +828,11 @@ export const createNotification = async (userId, title, message, type = 'general
       reference_id: referenceId,
     });
   // Notification insert error is non-critical
+  if (error) return;
 
   // Fire-and-forget: send push notification via Edge Function
   // Non-blocking — never slows down the UI even if it fails
-  void supabase.functions.invoke('send-push', {
-    body: { user_id: userId, title, body: message, url: '/customer/notifications' },
-  }).catch(() => { /* Edge function failure is non-critical */ });
+  sendPushNotification(userId, title, message);
 };
 
 // ==================== CONTACT INQUIRIES ====================
